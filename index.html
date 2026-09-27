@@ -50,7 +50,7 @@ body.dark .section.weekly-incomplete .section-head{background:#44301a}
 .box{width:22px;height:22px;border:2px solid #c7ccd6;border-radius:7px;display:grid;place-items:center;flex:none;font-weight:900}
 .done .box{background:var(--accent);border-color:var(--accent);color:#fff}
 .done .name{text-decoration:line-through;color:var(--muted)}
-.day{margin-left:auto;color:var(--muted);font-size:12px}
+.day{margin-left:auto;flex:0 0 58px;text-align:right;color:var(--muted);font-size:12px;white-space:nowrap}.day.long{flex:0 0 200px;text-align:right}
 .disabled{opacity:var(--disabled);cursor:default}
 .disabled .name{text-decoration:none}
 .section-head .summary{margin-left:auto;margin-right:10px;font-size:12px;color:var(--muted)}
@@ -78,7 +78,7 @@ body.dark .section.weekly-incomplete .section-head{background:#44301a}
 .reminder-time.next{color:var(--accent);border-color:var(--accent);font-weight:800}
 
 
-.search-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}.search-input{flex:1;min-width:180px;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:11px;padding:10px 12px;font-size:14px;outline:none}.search-input:focus{border-color:var(--accent)}.favorite-filter{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:11px;padding:10px 12px;font-size:13px;cursor:pointer}.favorite-filter.active{background:var(--accent);color:#fff;border-color:var(--accent)}.item-actions{margin-left:auto;display:flex;align-items:center;gap:7px}.favorite-btn{border:0;background:transparent;color:#c5c9d2;font-size:18px;cursor:pointer;padding:2px 4px;line-height:1}.favorite-btn.active{color:#f5b942}.favorite-btn:hover{transform:scale(1.08)}.yesterday-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:var(--shadow)}.yesterday-title{font-weight:800;font-size:15px;margin-bottom:8px}.yesterday-list{display:flex;flex-wrap:wrap;gap:7px}.yesterday-item{font-size:12px;border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:6px 8px}.yesterday-empty{color:var(--muted);font-size:13px}.complete-banner{display:none;margin-top:12px;padding:13px;border-radius:13px;background:linear-gradient(135deg,#fff4c8,#f4edff);font-weight:800;text-align:center}.complete-banner.show{display:block}.dark .complete-banner{background:linear-gradient(135deg,#3a3420,#30283f)}.reminder-head{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}.reminder-toggle{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:9px;padding:5px 9px;font-size:12px;cursor:pointer}.reminder-body.closed{display:none}.reminder-arrow{color:var(--muted);margin-left:6px}.search-empty{text-align:center;color:var(--muted);padding:24px 10px}.favorite-empty{padding:10px 0;color:var(--muted);font-size:13px}.favorite-panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:0;margin-bottom:12px;box-shadow:var(--shadow)}.favorite-panel .section-head{padding:16px 18px}.favorite-panel .section-title{font-weight:800;font-size:18px}.favorite-panel .favorite-panel-arrow{font-size:18px;color:var(--muted);transition:.2s}.favorite-panel.closed .favorite-panel-arrow{transform:rotate(-90deg)}.favorite-panel-body{padding:0 12px 12px;max-height:330px;overflow-y:auto}.favorite-panel-title{font-weight:800;font-size:15px;margin-bottom:10px}.favorite-group{margin-top:8px}.favorite-group-title{font-size:12px;font-weight:800;padding:6px 9px;border-radius:8px;margin-bottom:5px}.favorite-group-title.pending{background:#fff1d6;color:#b45309}.favorite-group-title.finished{background:#edf8ef;color:#278244}.dark .favorite-group-title.pending{background:#44301a;color:#ffc966}.dark .favorite-group-title.finished{background:#203629;color:#8de0a6}.favorite-sync-list{display:flex;flex-wrap:wrap;gap:6px}.favorite-sync-item{display:inline-flex;align-items:center;gap:6px;width:auto;max-width:100%;padding:5px 8px;border:1px solid var(--line);background:var(--bg);border-radius:8px;cursor:pointer}.favorite-sync-item:hover{border-color:var(--accent);transform:translateY(-1px)}.favorite-sync-item.done{opacity:.72}.favorite-sync-box{width:15px;height:15px;border:1.5px solid #c7ccd6;border-radius:4px;display:grid;place-items:center;flex:none;font-size:9px;font-weight:900}.favorite-sync-item.done .favorite-sync-box{background:var(--accent);border-color:var(--accent);color:#fff}.favorite-sync-name{font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.favorite-sync-meta{font-size:9px;color:var(--muted);white-space:nowrap}.favorite-sync-item.done .favorite-sync-name{text-decoration:line-through;color:var(--muted)}@media(max-width:560px){body{padding:12px 8px 34px}.hero{padding:17px 14px;border-radius:15px}h1{font-size:21px}.controls{gap:6px}.control-btn{flex:1;padding:9px 7px}.search-row{display:grid;grid-template-columns:1fr}.search-input{min-width:0;width:100%;font-size:16px}.favorite-filter{width:100%}.section-head{padding:14px 12px}.section-title{font-size:15px}.section-head .summary{font-size:11px;margin-right:6px}.select-all-btn{padding:6px 7px;font-size:11px}.item{padding:12px 4px}.name{font-size:14px}.day{font-size:11px}.favorite-btn{font-size:20px}.promo-wrap{margin-left:2px;margin-right:2px;padding:11px}.promo-text{font-size:12px;max-height:260px}.reminder-time{padding:5px 7px}.yesterday-card{border-radius:13px;padding:12px}}
+.search-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}.search-input{flex:1;min-width:180px;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:11px;padding:10px 12px;font-size:14px;outline:none}.search-input:focus{border-color:var(--accent)}.favorite-filter{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:11px;padding:10px 12px;font-size:13px;cursor:pointer}.favorite-filter.active{background:var(--accent);color:#fff;border-color:var(--accent)}.item-actions{margin-left:auto;display:flex;align-items:center;gap:7px}.favorite-btn{border:0;background:transparent;color:#c5c9d2;font-size:18px;cursor:pointer;padding:2px 4px;line-height:1}.favorite-btn.active{color:#f5b942}.favorite-btn:hover{transform:scale(1.08)}.yesterday-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:var(--shadow)}.yesterday-title{font-weight:800;font-size:15px;margin-bottom:8px}.yesterday-list{display:flex;flex-wrap:wrap;gap:7px}.yesterday-item{font-size:12px;border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:6px 8px}.yesterday-empty{color:var(--muted);font-size:13px}.complete-banner{display:none;margin-top:12px;padding:13px;border-radius:13px;background:linear-gradient(135deg,#fff4c8,#f4edff);font-weight:800;text-align:center}.complete-banner.show{display:block}.dark .complete-banner{background:linear-gradient(135deg,#3a3420,#30283f)}.reminder-head{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}.reminder-toggle{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:9px;padding:5px 9px;font-size:12px;cursor:pointer}.reminder-body.closed{display:none}.reminder-arrow{color:var(--muted);margin-left:6px}.search-empty{text-align:center;color:var(--muted);padding:24px 10px}.favorite-empty{padding:10px 0;color:var(--muted);font-size:13px}.favorite-panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:0;margin-bottom:12px;box-shadow:var(--shadow)}.favorite-panel .section-head{padding:16px 18px}.favorite-panel .section-title{font-weight:800;font-size:18px}.favorite-panel .favorite-panel-arrow{font-size:18px;color:var(--muted);transition:.2s}.favorite-panel.closed .favorite-panel-arrow{transform:rotate(-90deg)}.favorite-panel-body{padding:0 12px 12px;max-height:330px;overflow-y:auto}.favorite-panel-title{font-weight:800;font-size:15px;margin-bottom:10px}.favorite-group{margin-top:8px}.favorite-group-title{font-size:12px;font-weight:800;padding:6px 9px;border-radius:8px;margin-bottom:5px}.favorite-group-title.pending{background:#fff1d6;color:#b45309}.favorite-group-title.finished{background:#edf8ef;color:#278244}.dark .favorite-group-title.pending{background:#44301a;color:#ffc966}.dark .favorite-group-title.finished{background:#203629;color:#8de0a6}.favorite-sync-list{display:flex;flex-wrap:wrap;gap:6px}.favorite-sync-item{display:inline-flex;align-items:center;gap:6px;width:auto;max-width:100%;padding:5px 8px;border:1px solid var(--line);background:var(--bg);border-radius:8px;cursor:pointer}.favorite-sync-item:hover{border-color:var(--accent);transform:translateY(-1px)}.favorite-sync-item.done{opacity:.72}.favorite-sync-box{width:15px;height:15px;border:1.5px solid #c7ccd6;border-radius:4px;display:grid;place-items:center;flex:none;font-size:9px;font-weight:900}.favorite-sync-item.done .favorite-sync-box{background:var(--accent);border-color:var(--accent);color:#fff}.favorite-sync-name{font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.favorite-sync-meta{font-size:9px;color:var(--muted);white-space:nowrap}.favorite-sync-item.done .favorite-sync-name{text-decoration:line-through;color:var(--muted)}@media(max-width:560px){body{padding:12px 8px 34px}.hero{padding:17px 14px;border-radius:15px}h1{font-size:21px}.controls{gap:6px}.control-btn{flex:1;padding:9px 7px}.search-row{display:grid;grid-template-columns:1fr}.search-input{min-width:0;width:100%;font-size:16px}.favorite-filter{width:100%}.section-head{padding:14px 12px}.section-title{font-size:15px}.section-head .summary{font-size:11px;margin-right:6px}.select-all-btn{padding:6px 7px;font-size:11px}.item{padding:12px 4px}.name{font-size:14px}.day{font-size:11px;flex-basis:58px}.favorite-btn{font-size:20px}.promo-wrap{margin-left:2px;margin-right:2px;padding:11px}.promo-text{font-size:12px;max-height:260px}.reminder-time{padding:5px 7px}.yesterday-card{border-radius:13px;padding:12px}}
 
 .note{text-align:center;color:var(--muted);font-size:12px;margin-top:16px;line-height:1.6}
 .guide-btn{border:1px solid #8ab4f8;background:#eef5ff;color:#2563c7;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:.18s}.guide-btn:hover{background:#dceaff;transform:translateY(-1px)}.notify-btn{border:1px solid #f2b84b;background:#fff6df;color:#a86400;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:800;cursor:pointer;transition:.18s}.notify-btn:hover{background:#ffedbf;transform:translateY(-1px)}.notify-btn.on{background:#f2a51a;color:#fff;border-color:#f2a51a}.dark .guide-btn{background:#1d2d49;color:#8ab9ff;border-color:#416fa8}.dark .guide-btn:hover{background:#243b60}.dark .notify-btn{background:#3b2d18;color:#ffc966;border-color:#9a6b20}.dark .notify-btn:hover{background:#4a381d}.dark .notify-btn.on{background:#d98d08;color:#fff;border-color:#d98d08}.analytics-row{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:12px;padding:10px 12px;border-radius:13px;background:var(--bg);font-size:13px;color:var(--muted)}.analytics-row strong{color:var(--text);font-weight:800}.analytics-sep{opacity:.45}.notify-toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(15px);background:var(--card);color:var(--text);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:14px;padding:12px 16px;font-size:14px;font-weight:700;opacity:0;pointer-events:none;transition:.2s;z-index:9999}.notify-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -134,10 +134,10 @@ const sections = [
   ]],
   ["🤝 組隊任務", "daily", [
     ["第一次同行"],["金勾海賊王"],["龍騎士"],
-    ["復古炎魔祭壇","二、四、六",[2,4,6]],
-    ["瑪斯特利亞的祭壇","一、三、五",[1,3,5]],
-    ["女神的遺跡","六、日",[6,0]],
-    ["終極次元入侵","六、日",[6,0]]
+    ["復古炎魔祭壇","開放時段：每週二、四、六",[2,4,6],"long"],
+    ["瑪斯特利亞的祭壇","開放時段：每週一、三、五",[1,3,5],"long"],
+    ["女神的遺跡","開放時段：每週六、日",[6,0],"long"],
+    ["終極次元入侵","開放時段：每週六、日",[6,0],"long"]
   ]],
   ["📜 委託任務", "daily", [
     ["蒐集委託"],["藏寶獵人"],["懸賞任務"]
@@ -168,7 +168,9 @@ const sections = [
   ]],
   ["📆 每週任務", "weekly", [
     ["Roguelike 武陵道場"],
-    ["史烏（終極）"],["受選的賽蓮（困難）"],["受選的賽蓮（終極）"],
+    ["史烏（終極）"],
+    ["黑魔法師（困難）"],["黑魔法師（終極）"],
+    ["受選的賽蓮（困難）"],["受選的賽蓮（終極）"],
     ["監視者卡洛斯（混沌）"],["監視者卡洛斯（終極）"],
     ["咖凌（困難）"],["咖凌（終極）"],["林波（困難）"],
     ["巴德利斯（困難）"],["最初的敵對者（困難）"],["最初的敵對者（終極）"],
@@ -306,6 +308,8 @@ function render(){
       const id=si+"_"+li;
       if(!favorites[id]) return;
       const available=!days || days.includes(now.getDay());
+      // 每日任務若今天不適用，不在「我的最愛／置頂任務」顯示
+      if(type==="daily" && !available) return;
       const checked=!!store[id];
       favEntries.push({id,name,section:section[0],type,daysText,available,checked});
     });
@@ -328,18 +332,14 @@ function render(){
     const renderFavRow=(x)=>{
       const el=document.createElement("div");
       el.className="favorite-sync-item"+(x.checked?" done":"");
-      const unavailable=x.type==="daily" && !x.available;
-      el.innerHTML=`<div class="favorite-sync-box">${x.checked?"✓":""}</div><div class="favorite-sync-name">${x.name}</div><div class="favorite-sync-meta">${x.section}${unavailable?"｜今日不可用":(x.type==="weekly"?"｜每週":"｜每日")}</div>`;
-      if(x.type==="daily" && !x.available){el.style.cursor="default";el.style.opacity=".55";}
-      else{
-        el.onclick=()=>{
+      el.innerHTML=`<div class="favorite-sync-box">${x.checked?"✓":""}</div><div class="favorite-sync-name">${x.name}</div><div class="favorite-sync-meta">${x.section}${x.type==="weekly"?"｜每週":"｜每日"}</div>`;
+      el.onclick=()=>{
           const store=x.type==="weekly" ? weekly : daily;
           const storageKey=x.type==="weekly" ? "dodogu_weekly_"+weekKey : "dodogu_daily_"+todayKey;
           store[x.id]=!store[x.id];
           localStorage.setItem(storageKey,JSON.stringify(store));
           render();
-        };
-      }
+      };
       return el;
     };
     pending.forEach(x=>favCard.querySelector(".pending-list").appendChild(renderFavRow(x)));
@@ -393,7 +393,7 @@ function render(){
     const store = type==="weekly" ? weekly : daily;
     const storageKey = type==="weekly" ? "dodogu_weekly_"+weekKey : "dodogu_daily_"+todayKey;
     let doneInSection=0, activeTotal=0, visibleItems=[];
-    items.forEach(([name,daysText,days],localIndex)=>{
+    items.forEach(([name,daysText,days,dayStyle],localIndex)=>{
       const available=!days || days.includes(now.getDay());
       if(available) activeTotal++;
       const id=sectionIndex+"_"+localIndex;
@@ -401,7 +401,7 @@ function render(){
       if(type==="daily" && available && !store[id]) remaining.push({section:title,name,daysText});
       const matches=!query || name.toLowerCase().includes(query) || title.toLowerCase().includes(query);
       const favMatch=!onlyFavorites || !!favorites[id];
-      if(matches && favMatch) visibleItems.push({name,daysText,days,localIndex,id});
+      if(matches && favMatch) visibleItems.push({name,daysText,days,localIndex,id,dayStyle:dayStyle||""});
     });
     if(type==="weekly"){ weeklyDone+=doneInSection; weeklyTotal+=items.length; }
     else { dailyDone+=doneInSection; dailyTotal+=activeTotal; }
@@ -418,10 +418,10 @@ function render(){
     const selectAllBtn=head.querySelector(".select-all-btn");
     selectAllBtn.onclick=(e)=>{e.stopPropagation();items.forEach(([name,daysText,days],li)=>{const available=!days||days.includes(now.getDay());if(available)store[sectionIndex+"_"+li]=!allChecked;});localStorage.setItem(storageKey,JSON.stringify(store));render();};
     const body=document.createElement("div");body.className="items";
-    visibleItems.forEach(({name,daysText,days,localIndex,id})=>{
+    visibleItems.forEach(({name,daysText,days,localIndex,id,dayStyle})=>{
       const available=!days||days.includes(now.getDay()); const checked=!!store[id]; const isFav=!!favorites[id];
       const row=document.createElement("div");row.className="item"+(checked?" done":"")+(!available?" disabled":"");
-      row.innerHTML=`<div class="box">${checked?"✓":""}</div><div class="name">${name}</div>${daysText?`<div class="day">${daysText}</div>`:""}<div class="item-actions"><button class="favorite-btn ${isFav?"active":""}" type="button" title="${isFav?"取消最愛":"加入最愛／置頂"}">${isFav?"★":"☆"}</button></div>`;
+      row.innerHTML=`<div class="box">${checked?"✓":""}</div><div class="name">${name}</div>${daysText?`<div class="day ${dayStyle||""}">${daysText}</div>`:""}<div class="item-actions"><button class="favorite-btn ${isFav?"active":""}" type="button" title="${isFav?"取消最愛":"加入最愛／置頂"}">${isFav?"★":"☆"}</button></div>`;
       const favBtn=row.querySelector(".favorite-btn");
       favBtn.onclick=(e)=>{e.stopPropagation();favorites[id]=!favorites[id];if(!favorites[id])delete favorites[id];localStorage.setItem("dodogu_checklist_favorites",JSON.stringify(favorites));render();};
       if(available) row.onclick=()=>{store[id]=!store[id];localStorage.setItem(storageKey,JSON.stringify(store));render();};
