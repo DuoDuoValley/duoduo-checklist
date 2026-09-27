@@ -45,6 +45,16 @@ h1{margin:0 0 6px;font-size:26px}
 .section-head .summary{margin-left:auto;margin-right:10px;font-size:12px;color:var(--muted)}
 .select-all-btn{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:9px;padding:6px 9px;font-size:12px;cursor:pointer;white-space:nowrap}
 .select-all-btn:hover{opacity:.82}
+
+.promo-wrap{margin:4px 6px 8px;padding:14px;border-radius:14px;background:var(--bg);border:1px solid var(--line)}
+.promo-title{font-size:14px;font-weight:800;margin-bottom:10px}
+.promo-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:9px}
+.promo-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.promo-name{font-weight:800;font-size:14px}
+.copy-btn{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:9px;padding:6px 10px;font-size:12px;cursor:pointer;white-space:nowrap}
+.copy-btn:hover{opacity:.82}
+.promo-text{white-space:pre-wrap;line-height:1.65;font-size:13px;color:var(--text);max-height:220px;overflow:auto}
+
 .note{text-align:center;color:var(--muted);font-size:12px;margin-top:16px;line-height:1.6}
 @media(max-width:560px){.hero-top{align-items:center}.progress-row{grid-template-columns:1fr}.section-title{font-size:16px}}
 </style>
@@ -147,6 +157,50 @@ document.getElementById("today").textContent =
 let daily = JSON.parse(localStorage.getItem("dodogu_daily_"+todayKey) || "{}");
 let weekly = JSON.parse(localStorage.getItem("dodogu_weekly_"+weekKey) || "{}");
 
+const PROMO_FOOTER = `
+###  🙌🏻 期待與你在多多谷相遇。
+### 🔗 加入多多谷：https://discord.gg/snfvrB7kXC`;
+
+function getPromoDateCode(){
+  const d=new Date();
+  return String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
+}
+
+function getPromoTexts(){
+  const code=getPromoDateCode();
+  return {
+    facebook:`${code} 每一段冒險，都值得有人同行，一起加入多多谷！`,
+    discord:`# 【${code} 多多谷ᵀᴹˢ ｜招生中 ฅ^•ﻌ•^ฅ 🍀】
+
+## 【⭐️ 經營理念】
+**▸ 長期穩定經營  ▸ 友善遊戲環境  ▸ 優化遊戲體驗
+▸ 定期活動更新  ▸ 傾聽玩家意見  ▸ 活躍社群交流**
+## 【🌟 玩法走向】
+
+**✦ 自由流派搭配  ✦ 裝備簡易取得  ✦ 深度強化能力 
+✦ 陣營對抗玩法  ✦ 輪迴成長系統  ✦ 輕鬆暴力美學**
+## 【✨ 功能簡介】
+
+**✧ 全服獎池共享  ✧ 輪迴專屬技能  ✧ 懶人內掛練級
+✧ 裝備暴力強化  ✧ 博弈娛樂系統  ✧ 陣營競爭系統
+✧ 職業羈絆加成  ✧ 遺物增益效果  ✧ 世界隨機事件**${PROMO_FOOTER}`
+  };
+}
+
+async function copyPromo(type,button){
+  const text=getPromoTexts()[type];
+  try{
+    await navigator.clipboard.writeText(text);
+  }catch(e){
+    const ta=document.createElement("textarea");
+    ta.value=text; document.body.appendChild(ta); ta.select();
+    document.execCommand("copy"); ta.remove();
+  }
+  const old=button.textContent;
+  button.textContent="✓ 已複製";
+  setTimeout(()=>button.textContent=old,1200);
+}
+
 const FOLD_KEY = "dodogu_checklist_folds";
 const THEME_KEY = "dodogu_checklist_theme";
 
@@ -243,7 +297,33 @@ function render(){
       saveFolds();
       card.classList.toggle("closed",!!foldState[sectionIndex]);
     };
-    card.appendChild(head); card.appendChild(body); app.appendChild(card);
+
+    card.appendChild(head);
+    card.appendChild(body);
+
+    if(title === "📣 每日推廣"){
+      const promo=document.createElement("div");
+      promo.className="promo-wrap";
+      promo.innerHTML=`<div class="promo-title">📋 每日推廣文案｜今日日期：${getPromoDateCode()}</div>
+        <div class="promo-card">
+          <div class="promo-top"><div class="promo-name">Facebook</div><button class="copy-btn" type="button">📋 複製文案</button></div>
+          <div class="promo-text"></div>
+        </div>
+        <div class="promo-card">
+          <div class="promo-top"><div class="promo-name">Discord</div><button class="copy-btn" type="button">📋 複製文案</button></div>
+          <div class="promo-text"></div>
+        </div>`;
+      const texts=getPromoTexts();
+      const textBlocks=promo.querySelectorAll(".promo-text");
+      textBlocks[0].textContent=texts.facebook;
+      textBlocks[1].textContent=texts.discord;
+      const buttons=promo.querySelectorAll(".copy-btn");
+      buttons[0].onclick=(e)=>{e.stopPropagation();copyPromo("facebook",buttons[0]);};
+      buttons[1].onclick=(e)=>{e.stopPropagation();copyPromo("discord",buttons[1]);};
+      card.appendChild(promo);
+    }
+
+    app.appendChild(card);
   });
 
   document.getElementById("dailyCount").textContent=`${dailyDone} / ${dailyTotal}`;
@@ -255,6 +335,11 @@ function render(){
     : `🎉 今日任務全部完成！`;
 }
 render();
+
+// 頁面若跨過午夜，重新載入以切換到新的每日日期與任務紀錄。
+setInterval(()=>{
+  if(new Date().toLocaleDateString("sv-SE") !== todayKey) location.reload();
+},30000);
 </script>
 </body>
 </html>
