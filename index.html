@@ -181,6 +181,20 @@ const PROMO_FOOTER = `
 ###  🙌🏻 期待與你在多多谷相遇。
 ### 🔗 加入多多谷：https://discord.gg/snfvrB7kXC`;
 
+function getNextTime(times, now){
+  const currentMinutes = now.getHours()*60 + now.getMinutes();
+  let best = null;
+  let bestDiff = Infinity;
+  times.forEach(t=>{
+    const [h,m] = t.split(":").map(Number);
+    const target = h*60 + m;
+    let diff = target - currentMinutes;
+    if(diff < 0) diff += 24*60;
+    if(diff < bestDiff){ bestDiff = diff; best = t; }
+  });
+  return {time: best, diff: bestDiff};
+}
+
 function getPromoDateCode(){
   const d=new Date();
   return String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
@@ -280,31 +294,43 @@ function render(){
   }
 
   // 獨立資訊區塊：昨日漏掉的任務
-  {
+  if(!query && !onlyFavorites){
     const info=document.createElement("div");
-    info.className="section info-section";
     const closed=localStorage.getItem("dodogu_yesterday_closed")==="1";
-    info.innerHTML=`<div class="section-head"><span class="section-title">📅 昨日漏掉的任務</span><span class="arrow">⌄</span></div><div class="items info-items ${closed?"closed":""}"><div class="yesterday-list"></div></div>`;
-    const body=info.querySelector(".info-items");
+    info.className="section info-section"+(closed?" closed":"");
+    info.innerHTML=`<div class="section-head"><span class="section-title">📅 昨日漏掉的任務</span><span class="arrow">⌄</span></div><div class="items info-items"><div class="yesterday-list"></div></div>`;
     const list=info.querySelector(".yesterday-list");
     if(yesterdayMissed.length){yesterdayMissed.forEach(x=>{const el=document.createElement("div");el.className="yesterday-item";el.textContent=`${x.section}｜${x.name}`;list.appendChild(el);});}
     else{const el=document.createElement("div");el.className="yesterday-empty";el.textContent="昨天沒有未完成的每日任務 🎉";list.appendChild(el);}
-    info.querySelector(".section-head").onclick=()=>{const c=body.classList.toggle("closed");localStorage.setItem("dodogu_yesterday_closed",c?"1":"0");};
+    info.querySelector(".section-head").onclick=()=>{
+      const c=info.classList.toggle("closed");
+      localStorage.setItem("dodogu_yesterday_closed",c?"1":"0");
+    };
     app.appendChild(info);
   }
 
 
   // 獨立資訊區塊：每日活動提醒
-  {
+  if(!query && !onlyFavorites){
     const info=document.createElement("div");
-    info.className="section info-section";
     const closed=localStorage.getItem("dodogu_reminder_closed")==="1";
-    info.innerHTML=`<div class="section-head"><span class="section-title">🔔 每日活動提醒</span><span class="arrow">⌄</span></div><div class="items info-items ${closed?"closed":""}"><div class="reminder-card"><div class="reminder-top"><div class="reminder-name">🧳 流浪商人</div><div class="reminder-next" id="merchantNext"></div></div><div class="reminder-line"><span class="reminder-label">出沒時段：</span></div><div class="reminder-times" id="merchantTimes"></div><div class="reminder-line" style="margin-top:8px"><span class="reminder-label">出沒地點：</span>各村莊、城鎮</div></div><div class="reminder-card"><div class="reminder-top"><div class="reminder-name">💎 世界秘寶</div><div class="reminder-next" id="treasureNext"></div></div><div class="reminder-line"><span class="reminder-label">出沒時段：</span></div><div class="reminder-times" id="treasureTimes"></div><div class="reminder-line" style="margin-top:8px"><span class="reminder-label">出沒地點：</span>🔍 根據線索尋找秘寶蹤跡</div><div class="reminder-line"><span class="reminder-label">秘寶內容：</span>🎁 探索當日秘寶，領取神秘獎勵</div></div></div>`;
-    const body=info.querySelector(".info-items");
-    const schedules=[{id:"merchant",times:["09:00","13:00","17:00","21:00","01:00"]},{id:"treasure",times:["10:00","14:00","18:00","22:00"]}];
-    const getNext=times=>{const n=new Date(),cm=n.getHours()*60+n.getMinutes();let best=null;times.forEach(t=>{const [h,m]=t.split(":").map(Number);let diff=h*60+m-cm;if(diff<0)diff+=1440;if(best===null||diff<best.diff)best={time:t,diff};});return best;};
-    schedules.forEach(({id,times})=>{const next=getNext(times);const te=info.querySelector("#"+id+"Times");times.forEach(t=>{const sp=document.createElement("span");sp.className="reminder-time"+(t===next.time?" next":"");sp.textContent=t;te.appendChild(sp);});info.querySelector("#"+id+"Next").textContent=`下一次 ${next.time}`;});
-    info.querySelector(".section-head").onclick=()=>{const c=body.classList.toggle("closed");localStorage.setItem("dodogu_reminder_closed",c?"1":"0");};
+    info.className="section info-section"+(closed?" closed":"");
+    info.innerHTML=`<div class="section-head"><span class="section-title">🔔 每日活動提醒</span><span class="arrow">⌄</span></div><div class="items info-items"><div class="reminder-card"><div class="reminder-top"><div class="reminder-name">🧳 流浪商人</div><div class="reminder-next" id="merchantNext"></div></div><div class="reminder-line"><span class="reminder-label">出沒時段：</span></div><div class="reminder-times" id="merchantTimes"></div><div class="reminder-line" style="margin-top:8px"><span class="reminder-label">出沒地點：</span>各村莊、城鎮</div></div><div class="reminder-card"><div class="reminder-top"><div class="reminder-name">💎 世界秘寶</div><div class="reminder-next" id="treasureNext"></div></div><div class="reminder-line"><span class="reminder-label">出沒時段：</span></div><div class="reminder-times" id="treasureTimes"></div><div class="reminder-line" style="margin-top:8px"><span class="reminder-label">出沒地點：</span>🔍 根據線索尋找秘寶蹤跡</div><div class="reminder-line" style="margin-top:8px"><span class="reminder-label">秘寶內容：</span>🎁 探索當日秘寶，領取神秘獎勵</div></div></div></div>`;
+    const schedules={
+      merchant:["09:00","13:00","17:00","21:00","01:00"],
+      treasure:["10:00","14:00","18:00","22:00"]
+    };
+    const now2=new Date();
+    Object.entries(schedules).forEach(([id,times])=>{
+      const next=getNextTime(times,now2);
+      const te=info.querySelector("#"+id+"Times");
+      times.forEach(t=>{const sp=document.createElement("span");sp.className="reminder-time"+(t===next.time?" next":"");sp.textContent=t;te.appendChild(sp);});
+      info.querySelector("#"+id+"Next").textContent=`下一次 ${next.time}`;
+    });
+    info.querySelector(".section-head").onclick=()=>{
+      const c=info.classList.toggle("closed");
+      localStorage.setItem("dodogu_reminder_closed",c?"1":"0");
+    };
     app.appendChild(info);
   }
 
@@ -381,5 +407,6 @@ setInterval(()=>{
   if(new Date().toLocaleDateString("sv-SE") !== todayKey) location.reload();
 },30000);
 </script>
+
 </body>
 </html>
