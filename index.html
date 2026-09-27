@@ -35,6 +35,16 @@ h1{margin:0 0 6px;font-size:26px}
 .section.closed .arrow{transform:rotate(-90deg)}
 .items{padding:0 12px 10px}
 .section.closed .items{display:none}
+
+.section.incomplete .section-head{background:#fff8e8;border-left:4px solid #f2a51a;padding-left:14px}
+.section.incomplete .section-title{color:#a86400}
+.section.incomplete .summary{color:#c27a00;font-weight:800}
+.section.weekly-incomplete .section-head{background:#fff1d6;border-left-color:#f59e0b}
+.section.weekly-incomplete .section-title{color:#b45309}
+body.dark .section.incomplete .section-head{background:#3a2e1d;border-left-color:#d98d08}
+body.dark .section.incomplete .section-title{color:#ffc966}
+body.dark .section.incomplete .summary{color:#f0b64d}
+body.dark .section.weekly-incomplete .section-head{background:#44301a}
 .info-items{padding-top:0}.info-items.closed{display:none}
 .item{display:flex;align-items:center;gap:11px;padding:12px 6px;border-top:1px solid var(--line);cursor:pointer}
 .box{width:22px;height:22px;border:2px solid #c7ccd6;border-radius:7px;display:grid;place-items:center;flex:none;font-weight:900}
@@ -68,7 +78,7 @@ h1{margin:0 0 6px;font-size:26px}
 .reminder-time.next{color:var(--accent);border-color:var(--accent);font-weight:800}
 
 
-.search-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}.search-input{flex:1;min-width:180px;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:11px;padding:10px 12px;font-size:14px;outline:none}.search-input:focus{border-color:var(--accent)}.favorite-filter{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:11px;padding:10px 12px;font-size:13px;cursor:pointer}.favorite-filter.active{background:var(--accent);color:#fff;border-color:var(--accent)}.item-actions{margin-left:auto;display:flex;align-items:center;gap:7px}.favorite-btn{border:0;background:transparent;color:#c5c9d2;font-size:18px;cursor:pointer;padding:2px 4px;line-height:1}.favorite-btn.active{color:#f5b942}.favorite-btn:hover{transform:scale(1.08)}.yesterday-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:var(--shadow)}.yesterday-title{font-weight:800;font-size:15px;margin-bottom:8px}.yesterday-list{display:flex;flex-wrap:wrap;gap:7px}.yesterday-item{font-size:12px;border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:6px 8px}.yesterday-empty{color:var(--muted);font-size:13px}.complete-banner{display:none;margin-top:12px;padding:13px;border-radius:13px;background:linear-gradient(135deg,#fff4c8,#f4edff);font-weight:800;text-align:center}.complete-banner.show{display:block}.dark .complete-banner{background:linear-gradient(135deg,#3a3420,#30283f)}.reminder-head{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}.reminder-toggle{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:9px;padding:5px 9px;font-size:12px;cursor:pointer}.reminder-body.closed{display:none}.reminder-arrow{color:var(--muted);margin-left:6px}.search-empty{text-align:center;color:var(--muted);padding:24px 10px}.favorite-empty{padding:10px 0;color:var(--muted);font-size:13px}@media(max-width:560px){body{padding:12px 8px 34px}.hero{padding:17px 14px;border-radius:15px}h1{font-size:21px}.controls{gap:6px}.control-btn{flex:1;padding:9px 7px}.search-row{display:grid;grid-template-columns:1fr}.search-input{min-width:0;width:100%;font-size:16px}.favorite-filter{width:100%}.section-head{padding:14px 12px}.section-title{font-size:15px}.section-head .summary{font-size:11px;margin-right:6px}.select-all-btn{padding:6px 7px;font-size:11px}.item{padding:12px 4px}.name{font-size:14px}.day{font-size:11px}.favorite-btn{font-size:20px}.promo-wrap{margin-left:2px;margin-right:2px;padding:11px}.promo-text{font-size:12px;max-height:260px}.reminder-time{padding:5px 7px}.yesterday-card{border-radius:13px;padding:12px}}
+.search-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}.search-input{flex:1;min-width:180px;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:11px;padding:10px 12px;font-size:14px;outline:none}.search-input:focus{border-color:var(--accent)}.favorite-filter{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:11px;padding:10px 12px;font-size:13px;cursor:pointer}.favorite-filter.active{background:var(--accent);color:#fff;border-color:var(--accent)}.item-actions{margin-left:auto;display:flex;align-items:center;gap:7px}.favorite-btn{border:0;background:transparent;color:#c5c9d2;font-size:18px;cursor:pointer;padding:2px 4px;line-height:1}.favorite-btn.active{color:#f5b942}.favorite-btn:hover{transform:scale(1.08)}.yesterday-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:var(--shadow)}.yesterday-title{font-weight:800;font-size:15px;margin-bottom:8px}.yesterday-list{display:flex;flex-wrap:wrap;gap:7px}.yesterday-item{font-size:12px;border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:6px 8px}.yesterday-empty{color:var(--muted);font-size:13px}.complete-banner{display:none;margin-top:12px;padding:13px;border-radius:13px;background:linear-gradient(135deg,#fff4c8,#f4edff);font-weight:800;text-align:center}.complete-banner.show{display:block}.dark .complete-banner{background:linear-gradient(135deg,#3a3420,#30283f)}.reminder-head{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}.reminder-toggle{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:9px;padding:5px 9px;font-size:12px;cursor:pointer}.reminder-body.closed{display:none}.reminder-arrow{color:var(--muted);margin-left:6px}.search-empty{text-align:center;color:var(--muted);padding:24px 10px}.favorite-empty{padding:10px 0;color:var(--muted);font-size:13px}.favorite-panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:0;margin-bottom:12px;box-shadow:var(--shadow)}.favorite-panel .section-head{padding:16px 18px}.favorite-panel .section-title{font-weight:800;font-size:18px}.favorite-panel .favorite-panel-arrow{font-size:18px;color:var(--muted);transition:.2s}.favorite-panel.closed .favorite-panel-arrow{transform:rotate(-90deg)}.favorite-panel-body{padding:0 12px 12px;max-height:330px;overflow-y:auto}.favorite-panel-title{font-weight:800;font-size:15px;margin-bottom:10px}.favorite-group{margin-top:8px}.favorite-group-title{font-size:12px;font-weight:800;padding:6px 9px;border-radius:8px;margin-bottom:5px}.favorite-group-title.pending{background:#fff1d6;color:#b45309}.favorite-group-title.finished{background:#edf8ef;color:#278244}.dark .favorite-group-title.pending{background:#44301a;color:#ffc966}.dark .favorite-group-title.finished{background:#203629;color:#8de0a6}.favorite-sync-list{display:flex;flex-wrap:wrap;gap:6px}.favorite-sync-item{display:inline-flex;align-items:center;gap:6px;width:auto;max-width:100%;padding:5px 8px;border:1px solid var(--line);background:var(--bg);border-radius:8px;cursor:pointer}.favorite-sync-item:hover{border-color:var(--accent);transform:translateY(-1px)}.favorite-sync-item.done{opacity:.72}.favorite-sync-box{width:15px;height:15px;border:1.5px solid #c7ccd6;border-radius:4px;display:grid;place-items:center;flex:none;font-size:9px;font-weight:900}.favorite-sync-item.done .favorite-sync-box{background:var(--accent);border-color:var(--accent);color:#fff}.favorite-sync-name{font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.favorite-sync-meta{font-size:9px;color:var(--muted);white-space:nowrap}.favorite-sync-item.done .favorite-sync-name{text-decoration:line-through;color:var(--muted)}@media(max-width:560px){body{padding:12px 8px 34px}.hero{padding:17px 14px;border-radius:15px}h1{font-size:21px}.controls{gap:6px}.control-btn{flex:1;padding:9px 7px}.search-row{display:grid;grid-template-columns:1fr}.search-input{min-width:0;width:100%;font-size:16px}.favorite-filter{width:100%}.section-head{padding:14px 12px}.section-title{font-size:15px}.section-head .summary{font-size:11px;margin-right:6px}.select-all-btn{padding:6px 7px;font-size:11px}.item{padding:12px 4px}.name{font-size:14px}.day{font-size:11px}.favorite-btn{font-size:20px}.promo-wrap{margin-left:2px;margin-right:2px;padding:11px}.promo-text{font-size:12px;max-height:260px}.reminder-time{padding:5px 7px}.yesterday-card{border-radius:13px;padding:12px}}
 
 .note{text-align:center;color:var(--muted);font-size:12px;margin-top:16px;line-height:1.6}
 .guide-btn{border:1px solid #8ab4f8;background:#eef5ff;color:#2563c7;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:.18s}.guide-btn:hover{background:#dceaff;transform:translateY(-1px)}.notify-btn{border:1px solid #f2b84b;background:#fff6df;color:#a86400;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:800;cursor:pointer;transition:.18s}.notify-btn:hover{background:#ffedbf;transform:translateY(-1px)}.notify-btn.on{background:#f2a51a;color:#fff;border-color:#f2a51a}.dark .guide-btn{background:#1d2d49;color:#8ab9ff;border-color:#416fa8}.dark .guide-btn:hover{background:#243b60}.dark .notify-btn{background:#3b2d18;color:#ffc966;border-color:#9a6b20}.dark .notify-btn:hover{background:#4a381d}.dark .notify-btn.on{background:#d98d08;color:#fff;border-color:#d98d08}.analytics-row{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:12px;padding:10px 12px;border-radius:13px;background:var(--bg);font-size:13px;color:var(--muted)}.analytics-row strong{color:var(--text);font-weight:800}.analytics-sep{opacity:.45}.notify-toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(15px);background:var(--card);color:var(--text);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:14px;padding:12px 16px;font-size:14px;font-weight:700;opacity:0;pointer-events:none;transition:.2s;z-index:9999}.notify-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -126,7 +136,7 @@ const sections = [
     ["第一次同行"],["金勾海賊王"],["龍騎士"],
     ["復古炎魔祭壇","二、四、六",[2,4,6]],
     ["瑪斯特利亞的祭壇","一、三、五",[1,3,5]],
-    ["女神的遺跡","五、六",[5,6]],
+    ["女神的遺跡","六、日",[6,0]],
     ["終極次元入侵","六、日",[6,0]]
   ]],
   ["📜 委託任務", "daily", [
@@ -152,13 +162,12 @@ const sections = [
     ["頓凱爾（普通）"],["頓凱爾（困難）"],["真‧希拉（普通）"],["真‧希拉（困難）"]
   ]],
   ["👑 每日 BOSS｜終極", "daily", [
-    ["受選的賽蓮（普通）"],
+    ["黑魔法師（困難）"],["黑魔法師（終極）"],["受選的賽蓮（普通）"],
     ["監視者卡洛斯（普通）"],["咖凌（普通）"],["林波（普通）"],
     ["巴德利斯（普通）"],["最初的敵對者（普通）"],["凱伊（普通）"]
   ]],
   ["📆 每週任務", "weekly", [
     ["Roguelike 武陵道場"],
-    ["黑魔法師（困難）"],["黑魔法師（終極）"],
     ["受選的賽蓮（困難）"],["受選的賽蓮（終極）"],
     ["監視者卡洛斯（混沌）"],["監視者卡洛斯（終極）"],
     ["咖凌（困難）"],["咖凌（終極）"],["林波（困難）"],
@@ -288,14 +297,53 @@ function render(){
       if(available && !yStore[id]) yesterdayMissed.push({section:section[0],name});
     });
   });
-  // 最愛任務摘要
+  // 最愛／置頂任務摘要：同步顯示實際完成狀態，點擊可直接同步勾選原任務
   const favEntries=[];
-  sections.forEach((section,si)=>section[2].forEach(([name],li)=>{const id=si+"_"+li;if(favorites[id]) favEntries.push({id,name,section:section[0]});}));
+  sections.forEach((section,si)=>{
+    const type=section[1];
+    const store=type==="weekly" ? weekly : daily;
+    section[2].forEach(([name,daysText,days],li)=>{
+      const id=si+"_"+li;
+      if(!favorites[id]) return;
+      const available=!days || days.includes(now.getDay());
+      const checked=!!store[id];
+      favEntries.push({id,name,section:section[0],type,daysText,available,checked});
+    });
+  });
   if(favEntries.length){
-    const favCard=document.createElement("div"); favCard.className="yesterday-card";
-    favCard.innerHTML=`<div class="yesterday-title">⭐ 我的最愛／置頂任務</div><div class="yesterday-list"></div>`;
-    const list=favCard.querySelector(".yesterday-list");
-    favEntries.forEach(x=>{const el=document.createElement("div");el.className="yesterday-item";el.textContent=`${x.name}`;list.appendChild(el);});
+    const favCard=document.createElement("div");
+    const favClosed=localStorage.getItem("dodogu_favorites_closed")==="1";
+    favCard.className="favorite-panel section"+(favClosed?" closed":"");
+    favCard.innerHTML=`<div class="section-head"><span class="section-title">⭐ 我的最愛／置頂任務</span><span class="arrow favorite-panel-arrow">⌄</span></div>
+      <div class="items favorite-panel-body"><div class="favorite-group"><div class="favorite-group-title pending">⏳ 未完成 <span class="favorite-pending-count"></span></div><div class="favorite-sync-list pending-list"></div></div>
+      <div class="favorite-group"><div class="favorite-group-title finished">✅ 已完成 <span class="favorite-finished-count"></span></div><div class="favorite-sync-list finished-list"></div></div></div>`;
+    favCard.querySelector(".section-head").onclick=()=>{
+      const c=favCard.classList.toggle("closed");
+      localStorage.setItem("dodogu_favorites_closed",c?"1":"0");
+    };
+    const pending=favEntries.filter(x=>!x.checked);
+    const finished=favEntries.filter(x=>x.checked);
+    favCard.querySelector(".favorite-pending-count").textContent=`${pending.length}`;
+    favCard.querySelector(".favorite-finished-count").textContent=`${finished.length}`;
+    const renderFavRow=(x)=>{
+      const el=document.createElement("div");
+      el.className="favorite-sync-item"+(x.checked?" done":"");
+      const unavailable=x.type==="daily" && !x.available;
+      el.innerHTML=`<div class="favorite-sync-box">${x.checked?"✓":""}</div><div class="favorite-sync-name">${x.name}</div><div class="favorite-sync-meta">${x.section}${unavailable?"｜今日不可用":(x.type==="weekly"?"｜每週":"｜每日")}</div>`;
+      if(x.type==="daily" && !x.available){el.style.cursor="default";el.style.opacity=".55";}
+      else{
+        el.onclick=()=>{
+          const store=x.type==="weekly" ? weekly : daily;
+          const storageKey=x.type==="weekly" ? "dodogu_weekly_"+weekKey : "dodogu_daily_"+todayKey;
+          store[x.id]=!store[x.id];
+          localStorage.setItem(storageKey,JSON.stringify(store));
+          render();
+        };
+      }
+      return el;
+    };
+    pending.forEach(x=>favCard.querySelector(".pending-list").appendChild(renderFavRow(x)));
+    finished.forEach(x=>favCard.querySelector(".finished-list").appendChild(renderFavRow(x)));
     app.appendChild(favCard);
   }
 
@@ -359,12 +407,13 @@ function render(){
     else { dailyDone+=doneInSection; dailyTotal+=activeTotal; }
     if((query||onlyFavorites) && visibleItems.length===0) return;
 
-    const card=document.createElement("div");
-    card.className="section"+(foldState[sectionIndex] ? " closed" : "");
-    card.dataset.section=sectionIndex;
-    const head=document.createElement("div"); head.className="section-head";
     const totalInSection=type==="daily"?activeTotal:items.length;
     const allChecked=totalInSection>0&&doneInSection===totalInSection;
+    const incomplete=totalInSection>0 && !allChecked;
+    const card=document.createElement("div");
+    card.className="section"+(foldState[sectionIndex] ? " closed" : "")+(incomplete ? " incomplete" : "")+(incomplete && type==="weekly" ? " weekly-incomplete" : "");
+    card.dataset.section=sectionIndex;
+    const head=document.createElement("div"); head.className="section-head";
     head.innerHTML=`<span class="section-title">${title}</span><span class="summary">${doneInSection} / ${totalInSection}</span><button class="select-all-btn" type="button">${allChecked?"↩ 全部取消":"☑ 全選"}</button><span class="arrow">⌄</span>`;
     const selectAllBtn=head.querySelector(".select-all-btn");
     selectAllBtn.onclick=(e)=>{e.stopPropagation();items.forEach(([name,daysText,days],li)=>{const available=!days||days.includes(now.getDay());if(available)store[sectionIndex+"_"+li]=!allChecked;});localStorage.setItem(storageKey,JSON.stringify(store));render();};
@@ -384,7 +433,7 @@ function render(){
     if(title==="📣 每日推廣"){
       const promo=document.createElement("div");promo.className="promo-wrap";
       promo.innerHTML=`<div class="promo-title">📋 每日推廣文案｜今日日期：${getPromoDateCode()}</div><div class="promo-card"><div class="promo-top"><div class="promo-name">Facebook</div><button class="copy-btn" type="button">📋 複製文案</button></div><div class="promo-text"></div></div><div class="promo-card"><div class="promo-top"><div class="promo-name">Discord</div><button class="copy-btn" type="button">📋 複製文案</button></div><div class="promo-text"></div></div>`;
-      const texts=getPromoTexts();const blocks=promo.querySelectorAll(".promo-text");blocks[0].textContent=texts.facebook;blocks[1].textContent=texts.discord;const btns=promo.querySelectorAll(".copy-btn");btns[0].onclick=e=>{e.stopPropagation();copyPromo("facebook",btns[0]);};btns[1].onclick=e=>{e.stopPropagation();copyPromo("discord",btns[1]);};card.appendChild(promo);
+      const texts=getPromoTexts();const blocks=promo.querySelectorAll(".promo-text");blocks[0].textContent=texts.facebook;blocks[1].textContent=texts.discord;const btns=promo.querySelectorAll(".copy-btn");btns[0].onclick=e=>{e.stopPropagation();copyPromo("facebook",btns[0]);};btns[1].onclick=e=>{e.stopPropagation();copyPromo("discord",btns[1]);};body.appendChild(promo);
     }
 
     app.appendChild(card);
@@ -422,14 +471,23 @@ function notifyToast(msg){
 function updateNotifyButton(){
   const b=document.getElementById("notifyBtn"); if(!b) return;
   const on=localStorage.getItem(NOTIFY_KEY)==="1";
-  b.classList.toggle("on",on); b.textContent=on?"🔔 活動提醒已開啟":"🔔 開啟活動提醒";
+  b.classList.toggle("on",on);
+  b.textContent=on?"🔕 關閉活動提醒":"🔔 開啟活動提醒";
 }
-async function enableActivityNotify(){
+async function toggleActivityNotify(){
+  const on=localStorage.getItem(NOTIFY_KEY)==="1";
+  if(on){
+    localStorage.setItem(NOTIFY_KEY,"0");
+    updateNotifyButton();
+    notifyToast("🔕 活動提醒已關閉");
+    return;
+  }
   if(!("Notification" in window)){notifyToast("此瀏覽器不支援通知功能");return;}
   if(Notification.permission==="denied"){notifyToast("通知權限已被封鎖，請至瀏覽器設定重新允許");return;}
   const permission=Notification.permission==="granted"?"granted":await Notification.requestPermission();
   if(permission!=="granted"){notifyToast("未取得通知權限");return;}
-  localStorage.setItem(NOTIFY_KEY,"1"); updateNotifyButton();
+  localStorage.setItem(NOTIFY_KEY,"1");
+  updateNotifyButton();
   notifyToast("🔔 活動提醒已開啟！");
 }
 function checkActivityNotify(){
@@ -447,7 +505,7 @@ function checkActivityNotify(){
     notifyToast("🔔 "+x.name+" 開始了！");
   });
 }
-document.getElementById("notifyBtn")?.addEventListener("click",enableActivityNotify);
+document.getElementById("notifyBtn")?.addEventListener("click",toggleActivityNotify);
 updateNotifyButton();
 checkActivityNotify();
 setInterval(checkActivityNotify,15000);
