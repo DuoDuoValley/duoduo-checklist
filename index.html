@@ -65,6 +65,9 @@ body.dark .section.weekly-incomplete .section-head{background:#44301a}
 .copy-btn{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:9px;padding:6px 10px;font-size:12px;cursor:pointer;white-space:nowrap}
 .copy-btn:hover{opacity:.82}
 .promo-text{white-space:pre-wrap;line-height:1.65;font-size:13px;color:var(--text);max-height:220px;overflow:auto}
+.promo-links{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.promo-link{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:9px;padding:7px 10px;font-size:12px;font-weight:700;text-decoration:none;line-height:1.35}.promo-link:hover{border-color:var(--accent);color:var(--accent)}
+.promo-link-note{width:100%;font-size:12px;color:var(--muted);font-weight:700}
 .reminder-wrap{margin:4px 6px 10px;padding:14px;border-radius:14px;background:var(--bg);border:1px solid var(--line)}
 .reminder-title{font-size:14px;font-weight:800;margin-bottom:10px}
 .reminder-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:9px}
@@ -433,7 +436,7 @@ function render(){
 
     if(title==="📣 每日推廣"){
       const promo=document.createElement("div");promo.className="promo-wrap";
-      promo.innerHTML=`<div class="promo-title">📋 每日推廣文案｜今日日期：${getPromoDateCode()}</div><div class="promo-card"><div class="promo-top"><div class="promo-name">Facebook</div><button class="copy-btn" type="button">📋 複製文案</button></div><div class="promo-text"></div></div><div class="promo-card"><div class="promo-top"><div class="promo-name">Discord</div><button class="copy-btn" type="button">📋 複製文案</button></div><div class="promo-text"></div></div>`;
+      promo.innerHTML=`<div class="promo-title">📋 每日推廣文案｜今日日期：${getPromoDateCode()}</div><div class="promo-card"><div class="promo-top"><div class="promo-name">Facebook</div><button class="copy-btn" type="button">📋 複製文案</button></div><div class="promo-text"></div><div class="promo-links"><a class="promo-link" href="https://www.facebook.com/share/p/18pPTJDS5f/" target="_blank" rel="noopener noreferrer">↗ Facebook ①</a><a class="promo-link" href="https://www.facebook.com/groups/LAMAMS/permalink/27367622866227656?locale=zh_TW" target="_blank" rel="noopener noreferrer">↗ Facebook ②</a></div></div><div class="promo-card"><div class="promo-top"><div class="promo-name">Discord</div><button class="copy-btn" type="button">📋 複製文案</button></div><div class="promo-text"></div><div class="promo-links"><div class="promo-link-note">從以下 3 個頻道任選 2 個推廣</div><a class="promo-link" href="https://discord.com/channels/1034968130230964315/1057752422988128276" target="_blank" rel="noopener noreferrer">↗ Discord ①</a><a class="promo-link" href="https://discord.com/channels/1027069828294520873/1071953075964760164" target="_blank" rel="noopener noreferrer">↗ Discord ②</a><a class="promo-link" href="https://discord.com/channels/1342112035843870840/1488509497264574584" target="_blank" rel="noopener noreferrer">↗ Discord ③</a></div></div>`;
       const texts=getPromoTexts();const blocks=promo.querySelectorAll(".promo-text");blocks[0].textContent=texts.facebook;blocks[1].textContent=texts.discord;const btns=promo.querySelectorAll(".copy-btn");btns[0].onclick=e=>{e.stopPropagation();copyPromo("facebook",btns[0]);};btns[1].onclick=e=>{e.stopPropagation();copyPromo("discord",btns[1]);};body.appendChild(promo);
     }
 
