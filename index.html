@@ -73,7 +73,7 @@ body.dark .section.weekly-incomplete .section-head{background:#44301a}
 .reminder-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:9px}
 .reminder-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
 .reminder-name{font-weight:800;font-size:14px}
-.reminder-next{font-size:12px;color:var(--accent);font-weight:800}
+.reminder-next{font-size:12px;color:var(--accent);font-weight:800}.reminder-countdown{font-variant-numeric:tabular-nums;letter-spacing:.3px}.reminder-countdown.live{color:#e58b18}
 .reminder-line{font-size:13px;line-height:1.7;color:var(--text)}
 .reminder-label{font-weight:800}
 .reminder-times{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
@@ -202,6 +202,26 @@ const PROMO_FOOTER = `
 ###  🙌🏻 期待與你在多多谷相遇。
 ### 🔗 加入多多谷：https://discord.gg/snfvrB7kXC`;
 
+function getNextDateTime(times, now){
+  let bestDate=null;
+  let bestTime="";
+  times.forEach(t=>{
+    const [h,m]=t.split(":").map(Number);
+    const candidate=new Date(now);
+    candidate.setHours(h,m,0,0);
+    if(candidate<=now) candidate.setDate(candidate.getDate()+1);
+    if(!bestDate || candidate<bestDate){bestDate=candidate;bestTime=t;}
+  });
+  return {date:bestDate,time:bestTime};
+}
+function formatCountdown(ms){
+  const total=Math.max(0,Math.floor(ms/1000));
+  const h=Math.floor(total/3600);
+  const m=Math.floor((total%3600)/60);
+  const s=total%60;
+  return `${String(h).padStart(2,"0")} 小時 ${String(m).padStart(2,"0")} 分 ${String(s).padStart(2,"0")} 秒`;
+}
+
 function getNextTime(times, now){
   const currentMinutes = now.getHours()*60 + now.getMinutes();
   let best = null;
@@ -264,13 +284,18 @@ if(localStorage.getItem(THEME_KEY)==="dark") document.body.classList.add("dark")
 
 function saveFolds(){ localStorage.setItem(FOLD_KEY, JSON.stringify(foldState)); }
 function setAllSections(closed){
+  // 統一控制所有可折疊區塊：一般分類 + 昨日漏掉 + 每日活動提醒 + 我的最愛
   sections.forEach((_,i)=>foldState[i]=closed);
   saveFolds();
-  // 讓「昨日漏掉的任務」與「每日活動提醒」也同步跟隨全部展開／全部收起
   localStorage.setItem("dodogu_yesterday_closed",closed?"1":"0");
   localStorage.setItem("dodogu_reminder_closed",closed?"1":"0");
   localStorage.setItem("dodogu_favorites_closed",closed?"1":"0");
+
+  // 先重新建立畫面，再強制同步所有區塊的 closed 狀態，避免新增區塊漏掉
   render();
+  document.querySelectorAll("#app > .section").forEach(card=>{
+    card.classList.toggle("closed",closed);
+  });
 }
 
 document.getElementById("expandAll").onclick=()=>setAllSections(false);
@@ -285,7 +310,10 @@ function updateThemeButton(){
 }
 updateThemeButton();
 
+let reminderCountdownTimer=null;
+
 function render(){
+  if(reminderCountdownTimer){clearInterval(reminderCountdownTimer);reminderCountdownTimer=null;}
   const app=document.getElementById("app");
   app.innerHTML="";
   let dailyDone=0,dailyTotal=0,weeklyDone=0,weeklyTotal=0,remaining=[];
@@ -383,12 +411,27 @@ function render(){
       treasure:["10:00","14:00","18:00","22:00"]
     };
     const now2=new Date();
+    const updateReminderCountdown=()=>{
+      const current=new Date();
+      Object.entries(schedules).forEach(([id,times])=>{
+        const next=getNextDateTime(times,current);
+        const el=info.querySelector("#"+id+"Next");
+        if(!el) return;
+        const diff=next.date-current;
+        if(diff<=1000){
+          el.innerHTML=`<span class="reminder-countdown live">🔔 現在開放！</span>`;
+        }else{
+          el.innerHTML=`下一次 ${next.time}　<span class="reminder-countdown">${formatCountdown(diff)}</span>`;
+        }
+      });
+    };
     Object.entries(schedules).forEach(([id,times])=>{
       const next=getNextTime(times,now2);
       const te=info.querySelector("#"+id+"Times");
       times.forEach(t=>{const sp=document.createElement("span");sp.className="reminder-time"+(t===next.time?" next":"");sp.textContent=t;te.appendChild(sp);});
-      info.querySelector("#"+id+"Next").textContent=`下一次 ${next.time}`;
     });
+    updateReminderCountdown();
+    reminderCountdownTimer=setInterval(updateReminderCountdown,1000);
     info.querySelector(".section-head").onclick=()=>{
       const c=info.classList.toggle("closed");
       localStorage.setItem("dodogu_reminder_closed",c?"1":"0");
