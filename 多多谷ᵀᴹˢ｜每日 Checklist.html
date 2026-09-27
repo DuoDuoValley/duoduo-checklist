@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>多多谷ᵀᴹˢ｜每日 Checklist</title>
+<style>
+*{box-sizing:border-box}
+:root{--bg:#f7f8fc;--card:#fff;--text:#30343b;--muted:#7b8290;--line:#eef0f4;--bar:#e9ecf2;--accent:#7b8cff;--disabled:.38;--shadow:0 5px 20px rgba(40,50,80,.07)}
+body.dark{--bg:#15171c;--card:#20232a;--text:#f1f3f6;--muted:#a8afbc;--line:#343944;--bar:#343944;--accent:#8f9cff;--disabled:.32;--shadow:0 5px 20px rgba(0,0,0,.22)}
+body{margin:0;padding:24px 14px 48px;font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--text);transition:.2s}
+.wrap{max-width:760px;margin:auto}
+.hero,.section{background:var(--card);border-radius:18px;box-shadow:var(--shadow)}
+.hero{padding:22px;margin-bottom:14px}
+.hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+h1{margin:0 0 6px;font-size:26px}
+.date{color:var(--muted);font-size:14px}
+.theme-btn{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:12px;padding:8px 11px;font-size:13px;cursor:pointer;white-space:nowrap}
+.controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.control-btn{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:10px;padding:8px 12px;font-size:13px;cursor:pointer}
+.control-btn:hover,.theme-btn:hover{opacity:.82}
+.progress-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.progress-card{background:var(--bg);border-radius:13px;padding:11px 13px}
+.progress-card .label{font-size:12px;color:var(--muted);margin-bottom:3px}
+.progress-card .value{font-size:16px;font-weight:800}
+.bar{height:9px;background:var(--bar);border-radius:99px;margin-top:7px;overflow:hidden}
+.fill{height:100%;width:0;background:var(--accent);transition:.2s}
+.remaining{margin-top:12px;padding:11px 13px;border-radius:13px;background:var(--bg);font-size:14px;font-weight:700}
+.remaining strong{color:var(--accent)}
+.reset{font-size:12px;color:var(--muted);margin-top:10px}
+.section{margin-bottom:12px;overflow:hidden}
+.section-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;cursor:pointer;user-select:none}
+.section-title{font-size:18px;font-weight:800}
+.arrow{font-size:18px;color:var(--muted);transition:.2s}
+.section.closed .arrow{transform:rotate(-90deg)}
+.items{padding:0 12px 10px}
+.section.closed .items{display:none}
+.item{display:flex;align-items:center;gap:11px;padding:12px 6px;border-top:1px solid var(--line);cursor:pointer}
+.box{width:22px;height:22px;border:2px solid #c7ccd6;border-radius:7px;display:grid;place-items:center;flex:none;font-weight:900}
+.done .box{background:var(--accent);border-color:var(--accent);color:#fff}
+.done .name{text-decoration:line-through;color:var(--muted)}
+.day{margin-left:auto;color:var(--muted);font-size:12px}
+.disabled{opacity:var(--disabled);cursor:default}
+.disabled .name{text-decoration:none}
+.section-head .summary{margin-left:auto;margin-right:10px;font-size:12px;color:var(--muted)}
+.select-all-btn{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:9px;padding:6px 9px;font-size:12px;cursor:pointer;white-space:nowrap}
+.select-all-btn:hover{opacity:.82}
+.note{text-align:center;color:var(--muted);font-size:12px;margin-top:16px;line-height:1.6}
+@media(max-width:560px){.hero-top{align-items:center}.progress-row{grid-template-columns:1fr}.section-title{font-size:16px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <div class="hero-top">
+      <div>
+        <h1>🍀 多多谷ᵀᴹˢ｜每日 Checklist</h1>
+        <div class="date" id="today"></div>
+      </div>
+      <button class="theme-btn" id="themeBtn">🌙 深色模式</button>
+    </div>
+    <div class="controls">
+      <button class="control-btn" id="expandAll">⭐ 全部展開</button>
+      <button class="control-btn" id="collapseAll">⭐ 全部收起</button>
+    </div>
+    <div class="progress-row">
+      <div class="progress-card">
+        <div class="label">🔥 今日完成度</div>
+        <div class="value" id="dailyCount"></div>
+        <div class="bar"><div class="fill" id="dailyFill"></div></div>
+      </div>
+      <div class="progress-card">
+        <div class="label">📆 本週完成度</div>
+        <div class="value" id="weeklyCount"></div>
+        <div class="bar"><div class="fill" id="weeklyFill"></div></div>
+      </div>
+    </div>
+    <div class="remaining" id="remaining"></div>
+    <div class="reset">📅 每日任務每日 00:00 重置　｜　每週任務每週一 00:00 重置</div>
+  </div>
+  <div id="app"></div>
+  <div class="note">點擊分類標題即可收起／展開。<br>勾選紀錄儲存在目前裝置的瀏覽器中。</div>
+</div>
+
+<script>
+const sections = [
+  ["🤝 組隊任務", "daily", [
+    ["第一次同行"],["金勾海賊王"],["龍騎士"],
+    ["復古炎魔祭壇","二、四、六",[2,4,6]],
+    ["瑪斯特利亞的祭壇","一、三、五",[1,3,5]],
+    ["女神的遺跡","五、六",[5,6]],
+    ["終極次元入侵","六、日",[6,0]]
+  ]],
+  ["📜 委託任務", "daily", [
+    ["蒐集委託"],["藏寶獵人"],["懸賞任務"]
+  ]],
+  ["🎪 檔期活動", "daily", [
+    ["《葬送的芙莉蓮》"],["多多中秋祭"],["多多谷學院"]
+  ]],
+  ["🎁 獎勵列表", "daily", [
+    ["每日簽到"],["在線福利"],["多多通行證"],
+    ["阿斯特拉通行證"],["學院通行證"],["陣營任務"]
+  ]],
+  ["📣 每日推廣", "daily", [
+    ["Facebook"],["Discord"],["多多谷五星好評"]
+  ]],
+  ["👑 每日 BOSS｜初、中階", "daily", [
+    ["西格諾斯（普通）"],["斑斑（混沌）"],["比艾樂（混沌）"],
+    ["血腥皇后（混沌）"],["貝倫（混沌）"],["濃姬（普通）"],
+    ["梅格耐斯（困難）"],["拉圖斯（混沌）"]
+  ]],
+  ["👑 每日 BOSS｜高階", "daily", [
+    ["史烏（普通）"],["史烏（困難）"],["史烏（終極）"],
+    ["戴米安（普通）"],["戴米安（困難）"],["露希妲（普通）"],
+    ["露希妲（困難）"],["威爾（普通）"],["威爾（困難）"],
+    ["守護天使綠水靈（混沌）"],["戴斯克（普通）"],["戴斯克（混沌）"],
+    ["頓凱爾（普通）"],["頓凱爾（困難）"],["真‧希拉（普通）"],["真‧希拉（困難）"]
+  ]],
+  ["👑 每日 BOSS｜終極", "daily", [
+    ["黑魔法師（困難）"],["黑魔法師（終極）"],["受選的賽蓮（普通）"],
+    ["監視者卡洛斯（普通）"],["咖凌（普通）"],["林波（普通）"],
+    ["巴德利斯（普通）"],["最初的敵對者（普通）"],["凱伊（普通）"]
+  ]],
+  ["📆 每週任務", "weekly", [
+    ["Roguelike 武陵道場"],
+    ["受選的賽蓮（困難）"],["受選的賽蓮（終極）"],
+    ["監視者卡洛斯（混沌）"],["監視者卡洛斯（終極）"],
+    ["咖凌（困難）"],["咖凌（終極）"],["林波（困難）"],
+    ["巴德利斯（困難）"],["最初的敵對者（困難）"],["最初的敵對者（終極）"],
+    ["凱伊（困難）"],["瑪麗西亞（終極）"],["燦爛的凶星（普通）"],
+    ["燦爛的凶星（困難）"],["尤比太（普通）"],["尤比太（困難）"]
+  ]]
+];
+
+const now = new Date();
+const weekdays = ["日","一","二","三","四","五","六"];
+const todayKey = now.toLocaleDateString("sv-SE");
+const dayFromMonday = (now.getDay()+6)%7;
+const monday = new Date(now);
+monday.setHours(0,0,0,0);
+monday.setDate(now.getDate()-dayFromMonday);
+const weekKey = monday.toLocaleDateString("sv-SE");
+
+document.getElementById("today").textContent =
+  `${now.getFullYear()} / ${String(now.getMonth()+1).padStart(2,"0")} / ${String(now.getDate()).padStart(2,"0")}（${weekdays[now.getDay()]}）`;
+
+let daily = JSON.parse(localStorage.getItem("dodogu_daily_"+todayKey) || "{}");
+let weekly = JSON.parse(localStorage.getItem("dodogu_weekly_"+weekKey) || "{}");
+
+const FOLD_KEY = "dodogu_checklist_folds";
+const THEME_KEY = "dodogu_checklist_theme";
+
+let foldState = JSON.parse(localStorage.getItem(FOLD_KEY) || "{}");
+if(localStorage.getItem(THEME_KEY)==="dark") document.body.classList.add("dark");
+
+function saveFolds(){ localStorage.setItem(FOLD_KEY, JSON.stringify(foldState)); }
+function setAllSections(closed){
+  sections.forEach((_,i)=>foldState[i]=closed);
+  saveFolds();
+  render();
+}
+
+document.getElementById("expandAll").onclick=()=>setAllSections(false);
+document.getElementById("collapseAll").onclick=()=>setAllSections(true);
+document.getElementById("themeBtn").onclick=()=>{
+  const dark=document.body.classList.toggle("dark");
+  localStorage.setItem(THEME_KEY,dark?"dark":"light");
+  updateThemeButton();
+};
+function updateThemeButton(){
+  document.getElementById("themeBtn").textContent = document.body.classList.contains("dark") ? "☀️ 淺色模式" : "🌙 深色模式";
+}
+updateThemeButton();
+
+function render(){
+  const app=document.getElementById("app");
+  app.innerHTML="";
+  let dailyDone=0,dailyTotal=0,weeklyDone=0,weeklyTotal=0,remaining=[];
+
+  sections.forEach((section, sectionIndex)=>{
+    const [title,type,items]=section;
+    const store = type==="weekly" ? weekly : daily;
+    const storageKey = type==="weekly" ? "dodogu_weekly_"+weekKey : "dodogu_daily_"+todayKey;
+
+    let doneInSection=0, activeTotal=0;
+    items.forEach(([name,daysText,days],localIndex)=>{
+      const available=!days || days.includes(now.getDay());
+      if(available) activeTotal++;
+      const id=sectionIndex+"_"+localIndex;
+      if(available && store[id]) doneInSection++;
+      if(type==="daily" && available && !store[id]) remaining.push({section:title,name,daysText});
+    });
+
+    if(type==="weekly"){ weeklyDone+=doneInSection; weeklyTotal+=items.length; }
+    else { dailyDone+=doneInSection; dailyTotal+=activeTotal; }
+
+    const card=document.createElement("div");
+    card.className="section"+(foldState[sectionIndex] ? " closed" : "");
+    card.dataset.section=sectionIndex;
+
+    const head=document.createElement("div");
+    head.className="section-head";
+    const totalInSection = type==="daily" ? activeTotal : items.length;
+    const allChecked = totalInSection > 0 && doneInSection === totalInSection;
+    head.innerHTML=`<span class="section-title">${title}</span>
+      <span class="summary">${doneInSection} / ${totalInSection}</span>
+      <button class="select-all-btn" type="button">${allChecked ? "↩ 全部取消" : "☑ 全選"}</button>
+      <span class="arrow">⌄</span>`;
+
+    const selectAllBtn = head.querySelector(".select-all-btn");
+    selectAllBtn.onclick=(e)=>{
+      e.stopPropagation();
+      const nextValue=!allChecked;
+      items.forEach(([name,daysText,days],localIndex)=>{
+        const available=!days || days.includes(now.getDay());
+        if(available) store[sectionIndex+"_"+localIndex]=nextValue;
+      });
+      localStorage.setItem(storageKey,JSON.stringify(store));
+      render();
+    };
+
+    const body=document.createElement("div"); body.className="items";
+    items.forEach(([name,daysText,days],localIndex)=>{
+      const id=sectionIndex+"_"+localIndex;
+      const available=!days || days.includes(now.getDay());
+      const checked=!!store[id];
+      const row=document.createElement("div");
+      row.className="item"+(checked?" done":"")+(!available?" disabled":"");
+      row.innerHTML=`<div class="box">${checked?"✓":""}</div>
+        <div class="name">${name}</div>${daysText?`<div class="day">${daysText}</div>`:""}`;
+      if(available){
+        row.onclick=()=>{
+          store[id]=!store[id];
+          localStorage.setItem(storageKey,JSON.stringify(store));
+          render();
+        };
+      }
+      body.appendChild(row);
+    });
+
+    head.onclick=()=>{
+      foldState[sectionIndex]=!foldState[sectionIndex];
+      saveFolds();
+      card.classList.toggle("closed",!!foldState[sectionIndex]);
+    };
+    card.appendChild(head); card.appendChild(body); app.appendChild(card);
+  });
+
+  document.getElementById("dailyCount").textContent=`${dailyDone} / ${dailyTotal}`;
+  document.getElementById("weeklyCount").textContent=`${weeklyDone} / ${weeklyTotal}`;
+  document.getElementById("dailyFill").style.width=(dailyTotal?dailyDone/dailyTotal*100:0)+"%";
+  document.getElementById("weeklyFill").style.width=(weeklyTotal?weeklyDone/weeklyTotal*100:0)+"%";
+  document.getElementById("remaining").innerHTML = remaining.length
+    ? `🟢 今日還有 <strong>${remaining.length}</strong> 項任務尚未完成`
+    : `🎉 今日任務全部完成！`;
+}
+render();
+</script>
+</body>
+</html>
