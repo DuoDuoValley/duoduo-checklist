@@ -266,6 +266,10 @@ function saveFolds(){ localStorage.setItem(FOLD_KEY, JSON.stringify(foldState));
 function setAllSections(closed){
   sections.forEach((_,i)=>foldState[i]=closed);
   saveFolds();
+  // 讓「昨日漏掉的任務」與「每日活動提醒」也同步跟隨全部展開／全部收起
+  localStorage.setItem("dodogu_yesterday_closed",closed?"1":"0");
+  localStorage.setItem("dodogu_reminder_closed",closed?"1":"0");
+  localStorage.setItem("dodogu_favorites_closed",closed?"1":"0");
   render();
 }
 
