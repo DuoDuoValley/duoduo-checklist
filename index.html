@@ -35,6 +35,7 @@ h1{margin:0 0 6px;font-size:26px}
 .section.closed .arrow{transform:rotate(-90deg)}
 .items{padding:0 12px 10px}
 .section.closed .items{display:none}
+.info-items{padding-top:0}.info-items.closed{display:none}
 .item{display:flex;align-items:center;gap:11px;padding:12px 6px;border-top:1px solid var(--line);cursor:pointer}
 .box{width:22px;height:22px;border:2px solid #c7ccd6;border-radius:7px;display:grid;place-items:center;flex:none;font-weight:900}
 .done .box{background:var(--accent);border-color:var(--accent);color:#fff}
@@ -66,6 +67,9 @@ h1{margin:0 0 6px;font-size:26px}
 .reminder-time{border:1px solid var(--line);border-radius:8px;padding:4px 7px;font-size:12px;color:var(--muted);background:var(--bg)}
 .reminder-time.next{color:var(--accent);border-color:var(--accent);font-weight:800}
 
+
+.search-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}.search-input{flex:1;min-width:180px;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:11px;padding:10px 12px;font-size:14px;outline:none}.search-input:focus{border-color:var(--accent)}.favorite-filter{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:11px;padding:10px 12px;font-size:13px;cursor:pointer}.favorite-filter.active{background:var(--accent);color:#fff;border-color:var(--accent)}.item-actions{margin-left:auto;display:flex;align-items:center;gap:7px}.favorite-btn{border:0;background:transparent;color:#c5c9d2;font-size:18px;cursor:pointer;padding:2px 4px;line-height:1}.favorite-btn.active{color:#f5b942}.favorite-btn:hover{transform:scale(1.08)}.yesterday-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:var(--shadow)}.yesterday-title{font-weight:800;font-size:15px;margin-bottom:8px}.yesterday-list{display:flex;flex-wrap:wrap;gap:7px}.yesterday-item{font-size:12px;border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:6px 8px}.yesterday-empty{color:var(--muted);font-size:13px}.complete-banner{display:none;margin-top:12px;padding:13px;border-radius:13px;background:linear-gradient(135deg,#fff4c8,#f4edff);font-weight:800;text-align:center}.complete-banner.show{display:block}.dark .complete-banner{background:linear-gradient(135deg,#3a3420,#30283f)}.reminder-head{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}.reminder-toggle{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:9px;padding:5px 9px;font-size:12px;cursor:pointer}.reminder-body.closed{display:none}.reminder-arrow{color:var(--muted);margin-left:6px}.search-empty{text-align:center;color:var(--muted);padding:24px 10px}.favorite-empty{padding:10px 0;color:var(--muted);font-size:13px}@media(max-width:560px){body{padding:12px 8px 34px}.hero{padding:17px 14px;border-radius:15px}h1{font-size:21px}.controls{gap:6px}.control-btn{flex:1;padding:9px 7px}.search-row{display:grid;grid-template-columns:1fr}.search-input{min-width:0;width:100%;font-size:16px}.favorite-filter{width:100%}.section-head{padding:14px 12px}.section-title{font-size:15px}.section-head .summary{font-size:11px;margin-right:6px}.select-all-btn{padding:6px 7px;font-size:11px}.item{padding:12px 4px}.name{font-size:14px}.day{font-size:11px}.favorite-btn{font-size:20px}.promo-wrap{margin-left:2px;margin-right:2px;padding:11px}.promo-text{font-size:12px;max-height:260px}.reminder-time{padding:5px 7px}.yesterday-card{border-radius:13px;padding:12px}}
+
 .note{text-align:center;color:var(--muted);font-size:12px;margin-top:16px;line-height:1.6}
 @media(max-width:560px){.hero-top{align-items:center}.progress-row{grid-template-columns:1fr}.section-title{font-size:16px}}
 </style>
@@ -84,6 +88,10 @@ h1{margin:0 0 6px;font-size:26px}
       <button class="control-btn" id="expandAll">⭐ 全部展開</button>
       <button class="control-btn" id="collapseAll">⭐ 全部收起</button>
     </div>
+    <div class="search-row">
+      <input class="search-input" id="taskSearch" type="search" placeholder="🔍 搜尋任務，例如：希拉、簽到、Discord">
+      <button class="favorite-filter" id="favoriteFilter" type="button">⭐ 只看最愛</button>
+    </div>
     <div class="progress-row">
       <div class="progress-card">
         <div class="label">🔥 今日完成度</div>
@@ -97,6 +105,7 @@ h1{margin:0 0 6px;font-size:26px}
       </div>
     </div>
     <div class="remaining" id="remaining"></div>
+    <div class="complete-banner" id="completeBanner">🎉 今日任務全部完成！今天也辛苦啦 🍀</div>
     <div class="reset">📅 每日任務每日 00:00 重置　｜　每週任務每週一 00:00 重置</div>
   </div>
   <div id="app"></div>
@@ -105,6 +114,9 @@ h1{margin:0 0 6px;font-size:26px}
 
 <script>
 const sections = [
+  ["📣 每日推廣", "daily", [
+    ["Facebook"],["Discord"],["多多谷五星好評"]
+  ]],
   ["🤝 組隊任務", "daily", [
     ["第一次同行"],["金勾海賊王"],["龍騎士"],
     ["復古炎魔祭壇","二、四、六",[2,4,6]],
@@ -121,9 +133,6 @@ const sections = [
   ["🎁 獎勵列表", "daily", [
     ["每日簽到"],["在線福利"],["多多通行證"],
     ["阿斯特拉通行證"],["學院通行證"],["陣營任務"]
-  ]],
-  ["📣 每日推廣", "daily", [
-    ["Facebook"],["Discord"],["多多谷五星好評"]
   ]],
   ["👑 每日 BOSS｜初、中階", "daily", [
     ["西格諾斯（普通）"],["斑斑（混沌）"],["比艾樂（混沌）"],
@@ -241,165 +250,130 @@ function render(){
   const app=document.getElementById("app");
   app.innerHTML="";
   let dailyDone=0,dailyTotal=0,weeklyDone=0,weeklyTotal=0,remaining=[];
+  const query=(document.getElementById("taskSearch")?.value||"").trim().toLowerCase();
+  const onlyFavorites=localStorage.getItem("dodogu_favorite_filter")==="1";
+  const favorites=JSON.parse(localStorage.getItem("dodogu_checklist_favorites")||"{}");
+
+  // 昨日漏掉的每日任務（只做提醒，不會影響今天完成度）
+  const yDate=new Date(now); yDate.setDate(yDate.getDate()-1);
+  const yKey=yDate.toLocaleDateString("sv-SE");
+  const yStore=JSON.parse(localStorage.getItem("dodogu_daily_"+yKey)||"{}");
+  const yDay=yDate.getDay();
+  const yesterdayMissed=[];
+  sections.forEach((section,si)=>{
+    if(section[1]!=="daily") return;
+    section[2].forEach(([name,daysText,days],li)=>{
+      const available=!days || days.includes(yDay);
+      const id=si+"_"+li;
+      if(available && !yStore[id]) yesterdayMissed.push({section:section[0],name});
+    });
+  });
+  // 最愛任務摘要
+  const favEntries=[];
+  sections.forEach((section,si)=>section[2].forEach(([name],li)=>{const id=si+"_"+li;if(favorites[id]) favEntries.push({id,name,section:section[0]});}));
+  if(favEntries.length){
+    const favCard=document.createElement("div"); favCard.className="yesterday-card";
+    favCard.innerHTML=`<div class="yesterday-title">⭐ 我的最愛／置頂任務</div><div class="yesterday-list"></div>`;
+    const list=favCard.querySelector(".yesterday-list");
+    favEntries.forEach(x=>{const el=document.createElement("div");el.className="yesterday-item";el.textContent=`${x.name}`;list.appendChild(el);});
+    app.appendChild(favCard);
+  }
+
+  // 獨立資訊區塊：昨日漏掉的任務
+  {
+    const info=document.createElement("div");
+    info.className="section info-section";
+    const closed=localStorage.getItem("dodogu_yesterday_closed")==="1";
+    info.innerHTML=`<div class="section-head"><span class="section-title">📅 昨日漏掉的任務</span><span class="arrow">⌄</span></div><div class="items info-items ${closed?"closed":""}"><div class="yesterday-list"></div></div>`;
+    const body=info.querySelector(".info-items");
+    const list=info.querySelector(".yesterday-list");
+    if(yesterdayMissed.length){yesterdayMissed.forEach(x=>{const el=document.createElement("div");el.className="yesterday-item";el.textContent=`${x.section}｜${x.name}`;list.appendChild(el);});}
+    else{const el=document.createElement("div");el.className="yesterday-empty";el.textContent="昨天沒有未完成的每日任務 🎉";list.appendChild(el);}
+    info.querySelector(".section-head").onclick=()=>{const c=body.classList.toggle("closed");localStorage.setItem("dodogu_yesterday_closed",c?"1":"0");};
+    app.appendChild(info);
+  }
+
+
+  // 獨立資訊區塊：每日活動提醒
+  {
+    const info=document.createElement("div");
+    info.className="section info-section";
+    const closed=localStorage.getItem("dodogu_reminder_closed")==="1";
+    info.innerHTML=`<div class="section-head"><span class="section-title">🔔 每日活動提醒</span><span class="arrow">⌄</span></div><div class="items info-items ${closed?"closed":""}"><div class="reminder-card"><div class="reminder-top"><div class="reminder-name">🧳 流浪商人</div><div class="reminder-next" id="merchantNext"></div></div><div class="reminder-line"><span class="reminder-label">出沒時段：</span></div><div class="reminder-times" id="merchantTimes"></div><div class="reminder-line" style="margin-top:8px"><span class="reminder-label">出沒地點：</span>各村莊、城鎮</div></div><div class="reminder-card"><div class="reminder-top"><div class="reminder-name">💎 世界秘寶</div><div class="reminder-next" id="treasureNext"></div></div><div class="reminder-line"><span class="reminder-label">出沒時段：</span></div><div class="reminder-times" id="treasureTimes"></div><div class="reminder-line" style="margin-top:8px"><span class="reminder-label">出沒地點：</span>🔍 根據線索尋找秘寶蹤跡</div><div class="reminder-line"><span class="reminder-label">秘寶內容：</span>🎁 探索當日秘寶，領取神秘獎勵</div></div></div>`;
+    const body=info.querySelector(".info-items");
+    const schedules=[{id:"merchant",times:["09:00","13:00","17:00","21:00","01:00"]},{id:"treasure",times:["10:00","14:00","18:00","22:00"]}];
+    const getNext=times=>{const n=new Date(),cm=n.getHours()*60+n.getMinutes();let best=null;times.forEach(t=>{const [h,m]=t.split(":").map(Number);let diff=h*60+m-cm;if(diff<0)diff+=1440;if(best===null||diff<best.diff)best={time:t,diff};});return best;};
+    schedules.forEach(({id,times})=>{const next=getNext(times);const te=info.querySelector("#"+id+"Times");times.forEach(t=>{const sp=document.createElement("span");sp.className="reminder-time"+(t===next.time?" next":"");sp.textContent=t;te.appendChild(sp);});info.querySelector("#"+id+"Next").textContent=`下一次 ${next.time}`;});
+    info.querySelector(".section-head").onclick=()=>{const c=body.classList.toggle("closed");localStorage.setItem("dodogu_reminder_closed",c?"1":"0");};
+    app.appendChild(info);
+  }
 
   sections.forEach((section, sectionIndex)=>{
     const [title,type,items]=section;
     const store = type==="weekly" ? weekly : daily;
     const storageKey = type==="weekly" ? "dodogu_weekly_"+weekKey : "dodogu_daily_"+todayKey;
-
-    let doneInSection=0, activeTotal=0;
+    let doneInSection=0, activeTotal=0, visibleItems=[];
     items.forEach(([name,daysText,days],localIndex)=>{
       const available=!days || days.includes(now.getDay());
       if(available) activeTotal++;
       const id=sectionIndex+"_"+localIndex;
       if(available && store[id]) doneInSection++;
       if(type==="daily" && available && !store[id]) remaining.push({section:title,name,daysText});
+      const matches=!query || name.toLowerCase().includes(query) || title.toLowerCase().includes(query);
+      const favMatch=!onlyFavorites || !!favorites[id];
+      if(matches && favMatch) visibleItems.push({name,daysText,days,localIndex,id});
     });
-
     if(type==="weekly"){ weeklyDone+=doneInSection; weeklyTotal+=items.length; }
     else { dailyDone+=doneInSection; dailyTotal+=activeTotal; }
+    if((query||onlyFavorites) && visibleItems.length===0) return;
 
     const card=document.createElement("div");
     card.className="section"+(foldState[sectionIndex] ? " closed" : "");
     card.dataset.section=sectionIndex;
-
-    const head=document.createElement("div");
-    head.className="section-head";
-    const totalInSection = type==="daily" ? activeTotal : items.length;
-    const allChecked = totalInSection > 0 && doneInSection === totalInSection;
-    head.innerHTML=`<span class="section-title">${title}</span>
-      <span class="summary">${doneInSection} / ${totalInSection}</span>
-      <button class="select-all-btn" type="button">${allChecked ? "↩ 全部取消" : "☑ 全選"}</button>
-      <span class="arrow">⌄</span>`;
-
-    const selectAllBtn = head.querySelector(".select-all-btn");
-    selectAllBtn.onclick=(e)=>{
-      e.stopPropagation();
-      const nextValue=!allChecked;
-      items.forEach(([name,daysText,days],localIndex)=>{
-        const available=!days || days.includes(now.getDay());
-        if(available) store[sectionIndex+"_"+localIndex]=nextValue;
-      });
-      localStorage.setItem(storageKey,JSON.stringify(store));
-      render();
-    };
-
-    const body=document.createElement("div"); body.className="items";
-    items.forEach(([name,daysText,days],localIndex)=>{
-      const id=sectionIndex+"_"+localIndex;
-      const available=!days || days.includes(now.getDay());
-      const checked=!!store[id];
-      const row=document.createElement("div");
-      row.className="item"+(checked?" done":"")+(!available?" disabled":"");
-      row.innerHTML=`<div class="box">${checked?"✓":""}</div>
-        <div class="name">${name}</div>${daysText?`<div class="day">${daysText}</div>`:""}`;
-      if(available){
-        row.onclick=()=>{
-          store[id]=!store[id];
-          localStorage.setItem(storageKey,JSON.stringify(store));
-          render();
-        };
-      }
+    const head=document.createElement("div"); head.className="section-head";
+    const totalInSection=type==="daily"?activeTotal:items.length;
+    const allChecked=totalInSection>0&&doneInSection===totalInSection;
+    head.innerHTML=`<span class="section-title">${title}</span><span class="summary">${doneInSection} / ${totalInSection}</span><button class="select-all-btn" type="button">${allChecked?"↩ 全部取消":"☑ 全選"}</button><span class="arrow">⌄</span>`;
+    const selectAllBtn=head.querySelector(".select-all-btn");
+    selectAllBtn.onclick=(e)=>{e.stopPropagation();items.forEach(([name,daysText,days],li)=>{const available=!days||days.includes(now.getDay());if(available)store[sectionIndex+"_"+li]=!allChecked;});localStorage.setItem(storageKey,JSON.stringify(store));render();};
+    const body=document.createElement("div");body.className="items";
+    visibleItems.forEach(({name,daysText,days,localIndex,id})=>{
+      const available=!days||days.includes(now.getDay()); const checked=!!store[id]; const isFav=!!favorites[id];
+      const row=document.createElement("div");row.className="item"+(checked?" done":"")+(!available?" disabled":"");
+      row.innerHTML=`<div class="box">${checked?"✓":""}</div><div class="name">${name}</div>${daysText?`<div class="day">${daysText}</div>`:""}<div class="item-actions"><button class="favorite-btn ${isFav?"active":""}" type="button" title="${isFav?"取消最愛":"加入最愛／置頂"}">${isFav?"★":"☆"}</button></div>`;
+      const favBtn=row.querySelector(".favorite-btn");
+      favBtn.onclick=(e)=>{e.stopPropagation();favorites[id]=!favorites[id];if(!favorites[id])delete favorites[id];localStorage.setItem("dodogu_checklist_favorites",JSON.stringify(favorites));render();};
+      if(available) row.onclick=()=>{store[id]=!store[id];localStorage.setItem(storageKey,JSON.stringify(store));render();};
       body.appendChild(row);
     });
+    head.onclick=()=>{foldState[sectionIndex]=!foldState[sectionIndex];saveFolds();card.classList.toggle("closed",!!foldState[sectionIndex]);};
+    card.appendChild(head);card.appendChild(body);
 
-    head.onclick=()=>{
-      foldState[sectionIndex]=!foldState[sectionIndex];
-      saveFolds();
-      card.classList.toggle("closed",!!foldState[sectionIndex]);
-    };
-
-    card.appendChild(head);
-    card.appendChild(body);
-
-    if(title === "📣 每日推廣"){
-      const promo=document.createElement("div");
-      promo.className="promo-wrap";
-      promo.innerHTML=`<div class="promo-title">📋 每日推廣文案｜今日日期：${getPromoDateCode()}</div>
-        <div class="promo-card">
-          <div class="promo-top"><div class="promo-name">Facebook</div><button class="copy-btn" type="button">📋 複製文案</button></div>
-          <div class="promo-text"></div>
-        </div>
-        <div class="promo-card">
-          <div class="promo-top"><div class="promo-name">Discord</div><button class="copy-btn" type="button">📋 複製文案</button></div>
-          <div class="promo-text"></div>
-        </div>`;
-      const texts=getPromoTexts();
-      const textBlocks=promo.querySelectorAll(".promo-text");
-      textBlocks[0].textContent=texts.facebook;
-      textBlocks[1].textContent=texts.discord;
-      const buttons=promo.querySelectorAll(".copy-btn");
-      buttons[0].onclick=(e)=>{e.stopPropagation();copyPromo("facebook",buttons[0]);};
-      buttons[1].onclick=(e)=>{e.stopPropagation();copyPromo("discord",buttons[1]);};
-      card.appendChild(promo);
-    }
-
-    if(title === "📣 每日推廣"){
-      const reminder=document.createElement("div");
-      reminder.className="reminder-wrap";
-      reminder.innerHTML=`<div class="reminder-title">🔔 每日活動提醒</div>
-        <div class="reminder-card">
-          <div class="reminder-top">
-            <div class="reminder-name">🧳 流浪商人</div>
-            <div class="reminder-next" id="merchantNext"></div>
-          </div>
-          <div class="reminder-line"><span class="reminder-label">出沒時段：</span></div>
-          <div class="reminder-times" id="merchantTimes"></div>
-          <div class="reminder-line" style="margin-top:8px"><span class="reminder-label">出沒地點：</span>各村莊、城鎮</div>
-        </div>
-        <div class="reminder-card">
-          <div class="reminder-top">
-            <div class="reminder-name">💎 世界秘寶</div>
-            <div class="reminder-next" id="treasureNext"></div>
-          </div>
-          <div class="reminder-line"><span class="reminder-label">出沒時段：</span></div>
-          <div class="reminder-times" id="treasureTimes"></div>
-          <div class="reminder-line" style="margin-top:8px"><span class="reminder-label">出沒地點：</span>🔍 根據線索尋找秘寶蹤跡</div>
-          <div class="reminder-line"><span class="reminder-label">秘寶內容：</span>🎁 探索當日秘寶，領取神秘獎勵</div>
-        </div>`;
-
-      const schedules=[
-        {id:"merchant",times:["09:00","13:00","17:00","21:00","01:00"]},
-        {id:"treasure",times:["10:00","14:00","18:00","22:00"]}
-      ];
-      const getNext=(times)=>{
-        const nowTime=new Date();
-        const currentMinutes=nowTime.getHours()*60+nowTime.getMinutes();
-        let best=null;
-        times.forEach(t=>{
-          const [h,m]=t.split(":").map(Number);
-          let mins=h*60+m;
-          let diff=mins-currentMinutes;
-          if(diff<0) diff+=1440;
-          if(best===null || diff<best.diff) best={time:t,diff};
-        });
-        return best;
-      };
-      schedules.forEach(({id,times})=>{
-        const next=getNext(times);
-        const timesEl=reminder.querySelector(`#${id}Times`);
-        times.forEach(t=>{
-          const span=document.createElement("span");
-          span.className="reminder-time"+(t===next.time?" next":"");
-          span.textContent=t;
-          timesEl.appendChild(span);
-        });
-        reminder.querySelector(`#${id}Next`).textContent=`下一次 ${next.time}`;
-      });
-      card.appendChild(reminder);
+    if(title==="📣 每日推廣"){
+      const promo=document.createElement("div");promo.className="promo-wrap";
+      promo.innerHTML=`<div class="promo-title">📋 每日推廣文案｜今日日期：${getPromoDateCode()}</div><div class="promo-card"><div class="promo-top"><div class="promo-name">Facebook</div><button class="copy-btn" type="button">📋 複製文案</button></div><div class="promo-text"></div></div><div class="promo-card"><div class="promo-top"><div class="promo-name">Discord</div><button class="copy-btn" type="button">📋 複製文案</button></div><div class="promo-text"></div></div>`;
+      const texts=getPromoTexts();const blocks=promo.querySelectorAll(".promo-text");blocks[0].textContent=texts.facebook;blocks[1].textContent=texts.discord;const btns=promo.querySelectorAll(".copy-btn");btns[0].onclick=e=>{e.stopPropagation();copyPromo("facebook",btns[0]);};btns[1].onclick=e=>{e.stopPropagation();copyPromo("discord",btns[1]);};card.appendChild(promo);
     }
 
     app.appendChild(card);
   });
 
+
+  if((query||onlyFavorites) && !app.querySelector(".section")){const empty=document.createElement("div");empty.className="yesterday-card search-empty";empty.textContent=onlyFavorites?"目前還沒有加入最愛的任務 ⭐":"找不到符合條件的任務 🔍";app.appendChild(empty);}
   document.getElementById("dailyCount").textContent=`${dailyDone} / ${dailyTotal}`;
   document.getElementById("weeklyCount").textContent=`${weeklyDone} / ${weeklyTotal}`;
   document.getElementById("dailyFill").style.width=(dailyTotal?dailyDone/dailyTotal*100:0)+"%";
   document.getElementById("weeklyFill").style.width=(weeklyTotal?weeklyDone/weeklyTotal*100:0)+"%";
-  document.getElementById("remaining").innerHTML = remaining.length
-    ? `🟢 今日還有 <strong>${remaining.length}</strong> 項任務尚未完成`
-    : `🎉 今日任務全部完成！`;
+  document.getElementById("remaining").innerHTML=remaining.length?`🟢 今日還有 <strong>${remaining.length}</strong> 項任務尚未完成`:`🎉 今日任務全部完成！`;
+  document.getElementById("completeBanner").classList.toggle("show",dailyTotal>0&&dailyDone===dailyTotal);
+  const ff=document.getElementById("favoriteFilter");ff.classList.toggle("active",onlyFavorites);ff.textContent=onlyFavorites?"⭐ 顯示全部任務":"⭐ 只看最愛";
 }
+
+const searchInput=document.getElementById("taskSearch");
+if(searchInput){searchInput.addEventListener("input",()=>render());}
+const favoriteFilter=document.getElementById("favoriteFilter");
+if(favoriteFilter){favoriteFilter.onclick=()=>{const on=localStorage.getItem("dodogu_favorite_filter")==="1";localStorage.setItem("dodogu_favorite_filter",on?"0":"1");render();};}
+
 render();
 
 // 頁面若跨過午夜，重新載入以切換到新的每日日期與任務紀錄。
