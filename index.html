@@ -71,6 +71,7 @@ h1{margin:0 0 6px;font-size:26px}
 .search-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}.search-input{flex:1;min-width:180px;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:11px;padding:10px 12px;font-size:14px;outline:none}.search-input:focus{border-color:var(--accent)}.favorite-filter{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:11px;padding:10px 12px;font-size:13px;cursor:pointer}.favorite-filter.active{background:var(--accent);color:#fff;border-color:var(--accent)}.item-actions{margin-left:auto;display:flex;align-items:center;gap:7px}.favorite-btn{border:0;background:transparent;color:#c5c9d2;font-size:18px;cursor:pointer;padding:2px 4px;line-height:1}.favorite-btn.active{color:#f5b942}.favorite-btn:hover{transform:scale(1.08)}.yesterday-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:var(--shadow)}.yesterday-title{font-weight:800;font-size:15px;margin-bottom:8px}.yesterday-list{display:flex;flex-wrap:wrap;gap:7px}.yesterday-item{font-size:12px;border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:6px 8px}.yesterday-empty{color:var(--muted);font-size:13px}.complete-banner{display:none;margin-top:12px;padding:13px;border-radius:13px;background:linear-gradient(135deg,#fff4c8,#f4edff);font-weight:800;text-align:center}.complete-banner.show{display:block}.dark .complete-banner{background:linear-gradient(135deg,#3a3420,#30283f)}.reminder-head{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}.reminder-toggle{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:9px;padding:5px 9px;font-size:12px;cursor:pointer}.reminder-body.closed{display:none}.reminder-arrow{color:var(--muted);margin-left:6px}.search-empty{text-align:center;color:var(--muted);padding:24px 10px}.favorite-empty{padding:10px 0;color:var(--muted);font-size:13px}@media(max-width:560px){body{padding:12px 8px 34px}.hero{padding:17px 14px;border-radius:15px}h1{font-size:21px}.controls{gap:6px}.control-btn{flex:1;padding:9px 7px}.search-row{display:grid;grid-template-columns:1fr}.search-input{min-width:0;width:100%;font-size:16px}.favorite-filter{width:100%}.section-head{padding:14px 12px}.section-title{font-size:15px}.section-head .summary{font-size:11px;margin-right:6px}.select-all-btn{padding:6px 7px;font-size:11px}.item{padding:12px 4px}.name{font-size:14px}.day{font-size:11px}.favorite-btn{font-size:20px}.promo-wrap{margin-left:2px;margin-right:2px;padding:11px}.promo-text{font-size:12px;max-height:260px}.reminder-time{padding:5px 7px}.yesterday-card{border-radius:13px;padding:12px}}
 
 .note{text-align:center;color:var(--muted);font-size:12px;margin-top:16px;line-height:1.6}
+.guide-btn{border:1px solid #8ab4f8;background:#eef5ff;color:#2563c7;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:.18s}.guide-btn:hover{background:#dceaff;transform:translateY(-1px)}.notify-btn{border:1px solid #f2b84b;background:#fff6df;color:#a86400;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:800;cursor:pointer;transition:.18s}.notify-btn:hover{background:#ffedbf;transform:translateY(-1px)}.notify-btn.on{background:#f2a51a;color:#fff;border-color:#f2a51a}.dark .guide-btn{background:#1d2d49;color:#8ab9ff;border-color:#416fa8}.dark .guide-btn:hover{background:#243b60}.dark .notify-btn{background:#3b2d18;color:#ffc966;border-color:#9a6b20}.dark .notify-btn:hover{background:#4a381d}.dark .notify-btn.on{background:#d98d08;color:#fff;border-color:#d98d08}.analytics-row{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:12px;padding:10px 12px;border-radius:13px;background:var(--bg);font-size:13px;color:var(--muted)}.analytics-row strong{color:var(--text);font-weight:800}.analytics-sep{opacity:.45}.notify-toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(15px);background:var(--card);color:var(--text);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:14px;padding:12px 16px;font-size:14px;font-weight:700;opacity:0;pointer-events:none;transition:.2s;z-index:9999}.notify-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 @media(max-width:560px){.hero-top{align-items:center}.progress-row{grid-template-columns:1fr}.section-title{font-size:16px}}
 </style>
 </head>
@@ -87,6 +88,8 @@ h1{margin:0 0 6px;font-size:26px}
     <div class="controls">
       <button class="control-btn" id="expandAll">⭐ 全部展開</button>
       <button class="control-btn" id="collapseAll">⭐ 全部收起</button>
+      <a class="guide-btn" href="https://docs.google.com/document/d/13Ok02E9A_sS7LWrrFXw4S9jsPU6JWdTu6INpwuMlDdo/edit?tab=t.0#heading=h.abq713skdil9" target="_blank" rel="noopener">📖 遊玩指南</a>
+      <button class="notify-btn" id="notifyBtn" type="button">🔔 開啟活動提醒</button>
     </div>
     <div class="search-row">
       <input class="search-input" id="taskSearch" type="search" placeholder="🔍 搜尋任務，例如：希拉、簽到、Discord">
@@ -107,7 +110,9 @@ h1{margin:0 0 6px;font-size:26px}
     <div class="remaining" id="remaining"></div>
     <div class="complete-banner" id="completeBanner">🎉 今日任務全部完成！今天也辛苦啦 🍀</div>
     <div class="reset">📅 每日任務每日 00:00 重置　｜　每週任務每週一 00:00 重置</div>
+    <div class="analytics-row" id="analyticsRow" title="由 GoatCounter 提供網站瀏覽統計">👀 瀏覽統計　<span>今日 <strong id="todayVisitors">—</strong></span><span class="analytics-sep">｜</span><span>累計 <strong id="totalVisitors">—</strong></span></div>
   </div>
+  <div class="notify-toast" id="notifyToast"></div>
   <div id="app"></div>
   <div class="note">點擊分類標題即可收起／展開。<br>勾選紀錄儲存在目前裝置的瀏覽器中。</div>
 </div>
@@ -399,6 +404,77 @@ const searchInput=document.getElementById("taskSearch");
 if(searchInput){searchInput.addEventListener("input",()=>render());}
 const favoriteFilter=document.getElementById("favoriteFilter");
 if(favoriteFilter){favoriteFilter.onclick=()=>{const on=localStorage.getItem("dodogu_favorite_filter")==="1";localStorage.setItem("dodogu_favorite_filter",on?"0":"1");render();};}
+
+// 🔔 活動提醒：瀏覽器開啟頁面時，在活動開始時間提示一次。
+const NOTIFY_KEY = "dodogu_activity_notify";
+const NOTIFY_SENT_KEY = "dodogu_activity_notify_sent";
+const ACTIVITY_SCHEDULES = [
+  {name:"流浪商人", times:["09:00","13:00","17:00","21:00","01:00"]},
+  {name:"世界秘寶", times:["10:00","14:00","18:00","22:00"]}
+];
+function notifyToast(msg){
+  const el=document.getElementById("notifyToast"); if(!el) return;
+  el.textContent=msg; el.classList.add("show");
+  clearTimeout(window.__dodoguToastTimer);
+  window.__dodoguToastTimer=setTimeout(()=>el.classList.remove("show"),5000);
+}
+function updateNotifyButton(){
+  const b=document.getElementById("notifyBtn"); if(!b) return;
+  const on=localStorage.getItem(NOTIFY_KEY)==="1";
+  b.classList.toggle("on",on); b.textContent=on?"🔔 活動提醒已開啟":"🔔 開啟活動提醒";
+}
+async function enableActivityNotify(){
+  if(!("Notification" in window)){notifyToast("此瀏覽器不支援通知功能");return;}
+  if(Notification.permission==="denied"){notifyToast("通知權限已被封鎖，請至瀏覽器設定重新允許");return;}
+  const permission=Notification.permission==="granted"?"granted":await Notification.requestPermission();
+  if(permission!=="granted"){notifyToast("未取得通知權限");return;}
+  localStorage.setItem(NOTIFY_KEY,"1"); updateNotifyButton();
+  notifyToast("🔔 活動提醒已開啟！");
+}
+function checkActivityNotify(){
+  if(localStorage.getItem(NOTIFY_KEY)!=="1" || !window.Notification || Notification.permission!=="granted") return;
+  const d=new Date(), hm=String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");
+  const day=d.toLocaleDateString("sv-SE");
+  const sent=JSON.parse(localStorage.getItem(NOTIFY_SENT_KEY)||"{}");
+  ACTIVITY_SCHEDULES.forEach(x=>{
+    if(!x.times.includes(hm)) return;
+    const key=day+"_"+x.name+"_"+hm;
+    if(sent[key]) return;
+    sent[key]=1; localStorage.setItem(NOTIFY_SENT_KEY,JSON.stringify(sent));
+    const body=x.name==="世界秘寶"?"世界秘寶現在開始！快根據線索尋找秘寶蹤跡 🎁":"流浪商人現在出現！快前往各村莊、城鎮看看吧 🧳";
+    new Notification("🔔 多多谷活動提醒",{body});
+    notifyToast("🔔 "+x.name+" 開始了！");
+  });
+}
+document.getElementById("notifyBtn")?.addEventListener("click",enableActivityNotify);
+updateNotifyButton();
+checkActivityNotify();
+setInterval(checkActivityNotify,15000);
+
+// 📊 瀏覽統計：使用 GoatCounter JSON 計數，不使用 visit_count 的預設大圖框。
+const GOATCOUNTER_CODE = "duoduovalley";
+async function initAnalytics(){
+  const todayEl=document.getElementById("todayVisitors");
+  const totalEl=document.getElementById("totalVisitors");
+  if(!todayEl || !totalEl || !GOATCOUNTER_CODE) return;
+
+  const base="https://"+GOATCOUNTER_CODE+".goatcounter.com/counter//.json";
+  try{
+    const [todayRes,totalRes]=await Promise.all([
+      fetch(base+"?start=day",{cache:"no-store"}),
+      fetch(base,{cache:"no-store"})
+    ]);
+    if(!todayRes.ok || !totalRes.ok) throw new Error("GoatCounter statistics unavailable");
+    const [todayData,totalData]=await Promise.all([todayRes.json(),totalRes.json()]);
+    todayEl.textContent=todayData.count ?? "0";
+    totalEl.textContent=totalData.count ?? "0";
+  }catch(err){
+    console.warn("GoatCounter 瀏覽統計載入失敗：",err);
+    todayEl.textContent="—";
+    totalEl.textContent="—";
+  }
+}
+initAnalytics();
 
 render();
 
