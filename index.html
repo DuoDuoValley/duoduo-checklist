@@ -56,6 +56,8 @@ body.dark .section.weekly-incomplete .section-head{background:#44301a}
 .section-head .summary{margin-left:auto;margin-right:10px;font-size:12px;color:var(--muted)}
 .select-all-btn{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:9px;padding:6px 9px;font-size:12px;cursor:pointer;white-space:nowrap}
 .select-all-btn:hover{opacity:.82}
+.boss-group-title{display:flex;align-items:center;justify-content:space-between;margin:8px 2px 0;padding:9px 8px 7px;border-bottom:1px solid var(--line);font-size:14px;font-weight:800;color:var(--text)}
+.boss-group-title span:last-child{font-size:12px;color:var(--muted);font-weight:700}
 
 .promo-wrap{margin:4px 6px 8px;padding:14px;border-radius:14px;background:var(--bg);border:1px solid var(--line)}
 .promo-title{font-size:14px;font-weight:800;margin-bottom:10px}
@@ -153,22 +155,42 @@ const sections = [
     ["每日簽到"],["在線福利"],["多多通行證"],
     ["阿斯特拉通行證"],["學院通行證"],["陣營任務"]
   ]],
-  ["👑 每日 BOSS｜初、中階", "daily", [
-    ["西格諾斯（普通）"],["斑斑（混沌）"],["比艾樂（混沌）"],
-    ["血腥皇后（混沌）"],["貝倫（混沌）"],["濃姬（普通）"],
-    ["梅格耐斯（困難）"],["拉圖斯（混沌）"]
-  ]],
-  ["👑 每日 BOSS｜高階", "daily", [
-    ["史烏（普通）"],["史烏（困難）"],
-    ["戴米安（普通）"],["戴米安（困難）"],["露希妲（普通）"],
-    ["露希妲（困難）"],["威爾（普通）"],["威爾（困難）"],
-    ["守護天使綠水靈（混沌）"],["戴斯克（普通）"],["戴斯克（混沌）"],
-    ["頓凱爾（普通）"],["頓凱爾（困難）"],["真‧希拉（普通）"],["真‧希拉（困難）"]
-  ]],
-  ["👑 每日 BOSS｜終極", "daily", [
-    ["受選的賽蓮（普通）"],
-    ["監視者卡洛斯（普通）"],["咖凌（普通）"],["林波（普通）"],
-    ["巴德利斯（普通）"],["最初的敵對者（普通）"],["凱伊（普通）"]
+  ["👑 每日 BOSS", "daily", [
+    ["粉豆（普通）", null, null, "", "🔵 初階"],
+    ["拉圖斯（簡單）", null, null, "", "🔵 初階"],
+    ["凡雷恩（簡單）", null, null, "", "🔵 初階"],
+    ["希拉（普通）", null, null, "", "🔵 初階"],
+    ["阿卡伊農（簡單）", null, null, "", "🔵 初階"],
+    ["卡翁（普通）", null, null, "", "🟢 中階"],
+    ["西格諾斯（普通）", null, null, "", "🟢 中階"],
+    ["森蘭丸（普通）", null, null, "", "🟢 中階"],
+    ["梅格耐斯（簡單）", null, null, "", "🟢 中階"],
+    ["血腥皇后（混沌）", null, null, "", "🟢 中階"],
+    ["比艾樂（混沌）", null, null, "", "🟢 中階"],
+    ["斑斑（混沌）", null, null, "", "🟢 中階"],
+    ["貝倫（混沌）", null, null, "", "🟢 中階"],
+    ["史烏（普通）", null, null, "", "🟠 高階"],
+    ["史烏（困難）", null, null, "", "🟠 高階"],
+    ["戴米安（普通）", null, null, "", "🟠 高階"],
+    ["戴米安（困難）", null, null, "", "🟠 高階"],
+    ["露希妲（普通）", null, null, "", "🟠 高階"],
+    ["露希妲（困難）", null, null, "", "🟠 高階"],
+    ["威爾（普通）", null, null, "", "🟠 高階"],
+    ["威爾（困難）", null, null, "", "🟠 高階"],
+    ["守護天使綠水靈（混沌）", null, null, "", "🟠 高階"],
+    ["戴斯克（普通）", null, null, "", "🟠 高階"],
+    ["戴斯克（混沌）", null, null, "", "🟠 高階"],
+    ["頓凱爾（普通）", null, null, "", "🟠 高階"],
+    ["頓凱爾（困難）", null, null, "", "🟠 高階"],
+    ["真‧希拉（普通）", null, null, "", "🟠 高階"],
+    ["真‧希拉（困難）", null, null, "", "🟠 高階"],
+    ["受選的賽蓮（普通）", null, null, "", "🔴 終極"],
+    ["監視者卡洛斯（普通）", null, null, "", "🔴 終極"],
+    ["咖凌（普通）", null, null, "", "🔴 終極"],
+    ["林波（普通）", null, null, "", "🔴 終極"],
+    ["巴德利斯（普通）", null, null, "", "🔴 終極"],
+    ["最初的敵對者（普通）", null, null, "", "🔴 終極"],
+    ["凱伊（普通）", null, null, "", "🔴 終極"]
   ]],
   ["📆 每週任務", "weekly", [
     ["Roguelike 武陵道場"],
@@ -179,7 +201,7 @@ const sections = [
     ["咖凌（困難）"],["咖凌（終極）"],["林波（困難）"],
     ["巴德利斯（困難）"],["最初的敵對者（困難）"],["最初的敵對者（終極）"],
     ["凱伊（困難）"],["瑪麗西亞（終極）"],["燦爛的凶星（普通）"],
-    ["燦爛的凶星（困難）"]
+    ["燦爛的凶星（困難）"],["尤比太（普通）"],["尤比太（困難）"]
   ]]
 ];
 
@@ -197,6 +219,99 @@ document.getElementById("today").textContent =
 
 let daily = JSON.parse(localStorage.getItem("dodogu_daily_"+todayKey) || "{}");
 let weekly = JSON.parse(localStorage.getItem("dodogu_weekly_"+weekKey) || "{}");
+
+// V37：任務改為穩定 ID，避免分類／排序調整後造成既有勾選與最愛狀態錯位。
+function taskId(type,name){ return type+"::"+name; }
+function migrateV38Storage(){
+  const flag="dodogu_checklist_v38_migrated";
+  if(localStorage.getItem(flag)==="1") return;
+
+  // V36 舊分類索引：0~4 一般分類、5~7 舊版三個 BOSS 分類、8 每週任務。
+  const legacyBossSections=[
+    ["西格諾斯（普通）","斑斑（混沌）","比艾樂（混沌）","血腥皇后（混沌）","貝倫（混沌）","濃姬（普通）","梅格耐斯（困難）","拉圖斯（混沌）"],
+    ["史烏（普通）","史烏（困難）","戴米安（普通）","戴米安（困難）","露希妲（普通）","露希妲（困難）","威爾（普通）","威爾（困難）","守護天使綠水靈（混沌）","戴斯克（普通）","戴斯克（混沌）","頓凱爾（普通）","頓凱爾（困難）","真‧希拉（普通）","真‧希拉（困難）"],
+    ["受選的賽蓮（普通）","監視者卡洛斯（普通）","咖凌（普通）","林波（普通）","巴德利斯（普通）","最初的敵對者（普通）","凱伊（普通）"]
+  ];
+
+  // V37 已使用穩定 ID；V38 只把新增／更名的 BOSS ID 對應到新名稱。
+  const renameMap={
+    "粉豆":"粉豆（普通）",
+    "拉圖斯":"拉圖斯（簡單）",
+    "凡雷恩":"凡雷恩（簡單）",
+    "希拉":"希拉（普通）",
+    "阿卡伊農":"阿卡伊農（簡單）",
+    "卡翁":"卡翁（普通）",
+    "西格諾斯":"西格諾斯（普通）"
+  };
+
+  const v37BossNames=new Set([
+    "粉豆","拉圖斯","凡雷恩","希拉","阿卡伊農","卡翁","西格諾斯",
+    "史烏（普通）","史烏（困難）","戴米安（普通）","戴米安（困難）","露希妲（普通）","露希妲（困難）","威爾（普通）","威爾（困難）","守護天使綠水靈（混沌）","戴斯克（普通）","戴斯克（混沌）","頓凱爾（普通）","頓凱爾（困難）","真‧希拉（普通）","真‧希拉（困難）","受選的賽蓮（普通）","監視者卡洛斯（普通）","咖凌（普通）","林波（普通）","巴德利斯（普通）","最初的敵對者（普通）","凱伊（普通）"
+  ]);
+
+  function legacyName(type,si,li){
+    if(type==="daily" && si>=0 && si<=4) return sections[si]?.[2]?.[li]?.[0] || null;
+    if(type==="daily" && si>=5 && si<=7) return legacyBossSections[si-5]?.[li] || null;
+    if(type==="weekly" && si===8) return sections.find(x=>x[1]==="weekly")?.[2]?.[li]?.[0] || null;
+    return null;
+  }
+
+  function normalizeName(name){
+    if(renameMap[name]) return renameMap[name];
+    return name;
+  }
+
+  function migrateStore(store,type){
+    const next={};
+    Object.keys(store).forEach(k=>{
+      if(k.includes("::")){
+        const [t,name]=k.split("::");
+        next[k.replace("::"+name,"::"+normalizeName(name))]=store[k];
+        return;
+      }
+      const parts=k.split("_");
+      const si=Number(parts[0]), li=Number(parts[1]);
+      let name=legacyName(type,si,li);
+      if(name) name=normalizeName(name);
+      if(name && store[k]) next[taskId(type,name)]=true;
+    });
+    return next;
+  }
+
+  Object.keys(localStorage).forEach(key=>{
+    if(key.startsWith("dodogu_daily_")){
+      try{ localStorage.setItem(key,JSON.stringify(migrateStore(JSON.parse(localStorage.getItem(key)||"{}"),"daily"))); }catch(e){}
+    }
+    if(key.startsWith("dodogu_weekly_")){
+      try{ localStorage.setItem(key,JSON.stringify(migrateStore(JSON.parse(localStorage.getItem(key)||"{}"),"weekly"))); }catch(e){}
+    }
+  });
+  daily=JSON.parse(localStorage.getItem("dodogu_daily_"+todayKey) || "{}");
+  weekly=JSON.parse(localStorage.getItem("dodogu_weekly_"+weekKey) || "{}");
+
+  const favorites=JSON.parse(localStorage.getItem("dodogu_checklist_favorites")||"{}");
+  const favNext={};
+  Object.keys(favorites).forEach(k=>{
+    if(k.includes("::")){
+      const [t,name]=k.split("::");
+      favNext[taskId(t,normalizeName(name))]=favorites[k];
+      return;
+    }
+    const parts=k.split("_");
+    const si=Number(parts[0]), li=Number(parts[1]);
+    let type=null;
+    if(si>=0 && si<=7) type="daily";
+    else if(si===8) type="weekly";
+    let name=type?legacyName(type,si,li):null;
+    if(name) name=normalizeName(name);
+    if(type && name && favorites[k]) favNext[taskId(type,name)]=true;
+  });
+  localStorage.setItem("dodogu_checklist_favorites",JSON.stringify(favNext));
+
+  // V37 已經把 BOSS 合併成單一「每日 BOSS」分類；V38 只新增／調整子分類內容，不改收合邏輯。
+  localStorage.setItem(flag,"1");
+}
+migrateV38Storage();
 
 const PROMO_FOOTER = `
 ###  🙌🏻 期待與你在多多谷相遇。
@@ -347,7 +462,7 @@ function render(){
     if(section[1]!=="daily") return;
     section[2].forEach(([name,daysText,days],li)=>{
       const available=!days || days.includes(yDay);
-      const id=si+"_"+li;
+      const id=taskId("daily",name);
       if(available && !yStore[id]) yesterdayMissed.push({section:section[0],name});
     });
   });
@@ -357,7 +472,7 @@ function render(){
     const type=section[1];
     const store=type==="weekly" ? weekly : daily;
     section[2].forEach(([name,daysText,days],li)=>{
-      const id=si+"_"+li;
+      const id=taskId(type,name);
       if(!favorites[id]) return;
       const available=!days || days.includes(now.getDay());
       // 每日任務若今天不適用，不在「我的最愛／置頂任務」顯示
@@ -472,15 +587,15 @@ function render(){
     const store = type==="weekly" ? weekly : daily;
     const storageKey = type==="weekly" ? "dodogu_weekly_"+weekKey : "dodogu_daily_"+todayKey;
     let doneInSection=0, activeTotal=0, visibleItems=[];
-    items.forEach(([name,daysText,days,dayStyle],localIndex)=>{
+    items.forEach(([name,daysText,days,dayStyle,group],localIndex)=>{
       const available=!days || days.includes(now.getDay());
       if(available) activeTotal++;
-      const id=sectionIndex+"_"+localIndex;
+      const id=taskId(type,name);
       if(available && store[id]) doneInSection++;
       if(type==="daily" && available && !store[id]) remaining.push({section:title,name,daysText});
       const matches=!query || name.toLowerCase().includes(query) || title.toLowerCase().includes(query);
       const favMatch=!onlyFavorites || !!favorites[id];
-      if(matches && favMatch) visibleItems.push({name,daysText,days,localIndex,id,dayStyle:dayStyle||""});
+      if(matches && favMatch) visibleItems.push({name,daysText,days,localIndex,id,dayStyle:dayStyle||"",group:group||""});
     });
     if(type==="weekly"){ weeklyDone+=doneInSection; weeklyTotal+=items.length; }
     else { dailyDone+=doneInSection; dailyTotal+=activeTotal; }
@@ -495,17 +610,34 @@ function render(){
     const head=document.createElement("div"); head.className="section-head";
     head.innerHTML=`<span class="section-title">${title}</span><span class="summary">${doneInSection} / ${totalInSection}</span><button class="select-all-btn" type="button">${allChecked?"↩ 全部取消":"☑ 全選"}</button><span class="arrow">⌄</span>`;
     const selectAllBtn=head.querySelector(".select-all-btn");
-    selectAllBtn.onclick=(e)=>{e.stopPropagation();items.forEach(([name,daysText,days],li)=>{const available=!days||days.includes(now.getDay());if(available)store[sectionIndex+"_"+li]=!allChecked;});localStorage.setItem(storageKey,JSON.stringify(store));render();};
+    selectAllBtn.onclick=(e)=>{e.stopPropagation();items.forEach(([name,daysText,days],li)=>{const available=!days||days.includes(now.getDay());if(available)store[taskId(type,name)]=!allChecked;});localStorage.setItem(storageKey,JSON.stringify(store));render();};
     const body=document.createElement("div");body.className="items";
-    visibleItems.forEach(({name,daysText,days,localIndex,id,dayStyle})=>{
+    const appendTaskRow=({name,daysText,days,id,dayStyle})=>{
       const available=!days||days.includes(now.getDay()); const checked=!!store[id]; const isFav=!!favorites[id];
       const row=document.createElement("div");row.className="item"+(checked?" done":"")+(!available?" disabled":"");
       row.innerHTML=`<div class="box">${checked?"✓":""}</div><div class="name">${name}</div>${daysText?`<div class="day ${dayStyle||""}">${daysText}</div>`:""}<div class="item-actions"><button class="favorite-btn ${isFav?"active":""}" type="button" title="${isFav?"取消最愛":"加入最愛／置頂"}">${isFav?"★":"☆"}</button></div>`;
       const favBtn=row.querySelector(".favorite-btn");
       favBtn.onclick=(e)=>{e.stopPropagation();favorites[id]=!favorites[id];if(!favorites[id])delete favorites[id];localStorage.setItem("dodogu_checklist_favorites",JSON.stringify(favorites));render();};
       if(available) row.onclick=()=>{store[id]=!store[id];localStorage.setItem(storageKey,JSON.stringify(store));render();};
-      body.appendChild(row);
-    });
+      return row;
+    };
+
+    if(title==="👑 每日 BOSS") {
+      const groupOrder=["🔵 初階","🟢 中階","🟠 高階","🔴 終極"];
+      groupOrder.forEach(groupName=>{
+        const groupItems=visibleItems.filter(x=>x.group===groupName);
+        if(!groupItems.length) return;
+        const groupAll=items.filter(x=>x[4]===groupName);
+        const groupDone=groupAll.filter(x=>store[taskId(type,x[0])]).length;
+        const groupTitle=document.createElement("div");
+        groupTitle.className="boss-group-title";
+        groupTitle.innerHTML=`<span>${groupName}</span><span>${groupDone} / ${groupAll.length}</span>`;
+        body.appendChild(groupTitle);
+        groupItems.forEach(x=>body.appendChild(appendTaskRow(x)));
+      });
+    } else {
+      visibleItems.forEach(x=>body.appendChild(appendTaskRow(x)));
+    }
     head.onclick=()=>{foldState[sectionIndex]=!foldState[sectionIndex];saveFolds();card.classList.toggle("closed",!!foldState[sectionIndex]);};
     card.appendChild(head);card.appendChild(body);
 
