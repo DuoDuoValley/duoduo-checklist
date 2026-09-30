@@ -722,35 +722,37 @@ checkActivityNotify();
 setInterval(checkActivityNotify,15000);
 
 // 📊 瀏覽統計：GoatCounter
-// 追蹤程式負責記錄訪客；這裡讀取目前 GitHub Pages 路徑的今日訪客，以及整個網站累計訪客。
+// 使用 GoatCounter 官方 count.js 讀取首頁統計，避免 GitHub Pages 子路徑造成統計 API 路徑不一致。
 const GOATCOUNTER_CODE = "duoduovalley";
-async function initAnalytics(){
-  const todayEl=document.getElementById("todayVisitors");
-  const totalEl=document.getElementById("totalVisitors");
-  if(!todayEl || !totalEl) return;
+function initAnalytics(){
+  const row=document.getElementById("analyticsRow");
+  if(!row || !GOATCOUNTER_CODE) return;
 
-  const today=new Date().toISOString().slice(0,10);
-  const path=window.location.pathname || "/";
-  const pathEncoded=encodeURIComponent(path);
-  const todayUrl="https://"+GOATCOUNTER_CODE+".goatcounter.com/counter/"+pathEncoded+".json?start="+today;
-  // GoatCounter 的公開 JSON 計數器是依「頁面路徑」提供統計；
-  // 不使用未公開/不存在的 TOTAL.json，否則其中一個請求失敗會讓今日與累計一起顯示 —。
-  const totalUrl="https://"+GOATCOUNTER_CODE+".goatcounter.com/counter/"+pathEncoded+".json";
+  const script=document.createElement("script");
+  script.async=true;
+  script.src="https://gc.zgo.at/count.js";
+  script.dataset.goatcounter="https://"+GOATCOUNTER_CODE+".goatcounter.com/count";
+  document.head.appendChild(script);
 
-  try{
-    const [todayRes,totalRes]=await Promise.all([
-      fetch(todayUrl,{cache:"no-store"}),
-      fetch(totalUrl,{cache:"no-store"})
-    ]);
-    if(!todayRes.ok || !totalRes.ok) throw new Error("GoatCounter statistics unavailable");
-    const [todayData,totalData]=await Promise.all([todayRes.json(),totalRes.json()]);
-    todayEl.textContent=todayData.count ?? "0";
-    totalEl.textContent=totalData.count ?? "0";
-  }catch(err){
-    console.warn("GoatCounter 瀏覽統計載入失敗：",err);
-    todayEl.textContent="—";
-    totalEl.textContent="—";
-  }
+  const timer=setInterval(()=>{
+    if(!window.goatcounter || !window.goatcounter.visit_count) return;
+    clearInterval(timer);
+
+    window.goatcounter.visit_count({
+      append:"#todayVisitors",
+      path:"/",
+      start:"day",
+      no_branding:true,
+      attr:{"aria-label":"今日訪客"}
+    });
+
+    window.goatcounter.visit_count({
+      append:"#totalVisitors",
+      path:"/",
+      no_branding:true,
+      attr:{"aria-label":"累計訪客"}
+    });
+  },100);
 }
 initAnalytics();
 
