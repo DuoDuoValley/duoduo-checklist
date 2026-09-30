@@ -376,6 +376,7 @@ function getPromoTexts(){
   const code=getPromoDateCode();
   return {
     facebook:`${code} 每一段冒險，都值得有人同行，一起加入多多谷！`,
+    review:FIVE_STAR_REVIEW_TEXT,
     discord:`# 【${code} 多多谷ᵀᴹˢ ｜招生中 ฅ^•ﻌ•^ฅ 🍀】
 
 ## 【⭐️ 經營理念】
@@ -643,8 +644,8 @@ function render(){
 
     if(title==="📣 每日推廣"){
       const promo=document.createElement("div");promo.className="promo-wrap";
-      promo.innerHTML=`<div class="promo-title">📋 每日推廣文案｜今日日期：${getPromoDateCode()}</div><div class="promo-card"><div class="promo-top"><div class="promo-name">Facebook</div><button class="copy-btn" type="button">📋 複製文案</button></div><div class="promo-text"></div><div class="promo-links"><a class="promo-link facebook-link" href="https://www.facebook.com/share/p/18pPTJDS5f/" target="_blank" rel="noopener noreferrer">↗ Facebook ①</a><a class="promo-link facebook-link" href="https://www.facebook.com/groups/LAMAMS/permalink/27367622866227656?locale=zh_TW" target="_blank" rel="noopener noreferrer">↗ Facebook ②</a></div></div><div class="promo-card"><div class="promo-top"><div class="promo-name">Discord</div><button class="copy-btn" type="button">📋 複製文案</button></div><div class="promo-text"></div><div class="promo-links"><div class="promo-link-note">從以下 3 個頻道任選 2 個推廣</div><a class="promo-link discord-link" href="https://discord.com/channels/1034968130230964315/1057752422988128276" target="_blank" rel="noopener noreferrer">↗ Discord ①</a><a class="promo-link discord-link" href="https://discord.com/channels/1027069828294520873/1071953075964760164" target="_blank" rel="noopener noreferrer">↗ Discord ②</a><a class="promo-link discord-link" href="https://discord.com/channels/1342112035843870840/1488509497264574584" target="_blank" rel="noopener noreferrer">↗ Discord ③</a></div></div>`;
-      const texts=getPromoTexts();const blocks=promo.querySelectorAll(".promo-text");blocks[0].textContent=texts.facebook;blocks[1].textContent=texts.discord;const btns=promo.querySelectorAll(".copy-btn");btns[0].onclick=e=>{e.stopPropagation();copyPromo("facebook",btns[0]);};btns[1].onclick=e=>{e.stopPropagation();copyPromo("discord",btns[1]);};body.appendChild(promo);
+      promo.innerHTML=`<div class="promo-title">📋 每日推廣文案｜今日日期：${getPromoDateCode()}</div><div class="promo-card"><div class="promo-top"><div class="promo-name">Facebook</div><button class="copy-btn" type="button">📋 複製文案</button></div><div class="promo-text"></div><div class="promo-links"><a class="promo-link facebook-link" href="https://www.facebook.com/share/p/18pPTJDS5f/" target="_blank" rel="noopener noreferrer">↗ Facebook ①</a><a class="promo-link facebook-link" href="https://www.facebook.com/groups/LAMAMS/permalink/27367622866227656?locale=zh_TW" target="_blank" rel="noopener noreferrer">↗ Facebook ②</a></div></div><div class="promo-card"><div class="promo-top"><div class="promo-name">Discord</div><button class="copy-btn" type="button">📋 複製文案</button></div><div class="promo-text"></div><div class="promo-links"><div class="promo-link-note">從以下 3 個頻道任選 2 個推廣</div><a class="promo-link discord-link" href="https://discord.com/channels/1034968130230964315/1057752422988128276" target="_blank" rel="noopener noreferrer">↗ Discord ①</a><a class="promo-link discord-link" href="https://discord.com/channels/1027069828294520873/1071953075964760164" target="_blank" rel="noopener noreferrer">↗ Discord ②</a><a class="promo-link discord-link" href="https://discord.com/channels/1342112035843870840/1488509497264574584" target="_blank" rel="noopener noreferrer">↗ Discord ③</a></div></div><div class="promo-card"><div class="promo-top"><div class="promo-name">多多谷五星好評</div><button class="copy-btn" type="button">📋 複製文案</button></div><div class="promo-text"></div></div>`;
+      const texts=getPromoTexts();const blocks=promo.querySelectorAll(".promo-text");blocks[0].textContent=texts.facebook;blocks[1].textContent=texts.discord;blocks[2].textContent=texts.review;const btns=promo.querySelectorAll(".copy-btn");btns[0].onclick=e=>{e.stopPropagation();copyPromo("facebook",btns[0]);};btns[1].onclick=e=>{e.stopPropagation();copyPromo("discord",btns[1]);};btns[2].onclick=e=>{e.stopPropagation();copyPromo("review",btns[2]);};body.appendChild(promo);
     }
 
     app.appendChild(card);
@@ -724,6 +725,21 @@ setInterval(checkActivityNotify,15000);
 // 📊 瀏覽統計：GoatCounter
 // 使用 JSON 讀取既有首頁 "/" 統計，不使用 visit_count，因此不會產生大型計數框。
 // count.js 已在 <head> 載入一次，這裡只讀取統計資料。
+const FIVE_STAR_REVIEW_TEXT = `多多谷 ฅ^•ﻌ•^ฅ｜把每一次成長，都變成下一次期待！
+
+這裡沒有固定的玩法答案。
+從裝備、強化、輪迴，到天賦、陣營與各種特殊玩法，
+每一次成長都會讓角色再往前一步。
+
+想追戰力 → 強化裝備、突破養成
+想長期玩 → 輪迴、天賦持續累積
+想競爭 → BOSS、排名、陣營玩法
+想輕鬆玩 → 活動、掛機、社群交流
+
+不只是讓你畢業，而是讓你在每個階段，都還有下一個目標。
+找到自己的玩法，慢慢玩、一直變強。
+多多谷，現在就出發！`;
+
 const GOATCOUNTER_CODE = "duoduovalley";
 
 async function initAnalytics(){
