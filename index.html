@@ -745,33 +745,25 @@ const GOATCOUNTER_CODE = "duoduovalley";
 async function initAnalytics(){
   const todayEl = document.getElementById("todayVisitors");
   const totalEl = document.getElementById("totalVisitors");
-  if(!todayEl || !totalEl || !GOATCOUNTER_CODE) return;
+  if(!todayEl || !totalEl) return;
 
-  // 多多谷原本正常累計的統計路徑就是首頁 "/"
-  // GitHub Pages 的 /duoduo-checklist/ 不可拿來取代這個路徑，
-  // 否則 GoatCounter 會找不到原本的統計資料。
-  const base = "https://" + GOATCOUNTER_CODE + ".goatcounter.com/counter//.json";
-  const today = new Date().toLocaleDateString("sv-SE");
+  const today = new Date().toISOString().slice(0,10);
+  const path = window.location.pathname || "/";
+  const pathEncoded = encodeURIComponent(path);
+  const todayUrl = "https://" + GOATCOUNTER_CODE + ".goatcounter.com/counter/" + pathEncoded + ".json?start=" + today;
+  const totalUrl = "https://" + GOATCOUNTER_CODE + ".goatcounter.com/counter/" + pathEncoded + ".json";
 
   try{
-    const [todayRes, totalRes] = await Promise.all([
-      fetch(base + "?start=" + today, {cache:"no-store"}),
-      fetch(base, {cache:"no-store"})
+    const [todayRes,totalRes] = await Promise.all([
+      fetch(todayUrl,{cache:"no-store"}),
+      fetch(totalUrl,{cache:"no-store"})
     ]);
-
-    if(!todayRes.ok || !totalRes.ok){
-      throw new Error("GoatCounter statistics unavailable");
-    }
-
-    const [todayData, totalData] = await Promise.all([
-      todayRes.json(),
-      totalRes.json()
-    ]);
-
+    if(!todayRes.ok || !totalRes.ok) throw new Error("GoatCounter statistics unavailable");
+    const [todayData,totalData] = await Promise.all([todayRes.json(),totalRes.json()]);
     todayEl.textContent = todayData.count ?? "0";
     totalEl.textContent = totalData.count ?? "0";
   }catch(err){
-    console.warn("GoatCounter 瀏覽統計載入失敗：", err);
+    console.warn("GoatCounter 瀏覽統計載入失敗：",err);
     todayEl.textContent = "—";
     totalEl.textContent = "—";
   }
