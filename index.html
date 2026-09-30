@@ -722,37 +722,43 @@ checkActivityNotify();
 setInterval(checkActivityNotify,15000);
 
 // 📊 瀏覽統計：GoatCounter
-// 使用 GoatCounter 官方 count.js 讀取首頁統計，避免 GitHub Pages 子路徑造成統計 API 路徑不一致。
+// 直接讀取 GoatCounter JSON：今日訪客 + 全站累計訪客。
 const GOATCOUNTER_CODE = "duoduovalley";
-function initAnalytics(){
-  const row=document.getElementById("analyticsRow");
-  if(!row || !GOATCOUNTER_CODE) return;
+async function initAnalytics(){
+  const todayEl=document.getElementById("todayVisitors");
+  const totalEl=document.getElementById("totalVisitors");
+  if(!todayEl || !totalEl || !GOATCOUNTER_CODE) return;
 
-  const script=document.createElement("script");
-  script.async=true;
-  script.src="https://gc.zgo.at/count.js";
-  script.dataset.goatcounter="https://"+GOATCOUNTER_CODE+".goatcounter.com/count";
-  document.head.appendChild(script);
+  const today=new Date().toLocaleDateString("sv-SE");
+  const base="https://"+GOATCOUNTER_CODE+".goatcounter.com/counter/";
 
-  const timer=setInterval(()=>{
-    if(!window.goatcounter || !window.goatcounter.visit_count) return;
-    clearInterval(timer);
+  // 首頁今日統計
+  const todayUrl=base+encodeURIComponent("/")+".json?start="+today;
+  // 全站累計統計（GoatCounter 特殊路徑）
+  const totalUrl=base+"TOTAL.json";
 
-    window.goatcounter.visit_count({
-      append:"#todayVisitors",
-      path:"/",
-      start:"day",
-      no_branding:true,
-      attr:{"aria-label":"今日訪客"}
-    });
+  try{
+    const [todayRes,totalRes]=await Promise.all([
+      fetch(todayUrl,{cache:"no-store"}),
+      fetch(totalUrl,{cache:"no-store"})
+    ]);
 
-    window.goatcounter.visit_count({
-      append:"#totalVisitors",
-      path:"/",
-      no_branding:true,
-      attr:{"aria-label":"累計訪客"}
-    });
-  },100);
+    if(!todayRes.ok || !totalRes.ok){
+      throw new Error("GoatCounter statistics unavailable");
+    }
+
+    const [todayData,totalData]=await Promise.all([
+      todayRes.json(),
+      totalRes.json()
+    ]);
+
+    todayEl.textContent=todayData.count ?? "0";
+    totalEl.textContent=totalData.count ?? "0";
+  }catch(err){
+    console.warn("GoatCounter 瀏覽統計載入失敗：",err);
+    todayEl.textContent="—";
+    totalEl.textContent="—";
+  }
 }
 initAnalytics();
 
