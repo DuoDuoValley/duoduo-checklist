@@ -35,7 +35,7 @@ h1{margin:0 0 6px;font-size:26px}
 .arrow{font-size:18px;color:var(--muted);transition:.2s}
 .section.closed .arrow{transform:rotate(-90deg)}
 .items{padding:0 12px 10px}
-.section.closed .items{display:none}
+.section.closed .items{display:none}\n.section-head + .items{padding-top:8px}
 
 .section.incomplete .section-head{background:#fff8e8;border-left:4px solid #f2a51a;padding-left:14px}
 .section.incomplete .section-title{color:#a86400}
@@ -47,13 +47,14 @@ body.dark .section.incomplete .section-title{color:#ffc966}
 body.dark .section.incomplete .summary{color:#f0b64d}
 body.dark .section.weekly-incomplete .section-head{background:#44301a}
 .info-items{padding-top:0}.info-items.closed{display:none}
-.item{display:flex;align-items:center;gap:11px;padding:12px 6px;border-top:1px solid var(--line);cursor:pointer}
+.item{display:flex;align-items:center;gap:11px;padding:12px 6px;border-top:1px solid var(--line);cursor:pointer} .item.has-ui-icon{gap:9px}.task-ui-icon{width:36px;height:36px;flex:0 0 36px;display:flex;align-items:center;justify-content:center;overflow:hidden}.task-ui-icon img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain}.item.has-ui-icon .name{flex:1;min-width:0}.ui-title-icon{width:25px;height:25px;flex:0 0 25px;display:inline-flex;align-items:center;justify-content:center}.ui-title-icon img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;display:block}.section-title > .ui-title-icon{margin-right:7px;vertical-align:middle}.task-ui-icon.facebook-ui-icon img,.task-ui-icon img[src$="facebook.PNG"]{width:26px !important;height:26px !important;max-width:26px !important;max-height:26px !important;object-fit:contain}.ui-title-icon.facebook-ui-icon img,.ui-title-icon img[src$="facebook.PNG"]{width:18px !important;height:18px !important;max-width:18px !important;max-height:18px !important;object-fit:contain}.promo-name,.reminder-name{display:flex;align-items:center;gap:7px;min-width:0}
 .box{width:22px;height:22px;border:2px solid #c7ccd6;border-radius:7px;display:grid;place-items:center;flex:none;font-weight:900}
 .done .box{background:#32965b;border-color:#32965b;color:#fff}
 .done .name{text-decoration:line-through;color:#548363}
 .item.done:not(.boss-item){background:#edf8ef;border-radius:10px}
 .item.boss-item.done{background:#e8f5eb;border:1px solid #78bd8c;box-shadow:inset 3px 0 0 #32965b}
 .item.boss-item.done .boss-image{filter:grayscale(.48);opacity:.72}
+.item.done:not(.boss-item) .task-ui-icon img{filter:grayscale(.48);opacity:.72;transition:filter .18s ease,opacity .18s ease}
 .item.boss-item.done .boss-difficulty-image{opacity:1}
 body.dark .item.done:not(.boss-item){background:#203629}
 body.dark .item.boss-item.done{background:#203629;border-color:#3e8054;box-shadow:inset 3px 0 0 #58b878}
@@ -80,10 +81,10 @@ body.dark .done .name{color:#9ad5a8}
 .promo-link-note{width:100%;font-size:12px;color:var(--muted);font-weight:700}
 .reminder-wrap{margin:4px 6px 10px;padding:14px;border-radius:14px;background:var(--bg);border:1px solid var(--line)}
 .reminder-title{font-size:14px;font-weight:800;margin-bottom:10px}
-.reminder-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:9px}
+.reminder-card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 108px 12px 12px;margin-top:9px;min-height:92px}.reminder-ui-icon{position:absolute;right:14px;top:auto;bottom:12px;width:80px;height:80px;display:flex;align-items:center;justify-content:center;pointer-events:none}.reminder-ui-icon img{display:block;width:100%;height:100%;object-fit:contain;object-position:center}.reminder-card .reminder-name{min-height:24px}@media(max-width:560px){.reminder-card{padding-right:78px;min-height:76px}.reminder-ui-icon{right:9px;top:auto;bottom:10px;width:60px;height:60px}}
 .reminder-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
 .reminder-name{font-weight:800;font-size:14px}
-.reminder-next{font-size:12px;color:var(--accent);font-weight:800}.reminder-countdown{font-variant-numeric:tabular-nums;letter-spacing:.3px}.reminder-countdown.live{color:#e58b18}.reminder-countdown.active{color:#e58b18}.reminder-time.active{color:#e58b18;border-color:#e58b18;background:#fff7e8;font-weight:800}.dark .reminder-time.active{background:#3b2d18;color:#ffc966;border-color:#9a6b20}
+.reminder-next{position:absolute;top:12px;right:12px;max-width:calc(100% - 24px);text-align:right;font-size:12px;color:var(--accent);font-weight:800}.reminder-countdown{font-variant-numeric:tabular-nums;letter-spacing:.3px}.reminder-countdown.live{color:#e58b18}.reminder-countdown.active{color:#e58b18}.reminder-time.active{color:#e58b18;border-color:#e58b18;background:#fff7e8;font-weight:800}.dark .reminder-time.active{background:#3b2d18;color:#ffc966;border-color:#9a6b20}
 .reminder-line{font-size:13px;line-height:1.7;color:var(--text)}
 .reminder-label{font-weight:800}
 .reminder-times{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
@@ -91,7 +92,14 @@ body.dark .done .name{color:#9ad5a8}
 .reminder-time.next{color:var(--accent);border-color:var(--accent);font-weight:800}
 
 
-.search-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}.search-input{flex:1;min-width:180px;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:11px;padding:10px 12px;font-size:14px;outline:none}.search-input:focus{border-color:var(--accent)}.favorite-filter{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:11px;padding:10px 12px;font-size:13px;cursor:pointer}.favorite-filter.active{background:var(--accent);color:#fff;border-color:var(--accent)}.item-actions{margin-left:auto;display:flex;align-items:center;gap:7px}.favorite-btn{border:0;background:transparent;color:#c5c9d2;font-size:18px;cursor:pointer;padding:2px 4px;line-height:1}.favorite-btn.active{color:#f5b942}.favorite-btn:hover{transform:scale(1.08)}.yesterday-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:var(--shadow)}.yesterday-title{font-weight:800;font-size:15px;margin-bottom:8px}.yesterday-list{display:flex;flex-wrap:wrap;gap:7px}.yesterday-item{font-size:12px;border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:6px 8px}.yesterday-empty{color:var(--muted);font-size:13px}.complete-banner{display:none;margin-top:12px;padding:13px;border-radius:13px;background:linear-gradient(135deg,#fff4c8,#f4edff);font-weight:800;text-align:center}.complete-banner.show{display:block}.dark .complete-banner{background:linear-gradient(135deg,#3a3420,#30283f)}.reminder-head{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}.reminder-toggle{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:9px;padding:5px 9px;font-size:12px;cursor:pointer}.reminder-body.closed{display:none}.reminder-arrow{color:var(--muted);margin-left:6px}.search-empty{text-align:center;color:var(--muted);padding:24px 10px}.favorite-empty{padding:10px 0;color:var(--muted);font-size:13px}.favorite-panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:0;margin-bottom:12px;box-shadow:var(--shadow)}.favorite-panel .section-head{padding:16px 18px}.favorite-panel .section-title{font-weight:800;font-size:18px}.favorite-panel .favorite-panel-arrow{font-size:18px;color:var(--muted);transition:.2s}.favorite-panel.closed .favorite-panel-arrow{transform:rotate(-90deg)}.favorite-panel-body{padding:0 12px 12px;max-height:330px;overflow-y:auto}.favorite-panel-title{font-weight:800;font-size:15px;margin-bottom:10px}.favorite-group{margin-top:8px}.favorite-group-title{font-size:12px;font-weight:800;padding:6px 9px;border-radius:8px;margin-bottom:5px}.favorite-group-title.pending{background:#fff1d6;color:#b45309}.favorite-group-title.finished{background:#edf8ef;color:#278244}.dark .favorite-group-title.pending{background:#44301a;color:#ffc966}.dark .favorite-group-title.finished{background:#203629;color:#8de0a6}.favorite-sync-list{display:flex;flex-wrap:wrap;gap:6px}.favorite-sync-item{display:inline-flex;align-items:center;gap:6px;width:auto;max-width:100%;padding:5px 8px;border:1px solid var(--line);background:var(--bg);border-radius:8px;cursor:pointer}.favorite-sync-item:hover{border-color:var(--accent);transform:translateY(-1px)}.favorite-sync-item.done{opacity:.72}.favorite-sync-box{width:15px;height:15px;border:1.5px solid #c7ccd6;border-radius:4px;display:grid;place-items:center;flex:none;font-size:9px;font-weight:900}.favorite-sync-item.done .favorite-sync-box{background:var(--accent);border-color:var(--accent);color:#fff}.favorite-sync-name{font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.favorite-sync-meta{font-size:9px;color:var(--muted);white-space:nowrap}.favorite-sync-item.done .favorite-sync-name{text-decoration:line-through;color:var(--muted)}@media(max-width:560px){body{padding:12px 8px 34px}.hero{padding:17px 14px;border-radius:15px}h1{font-size:21px}.controls{gap:6px}.control-btn{flex:1;padding:9px 7px}.search-row{display:grid;grid-template-columns:1fr}.search-input{min-width:0;width:100%;font-size:16px}.favorite-filter{width:100%}.section-head{padding:14px 12px}.section-title{font-size:15px}.section-head .summary{font-size:11px;margin-right:6px}.select-all-btn{padding:6px 7px;font-size:11px}.item{padding:12px 4px}.name{font-size:14px}.day{font-size:11px;flex-basis:58px}.favorite-btn{font-size:20px}.promo-wrap{margin-left:2px;margin-right:2px;padding:11px}.promo-text{font-size:12px;max-height:260px}.reminder-time{padding:5px 7px}.yesterday-card{border-radius:13px;padding:12px}}
+.search-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}.search-input{flex:1;min-width:180px;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:11px;padding:10px 12px;font-size:14px;outline:none}.search-input:focus{border-color:var(--accent)}.favorite-filter{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:11px;padding:10px 12px;font-size:13px;cursor:pointer}.favorite-filter.active{background:var(--accent);color:#fff;border-color:var(--accent)}.item-actions{margin-left:auto;display:flex;align-items:center;gap:7px}.favorite-btn{border:0;background:transparent;color:#c5c9d2;font-size:18px;cursor:pointer;padding:2px 4px;line-height:1}.favorite-btn.active{color:#f5b942}.favorite-btn:hover{transform:scale(1.08)}.yesterday-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:var(--shadow)}.yesterday-title{font-weight:800;font-size:15px;margin-bottom:8px}.yesterday-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;align-items:start}
+.yesterday-category-card{min-width:0;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:8px}
+.yesterday-category-head{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:800;line-height:1.3;margin-bottom:7px;color:var(--text)}
+.yesterday-category-icon{width:17px;height:17px;flex:0 0 17px;display:inline-flex;align-items:center;justify-content:center}
+.yesterday-category-icon img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain}
+.yesterday-category-items{display:flex;flex-wrap:wrap;gap:5px}.yesterday-item-icon{width:16px;height:16px;flex:0 0 16px;display:inline-flex;align-items:center;justify-content:center;margin-right:4px}.yesterday-item-icon img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain}
+.yesterday-item{display:inline-flex;align-items:center;max-width:100%;font-size:12px;line-height:1.35;border:1px solid var(--line);background:var(--bg);border-radius:7px;padding:4px 7px;overflow-wrap:anywhere}
+@media(max-width:560px){.yesterday-list{grid-template-columns:minmax(0,1fr)}.yesterday-category-card{padding:8px}.yesterday-category-head{margin-bottom:6px}}.yesterday-empty{color:var(--muted);font-size:13px}.complete-banner{display:none;margin-top:12px;padding:13px;border-radius:13px;background:linear-gradient(135deg,#fff4c8,#f4edff);font-weight:800;text-align:center}.complete-banner.show{display:block}.dark .complete-banner{background:linear-gradient(135deg,#3a3420,#30283f)}.reminder-head{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}.reminder-toggle{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:9px;padding:5px 9px;font-size:12px;cursor:pointer}.reminder-body.closed{display:none}.reminder-arrow{color:var(--muted);margin-left:6px}.search-empty{text-align:center;color:var(--muted);padding:24px 10px}.favorite-empty{padding:10px 0;color:var(--muted);font-size:13px}.favorite-panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:0;margin-bottom:12px;box-shadow:var(--shadow)}.favorite-panel .section-head{padding:16px 18px}.favorite-panel .section-title{font-weight:800;font-size:18px}.favorite-panel .favorite-panel-arrow{font-size:18px;color:var(--muted);transition:.2s}.favorite-panel.closed .favorite-panel-arrow{transform:rotate(-90deg)}.favorite-panel-body{padding:0 12px 12px;max-height:330px;overflow-y:auto}.favorite-panel-title{font-weight:800;font-size:15px;margin-bottom:10px}.favorite-group{margin-top:8px}.favorite-group-title{font-size:12px;font-weight:800;padding:6px 9px;border-radius:8px;margin-bottom:5px}.favorite-group-title.pending{background:#fff1d6;color:#b45309}.favorite-group-title.finished{background:#edf8ef;color:#278244}.dark .favorite-group-title.pending{background:#44301a;color:#ffc966}.dark .favorite-group-title.finished{background:#203629;color:#8de0a6}.favorite-sync-list{display:flex;flex-wrap:wrap;gap:6px}.favorite-sync-item{display:inline-flex;align-items:center;gap:6px;width:auto;max-width:100%;padding:5px 8px;border:1px solid var(--line);background:var(--bg);border-radius:8px;cursor:pointer}.favorite-sync-item:hover{border-color:var(--accent);transform:translateY(-1px)}.favorite-sync-item.done{opacity:.72}.favorite-sync-box{width:15px;height:15px;border:1.5px solid #c7ccd6;border-radius:4px;display:grid;place-items:center;flex:none;font-size:9px;font-weight:900}.favorite-sync-item.done .favorite-sync-box{background:var(--accent);border-color:var(--accent);color:#fff}.favorite-sync-name{font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.favorite-sync-meta{font-size:9px;color:var(--muted);white-space:nowrap}.favorite-sync-item.done .favorite-sync-name{text-decoration:line-through;color:var(--muted)}@media(max-width:560px){body{padding:12px 8px 34px}.hero{padding:17px 14px;border-radius:15px}h1{font-size:21px}.controls{gap:6px}.control-btn{flex:1;padding:9px 7px}.search-row{display:grid;grid-template-columns:1fr}.search-input{min-width:0;width:100%;font-size:16px}.favorite-filter{width:100%}.section-head{padding:14px 12px}.section-title{font-size:15px}.section-head .summary{font-size:11px;margin-right:6px}.select-all-btn{padding:6px 7px;font-size:11px}.item{padding:12px 4px}.name{font-size:14px}.day{font-size:11px;flex-basis:58px}.favorite-btn{font-size:20px}.promo-wrap{margin-left:2px;margin-right:2px;padding:11px}.promo-text{font-size:12px;max-height:260px}.reminder-time{padding:5px 7px}.yesterday-card{border-radius:13px;padding:12px}}
 
 .note{text-align:center;color:var(--muted);font-size:12px;margin-top:16px;line-height:1.6}
 .guide-btn{border:1px solid #8ab4f8;background:#eef5ff;color:#2563c7;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:.18s}.guide-btn:hover{background:#dceaff;transform:translateY(-1px)}.official-btn{border:1px solid #65b982;background:#effaf2;color:#247744;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:.18s}.official-btn:hover{background:#ddf4e4;transform:translateY(-1px)}.dark .official-btn{background:#20392a;color:#8de0a6;border-color:#3e8054}.dark .official-btn:hover{background:#284a35}.notify-btn{border:1px solid #f2b84b;background:#fff6df;color:#a86400;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:800;cursor:pointer;transition:.18s}.notify-btn:hover{background:#ffedbf;transform:translateY(-1px)}.notify-btn.on{background:#f2a51a;color:#fff;border-color:#f2a51a}.dark .guide-btn{background:#1d2d49;color:#8ab9ff;border-color:#416fa8}.dark .guide-btn:hover{background:#243b60}.dark .notify-btn{background:#3b2d18;color:#ffc966;border-color:#9a6b20}.dark .notify-btn:hover{background:#4a381d}.dark .notify-btn.on{background:#d98d08;color:#fff;border-color:#d98d08}.analytics-row{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:12px;padding:10px 12px;border-radius:13px;background:var(--bg);font-size:13px;color:var(--muted)}.analytics-row strong{color:var(--text);font-weight:800}.analytics-sep{opacity:.45}.notify-toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(15px);background:var(--card);color:var(--text);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:14px;padding:12px 16px;font-size:14px;font-weight:700;opacity:0;pointer-events:none;transition:.2s;z-index:9999}.notify-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -99,6 +107,7 @@ body.dark .done .name{color:#9ad5a8}
 
 /* BOSS 清單：依參考圖採四分類切換、雙欄排列；保留原始 BOSS 與難易度圖片素材 */
 .boss-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:0 0 10px}
+.boss-tabs{margin-top:8px !important}
 .boss-tab{min-width:0;min-height:53px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--text);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:5px 3px;cursor:pointer;font:inherit}
 .boss-tab.active{border-color:#7b8cff;box-shadow:0 0 0 1px rgba(123,140,255,.16);background:var(--card)}
 .boss-tab-name{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:800;white-space:nowrap}
@@ -162,28 +171,134 @@ body.dark .done .name{color:#9ad5a8}
 </div>
 
 <script>
+const UI_ICON_MAP = {
+  "Facebook": "facebook.PNG",
+  "Discord": "discord、五星好評.PNG",
+  "多多谷五星好評": "discord、五星好評.PNG",
+  "Roguelike 武陵道場": "Roguelike武陵道場.png",
+  "第一次同行": "第一次同行.png",
+  "金勾海賊王": "金勾海賊王.png",
+  "龍騎士": "龍騎士.png",
+  "復古炎魔祭壇": "復古殘暴炎魔祭壇.png",
+  "瑪斯特利亞的祭壇": "瑪斯特利亞的祭壇.png",
+  "女神的遺跡": "女神的遺跡.png",
+  "終極次元入侵": "終極次元入侵.png",
+  "多多谷學院": "多多谷學院.png",
+  "懸賞任務": "懸賞任務.png",
+  "《葬送的芙莉蓮》": "葬送的芙莉蓮.png",
+  "蒐集委託": "蒐集委託.png",
+  "藏寶獵人": "藏寶獵人.png",
+  "雙十國慶嘉年華": "雙十國慶嘉年華.png",
+  "每日簽到": "獎勵列表.png",
+  "在線福利": "獎勵列表.png",
+  "多多通行證": "獎勵列表.png",
+  "阿斯特拉通行證": "獎勵列表.png",
+  "學院通行證": "獎勵列表.png",
+  "陣營任務": "獎勵列表.png"
+};
+const UI_ICON_BASE = "UI/";
+function makeUiIcon(filename, className="task-ui-icon", alt="") {
+  if (!filename) return null;
+  const wrap=document.createElement("span");
+  wrap.className=className+(filename.toLowerCase()==="facebook.png"?" facebook-ui-icon":"");
+  const img=document.createElement("img");
+  img.src=UI_ICON_BASE+filename;
+  img.alt=alt;
+  img.loading="lazy";
+  img.decoding="async";
+  wrap.appendChild(img);
+  return wrap;
+}
+const YESTERDAY_BOSS_ICON_MAP = {
+  "凡雷恩": "凡雷恩2.png",
+  "尤比太": "尤比太2.png",
+  "巴德利斯": "巴德利斯2.png",
+  "比艾樂": "比艾樂2.png",
+  "卡翁": "卡翁2.png",
+  "史烏": "史烏2.png",
+  "守護天使綠水靈": "守護天使綠水靈2.png",
+  "血腥皇后": "血腥皇后2.png",
+  "希拉": "希拉2.png",
+  "西格諾斯": "西格諾斯2.png",
+  "貝倫": "貝倫2.png",
+  "受選的賽蓮": "受選的賽蓮2.png",
+  "咖凌": "咖凌2.png",
+  "拉圖斯": "拉圖斯2.png",
+  "林波": "林波2.png",
+  "阿卡伊農": "阿卡伊農2.png",
+  "威爾": "威爾2.png",
+  "真希拉": "真希拉2.png",
+  "粉豆": "粉豆2.png",
+  "梅格耐斯": "梅格耐斯2.png",
+  "凱伊": "凱伊2.png",
+  "斑斑": "斑斑2.png",
+  "最初的敵對者": "最初的敵對者2.png",
+  "森蘭丸": "森蘭丸2.png",
+  "黑魔法師": "黑魔法師2.png",
+  "頓凱爾": "頓凱爾2.png",
+  "瑪麗西亞": "瑪麗西亞2.png",
+  "監視者卡洛斯": "監視者卡洛斯2.png",
+  "戴米安": "戴米安2.png",
+  "戴斯克": "戴斯克2.png",
+  "燦爛的凶星": "燦爛的凶星2.png",
+  "露希妲": "露希妲2.png"
+};
+const YESTERDAY_CATEGORY_ICON_MAP = {
+  "每日推廣": "每日推廣.png",
+  "組隊任務": "組隊任務標題.png",
+  "委託任務": "委託任務標題.png",
+  "檔期活動": "檔期活動標題.png",
+  "獎勵列表": "獎勵列表標題.png",
+  "每日 BOSS": "每日BOSS標題.png",
+  "每日BOSS": "每日BOSS標題.png",
+  "每週任務": "每週任務標題.png"
+};
+const SECTION_TITLE_ICON_MAP = {
+  "我的最愛／置頂任務": "我的最愛／置頂任務標題.png",
+  "昨日漏掉的任務": "昨日漏掉的任務標題.png",
+  "每日活動提醒": "每日活動提醒標題.png",
+  "每日推廣": "每日推廣.png",
+  "組隊任務": "組隊任務標題.png",
+  "委託任務": "委託任務標題.png",
+  "檔期活動": "檔期活動標題.png",
+  "獎勵列表": "獎勵列表標題.png",
+  "每日 BOSS": "每日BOSS標題.png",
+  "每日BOSS": "每日BOSS標題.png",
+  "每週任務": "每週任務標題.png"
+};
+function addSectionTitleIcon(el, label) {
+  if (!el) return;
+  const filename = Object.entries(SECTION_TITLE_ICON_MAP).find(([key]) => label.includes(key))?.[1];
+  if (filename) addNamedUiIcon(el, filename, "ui-title-icon");
+}
+function addNamedUiIcon(el, filename, className="ui-title-icon") {
+  if (!el || !filename || el.querySelector(":scope > .ui-title-icon")) return;
+  const icon=makeUiIcon(filename,className,"");
+  if(icon) el.prepend(icon);
+}
+
 const sections = [
-  ["📣 每日推廣", "daily", [
+  ["每日推廣", "daily", [
     ["Facebook"],["Discord"],["多多谷五星好評"]
   ]],
-  ["🤝 組隊任務", "daily", [
+  ["組隊任務", "daily", [
     ["第一次同行"],["金勾海賊王"],["龍騎士"],
     ["復古炎魔祭壇","開放時段：每週二、四、六",[2,4,6],"long"],
     ["瑪斯特利亞的祭壇","開放時段：每週一、三、五",[1,3,5],"long"],
     ["女神的遺跡","開放時段：每週六、日",[6,0],"long"],
     ["終極次元入侵","開放時段：每週六、日",[6,0],"long"]
   ]],
-  ["📜 委託任務", "daily", [
+  ["委託任務", "daily", [
     ["蒐集委託"],["藏寶獵人"],["懸賞任務"]
   ]],
-  ["🎪 檔期活動", "daily", [
+  ["檔期活動", "daily", [
     ["《葬送的芙莉蓮》"],["多多谷學院"],["雙十國慶嘉年華"]
   ]],
-  ["🎁 獎勵列表", "daily", [
+  ["獎勵列表", "daily", [
     ["每日簽到"],["在線福利"],["多多通行證"],
     ["阿斯特拉通行證"],["學院通行證"],["陣營任務"]
   ]],
-  ["👑 每日 BOSS", "daily", [
+  ["每日 BOSS", "daily", [
     ["粉豆（普通）", null, null, "", "🔵 初階"],
     ["拉圖斯（簡單）", null, null, "", "🔵 初階"],
     ["凡雷恩（簡單）", null, null, "", "🔵 初階"],
@@ -220,7 +335,7 @@ const sections = [
     ["凱伊（普通）", null, null, "", "🔴 終極"],
     ["守護天使綠水靈（混沌）", null, null, "", "🟠 高階"]
   ]],
-  ["📆 每週任務", "weekly", [
+  ["每週任務", "weekly", [
     ["Roguelike 武陵道場"],
     ["史烏（終極）"],
     ["黑魔法師（困難）"],["黑魔法師（終極）"],
@@ -287,7 +402,7 @@ function getBossDifficultyCode(name){
 }
 function getBossGroupForName(name){
   const base=getBossBaseName(name);
-  const dailyBossSection=sections.find(s=>s[0]==="👑 每日 BOSS");
+  const dailyBossSection=sections.find(s=>s[0]==="每日 BOSS");
   const matched=dailyBossSection?.[2]?.find(item=>getBossBaseName(item[0])===base);
   if(matched) return matched[4]||"🔴 終極";
   // 這些只出現在每週清單的 BOSS，沿用終局 BOSS 分類；既有每日分類不做改動。
@@ -597,9 +712,10 @@ function render(){
     const favCard=document.createElement("div");
     const favClosed=localStorage.getItem("dodogu_favorites_closed")==="1";
     favCard.className="favorite-panel section"+(favClosed?" closed":"");
-    favCard.innerHTML=`<div class="section-head"><span class="section-title">⭐ 我的最愛／置頂任務</span><span class="arrow favorite-panel-arrow">⌄</span></div>
+    favCard.innerHTML=`<div class="section-head"><span class="section-title">我的最愛／置頂任務</span><span class="arrow favorite-panel-arrow">⌄</span></div>
       <div class="items favorite-panel-body"><div class="favorite-group"><div class="favorite-group-title pending">⏳ 未完成 <span class="favorite-pending-count"></span></div><div class="favorite-sync-list pending-list"></div></div>
       <div class="favorite-group"><div class="favorite-group-title finished">✅ 已完成 <span class="favorite-finished-count"></span></div><div class="favorite-sync-list finished-list"></div></div></div>`;
+    addSectionTitleIcon(favCard.querySelector(".section-title"), "我的最愛／置頂任務");
     favCard.querySelector(".section-head").onclick=()=>{
       const c=favCard.classList.toggle("closed");
       localStorage.setItem("dodogu_favorites_closed",c?"1":"0");
@@ -631,9 +747,36 @@ function render(){
     const info=document.createElement("div");
     const closed=localStorage.getItem("dodogu_yesterday_closed")==="1";
     info.className="section info-section"+(closed?" closed":"");
-    info.innerHTML=`<div class="section-head"><span class="section-title">📅 昨日漏掉的任務</span><span class="arrow">⌄</span></div><div class="items info-items"><div class="yesterday-list"></div></div>`;
+    info.innerHTML=`<div class="section-head"><span class="section-title">昨日漏掉的任務</span><span class="arrow">⌄</span></div><div class="items info-items"><div class="yesterday-list"></div></div>`;
+    addSectionTitleIcon(info.querySelector(".section-title"), "昨日漏掉的任務");
     const list=info.querySelector(".yesterday-list");
-    if(yesterdayMissed.length){yesterdayMissed.forEach(x=>{const el=document.createElement("div");el.className="yesterday-item";el.textContent=`${x.section}｜${x.name}`;list.appendChild(el);});}
+    if(yesterdayMissed.length){
+      const grouped=new Map();
+      yesterdayMissed.forEach(x=>{
+        if(!grouped.has(x.section)) grouped.set(x.section,[]);
+        grouped.get(x.section).push(x);
+      });
+      grouped.forEach((items,sectionName)=>{
+        const card=document.createElement("div");card.className="yesterday-category-card";
+        const head=document.createElement("div");head.className="yesterday-category-head";
+        const iconFile=Object.entries(YESTERDAY_CATEGORY_ICON_MAP).find(([label])=>sectionName===label || sectionName.includes(label))?.[1];
+        if(iconFile){const icon=makeUiIcon(iconFile,"yesterday-category-icon","");if(icon)head.appendChild(icon);}
+        const title=document.createElement("span");title.textContent=sectionName;head.appendChild(title);
+        card.appendChild(head);
+        const itemsWrap=document.createElement("div");itemsWrap.className="yesterday-category-items";
+        items.forEach(x=>{
+          const chip=document.createElement("span");chip.className="yesterday-item";
+          const bossBase=getBossBaseName(x.name);
+          const bossIconFile=YESTERDAY_BOSS_ICON_MAP[bossBase];
+          const itemIconFile=bossIconFile || Object.entries(UI_ICON_MAP).find(([label])=>x.name.includes(label))?.[1];
+          if(itemIconFile){const itemIcon=makeUiIcon(itemIconFile,"yesterday-item-icon","");if(itemIcon)chip.appendChild(itemIcon);}
+          const itemLabel=document.createElement("span");itemLabel.textContent=x.name;chip.appendChild(itemLabel);
+          itemsWrap.appendChild(chip);
+        });
+        card.appendChild(itemsWrap);
+        list.appendChild(card);
+      });
+    }
     else{const el=document.createElement("div");el.className="yesterday-empty";el.textContent="昨天沒有未完成的每日任務 🎉";list.appendChild(el);}
     info.querySelector(".section-head").onclick=()=>{
       const c=info.classList.toggle("closed");
@@ -648,7 +791,23 @@ function render(){
     const info=document.createElement("div");
     const closed=localStorage.getItem("dodogu_reminder_closed")==="1";
     info.className="section info-section"+(closed?" closed":"");
-    info.innerHTML=`<div class="section-head"><span class="section-title">🔔 每日活動提醒</span><span class="arrow">⌄</span></div><div class="items info-items"><div class="reminder-card"><div class="reminder-top"><div class="reminder-name">🧳 流浪商人</div><div class="reminder-next" id="merchantNext"></div></div><div class="reminder-line"><span class="reminder-label">出沒時段：</span></div><div class="reminder-times" id="merchantTimes"></div><div class="reminder-line" style="margin-top:8px"><span class="reminder-label">出沒頻道：</span>CH.6 頻道｜持續 30 分鐘</div><div class="reminder-line" style="margin-top:8px"><span class="reminder-label">出沒地點：</span>各村莊、城鎮</div></div><div class="reminder-card"><div class="reminder-top"><div class="reminder-name">💎 世界秘寶</div><div class="reminder-next" id="treasureNext"></div></div><div class="reminder-line"><span class="reminder-label">出沒時段：</span></div><div class="reminder-times" id="treasureTimes"></div><div class="reminder-line" style="margin-top:8px"><span class="reminder-label">出沒頻道：</span>CH.7 頻道｜持續 30 分鐘</div><div class="reminder-line" style="margin-top:8px"><span class="reminder-label">出沒地點：</span>🔍 根據線索尋找秘寶蹤跡</div><div class="reminder-line" style="margin-top:8px"><span class="reminder-label">秘寶內容：</span>🎁 探索當日秘寶，領取神秘獎勵</div></div></div></div>`;
+    info.innerHTML=`<div class="section-head"><span class="section-title">每日活動提醒</span><span class="arrow">⌄</span></div><div class="items info-items"><div class="reminder-card"><div class="reminder-top"><div class="reminder-name">流浪商人</div><div class="reminder-next" id="merchantNext"></div></div><div class="reminder-line"><span class="reminder-label">出沒時段：</span></div><div class="reminder-times" id="merchantTimes"></div><div class="reminder-line" style="margin-top:8px"><span class="reminder-label">出沒頻道：</span>CH.6 頻道｜持續 30 分鐘</div><div class="reminder-line" style="margin-top:8px"><span class="reminder-label">出沒地點：</span>各村莊、城鎮</div></div><div class="reminder-card"><div class="reminder-top"><div class="reminder-name">世界秘寶</div><div class="reminder-next" id="treasureNext"></div></div><div class="reminder-line"><span class="reminder-label">出沒時段：</span></div><div class="reminder-times" id="treasureTimes"></div><div class="reminder-line" style="margin-top:8px"><span class="reminder-label">出沒頻道：</span>CH.7 頻道｜持續 30 分鐘</div><div class="reminder-line" style="margin-top:8px"><span class="reminder-label">出沒地點：</span>🔍 根據線索尋找秘寶蹤跡</div><div class="reminder-line" style="margin-top:8px"><span class="reminder-label">秘寶內容：</span>🎁 探索當日秘寶，領取神秘獎勵</div></div></div></div>`;
+    addSectionTitleIcon(info.querySelector(".section-title"), "每日活動提醒");
+      const reminderIconMap={"流浪商人":"流浪商人.png","世界秘寶":"世界祕寶.png"};
+      info.querySelectorAll(".reminder-card").forEach(card=>{
+        const title=card.querySelector(".reminder-name");
+        const filename=title&&reminderIconMap[title.textContent.trim()];
+        if(!filename) return;
+        const icon=document.createElement("span");
+        icon.className="reminder-ui-icon";
+        const img=document.createElement("img");
+        img.src=UI_ICON_BASE+filename;
+        img.alt="";
+        img.loading="lazy";
+        img.decoding="async";
+        icon.appendChild(img);
+        card.appendChild(icon);
+      });
     const schedules={
       merchant:{times:["09:00","13:00","17:00","21:00","01:00"],duration:30},
       treasure:{times:["10:00","14:00","18:00","22:00"],duration:30}
@@ -721,13 +880,15 @@ function render(){
     card.dataset.section=sectionIndex;
     const head=document.createElement("div"); head.className="section-head";
     head.innerHTML=`<span class="section-title">${title}</span><span class="summary">${doneInSection} / ${totalInSection}</span><button class="select-all-btn" type="button">${allChecked?"↩ 全部取消":"☑ 全選"}</button><span class="arrow">⌄</span>`;
+    addSectionTitleIcon(head.querySelector(".section-title"), title);
     const selectAllBtn=head.querySelector(".select-all-btn");
     selectAllBtn.onclick=(e)=>{e.stopPropagation();items.forEach(([name,daysText,days],li)=>{const available=!days||days.includes(now.getDay());if(available)store[taskId(type,name)]=!allChecked;});localStorage.setItem(storageKey,JSON.stringify(store));render();};
     const body=document.createElement("div");body.className="items";
     const appendTaskRow=({name,daysText,days,id,dayStyle})=>{
       const available=!days||days.includes(now.getDay()); const checked=!!store[id]; const isFav=!!favorites[id];
-      const row=document.createElement("div");row.className="item"+(checked?" done":"")+(!available?" disabled":"");
-      row.innerHTML=`<div class="box">${checked?"✓":""}</div><div class="name">${name}</div>${daysText?`<div class="day ${dayStyle||""}">${daysText}</div>`:""}<div class="item-actions"><button class="favorite-btn ${isFav?"active":""}" type="button" title="${isFav?"取消最愛":"加入最愛／置頂"}">${isFav?"★":"☆"}</button></div>`;
+      const uiIconFile=UI_ICON_MAP[name]||null;
+      const row=document.createElement("div");row.className="item"+(uiIconFile?" has-ui-icon":"")+(checked?" done":"")+(!available?" disabled":"");
+      row.innerHTML=`<div class="box">${checked?"✓":""}</div>${uiIconFile?`<span class="task-ui-icon"><img src="${UI_ICON_BASE+uiIconFile}" alt="" loading="lazy" decoding="async"></span>`:""}<div class="name">${name}</div>${daysText?`<div class="day ${dayStyle||""}">${daysText}</div>`:""}<div class="item-actions"><button class="favorite-btn ${isFav?"active":""}" type="button" title="${isFav?"取消最愛":"加入最愛／置頂"}">${isFav?"★":"☆"}</button></div>`;
       const favBtn=row.querySelector(".favorite-btn");
       favBtn.onclick=(e)=>{e.stopPropagation();favorites[id]=!favorites[id];if(!favorites[id])delete favorites[id];localStorage.setItem("dodogu_checklist_favorites",JSON.stringify(favorites));render();};
       if(available) row.onclick=()=>{store[id]=!store[id];localStorage.setItem(storageKey,JSON.stringify(store));render();};
@@ -742,7 +903,7 @@ function render(){
       row.onclick=()=>{store[x.id]=!store[x.id];localStorage.setItem(storageKey,JSON.stringify(store));render();};
       return row;
     };
-    if(title==="👑 每日 BOSS" || title==="📆 每週任務"){
+    if(title==="每日 BOSS" || title==="每週任務"){
       const bossItems=visibleItems.filter(x=>isBossTask(x.name)).map(x=>({...x,group:x.group||getBossGroupForName(x.name)}));
       const ordinaryItems=visibleItems.filter(x=>!isBossTask(x.name));
       if(ordinaryItems.length) ordinaryItems.forEach(x=>body.appendChild(appendTaskRow(x)));
@@ -767,9 +928,11 @@ function render(){
     head.onclick=()=>{foldState[sectionIndex]=!foldState[sectionIndex];saveFolds();card.classList.toggle("closed",!!foldState[sectionIndex]);};
     card.appendChild(head);card.appendChild(body);
 
-    if(title==="📣 每日推廣"){
+    if(title==="每日推廣"){
       const promo=document.createElement("div");promo.className="promo-wrap";
       promo.innerHTML=`<div class="promo-title">📋 每日推廣文案｜今日日期：${getPromoDateCode()}</div><div class="promo-card"><div class="promo-top"><div class="promo-name">Facebook</div><button class="copy-btn" type="button">📋 複製文案</button></div><div class="promo-text"></div><div class="promo-links"><a class="promo-link facebook-link" href="https://www.facebook.com/share/p/18pPTJDS5f/" target="_blank" rel="noopener noreferrer">↗ Facebook ①</a><a class="promo-link facebook-link" href="https://www.facebook.com/groups/LAMAMS/permalink/27367622866227656?locale=zh_TW" target="_blank" rel="noopener noreferrer">↗ Facebook ②</a></div></div><div class="promo-card"><div class="promo-top"><div class="promo-name">Discord</div><button class="copy-btn" type="button">📋 複製文案</button></div><div class="promo-text"></div><div class="promo-links"><div class="promo-link-note">從以下 3 個頻道任選 2 個推廣</div><a class="promo-link discord-link" href="https://discord.com/channels/1034968130230964315/1057752422988128276" target="_blank" rel="noopener noreferrer">↗ Discord ①</a><a class="promo-link discord-link" href="https://discord.com/channels/1027069828294520873/1071953075964760164" target="_blank" rel="noopener noreferrer">↗ Discord ②</a><a class="promo-link discord-link" href="https://discord.com/channels/1342112035843870840/1488509497264574584" target="_blank" rel="noopener noreferrer">↗ Discord ③</a></div></div><div class="promo-card"><div class="promo-top"><div class="promo-name">多多谷五星好評</div><button class="copy-btn" type="button">📋 複製文案</button></div><div class="promo-text"></div></div>`;
+      const promoIconMap={"Facebook":"facebook.PNG","Discord":"discord、五星好評.PNG","多多谷五星好評":"discord、五星好評.PNG"};
+      promo.querySelectorAll(".promo-name").forEach(el=>addNamedUiIcon(el,promoIconMap[el.textContent.trim()]));
       const texts=getPromoTexts();const blocks=promo.querySelectorAll(".promo-text");blocks[0].textContent=texts.facebook;blocks[1].textContent=texts.discord;blocks[2].textContent=texts.review;const btns=promo.querySelectorAll(".copy-btn");btns[0].onclick=e=>{e.stopPropagation();copyPromo("facebook",btns[0]);};btns[1].onclick=e=>{e.stopPropagation();copyPromo("discord",btns[1]);};btns[2].onclick=e=>{e.stopPropagation();copyPromo("review",btns[2]);};body.appendChild(promo);
     }
 
