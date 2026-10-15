@@ -239,7 +239,7 @@ body.dark .category-card .section-head{background:linear-gradient(100deg,color-m
       <button class="notify-btn" id="notifyBtn" type="button">🔔 開啟活動提醒</button>
     </div>
     <div class="search-row">
-      <input class="search-input" id="taskSearch" type="search" placeholder="🔍 搜尋任務，例如：希拉、簽到、Discord">
+      <input class="search-input" id="taskSearch" type="search" placeholder="🔍 搜尋任務，例如：每日簽到、復古炎魔祭壇、燦爛的凶星">
       <button class="favorite-filter" id="favoriteFilter" type="button">⭐ 只看最愛</button>
     </div>
     <div class="progress-row">
@@ -426,8 +426,8 @@ const sections = [
     ["戴斯克（混沌）", null, null, "", "🟠 高階"],
     ["頓凱爾（普通）", null, null, "", "🟠 高階"],
     ["頓凱爾（困難）", null, null, "", "🟠 高階"],
-    ["真‧希拉（普通）", null, null, "", "🟠 高階"],
-    ["真‧希拉（困難）", null, null, "", "🟠 高階"],
+    ["真希拉（普通）", null, null, "", "🟠 高階"],
+    ["真希拉（困難）", null, null, "", "🟠 高階"],
     ["受選的賽蓮（普通）", null, null, "", "🔴 終極"],
     ["監視者卡洛斯（普通）", null, null, "", "🔴 終極"],
     ["咖凌（普通）", null, null, "", "🔴 終極"],
@@ -496,7 +496,7 @@ const YESTERDAY_DIFFICULTY_LABEL_MAP={"EASY":"UI/yesterday-difficulty/easy.png",
 const BOSS_GROUP_LABELS = ["🔵 初階","🟢 中階","🟠 高階","🔴 終極"];
 const BOSS_GROUP_COLORS = {"🔵 初階":"#2196e8","🟢 中階":"#23b52d","🟠 高階":"#ff7900","🔴 終極":"#ed2445"};
 function getBossBaseName(name){
-  return name.replace(/[（(][^）)]*[）)]/g,"").replace(/^真‧希拉$/,"真希拉").trim();
+  return name.replace(/[（(][^）)]*[）)]/g,"").replace(/^真希拉$/,"真希拉").trim();
 }
 function getBossDifficultyCode(name){
   const m=name.match(/[（(]([^）)]+)[）)]/);
@@ -558,7 +558,7 @@ function migrateV38Storage(){
   // V36 舊分類索引：0~4 一般分類、5~7 舊版三個 BOSS 分類、8 每週任務。
   const legacyBossSections=[
     ["西格諾斯（普通）","斑斑（混沌）","比艾樂（混沌）","血腥皇后（混沌）","貝倫（混沌）","濃姬（普通）","梅格耐斯（困難）","拉圖斯（混沌）"],
-    ["史烏（普通）","史烏（困難）","戴米安（普通）","戴米安（困難）","露希妲（普通）","露希妲（困難）","威爾（普通）","威爾（困難）","守護天使綠水靈（混沌）","戴斯克（普通）","戴斯克（混沌）","頓凱爾（普通）","頓凱爾（困難）","真‧希拉（普通）","真‧希拉（困難）"],
+    ["史烏（普通）","史烏（困難）","戴米安（普通）","戴米安（困難）","露希妲（普通）","露希妲（困難）","威爾（普通）","威爾（困難）","守護天使綠水靈（混沌）","戴斯克（普通）","戴斯克（混沌）","頓凱爾（普通）","頓凱爾（困難）","真希拉（普通）","真希拉（困難）"],
     ["受選的賽蓮（普通）","監視者卡洛斯（普通）","咖凌（普通）","林波（普通）","巴德利斯（普通）","最初的敵對者（普通）","凱伊（普通）"]
   ];
 
@@ -575,7 +575,7 @@ function migrateV38Storage(){
 
   const v37BossNames=new Set([
     "粉豆","拉圖斯","凡雷恩","希拉","阿卡伊農","卡翁","西格諾斯",
-    "史烏（普通）","史烏（困難）","戴米安（普通）","戴米安（困難）","露希妲（普通）","露希妲（困難）","威爾（普通）","威爾（困難）","守護天使綠水靈（混沌）","戴斯克（普通）","戴斯克（混沌）","頓凱爾（普通）","頓凱爾（困難）","真‧希拉（普通）","真‧希拉（困難）","受選的賽蓮（普通）","監視者卡洛斯（普通）","咖凌（普通）","林波（普通）","巴德利斯（普通）","最初的敵對者（普通）","凱伊（普通）"
+    "史烏（普通）","史烏（困難）","戴米安（普通）","戴米安（困難）","露希妲（普通）","露希妲（困難）","威爾（普通）","威爾（困難）","守護天使綠水靈（混沌）","戴斯克（普通）","戴斯克（混沌）","頓凱爾（普通）","頓凱爾（困難）","真希拉（普通）","真希拉（困難）","受選的賽蓮（普通）","監視者卡洛斯（普通）","咖凌（普通）","林波（普通）","巴德利斯（普通）","最初的敵對者（普通）","凱伊（普通）"
   ]);
 
   function legacyName(type,si,li){
