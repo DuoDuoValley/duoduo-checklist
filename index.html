@@ -49,8 +49,15 @@ body.dark .section.weekly-incomplete .section-head{background:#44301a}
 .info-items{padding-top:0}.info-items.closed{display:none}
 .item{display:flex;align-items:center;gap:11px;padding:12px 6px;border-top:1px solid var(--line);cursor:pointer}
 .box{width:22px;height:22px;border:2px solid #c7ccd6;border-radius:7px;display:grid;place-items:center;flex:none;font-weight:900}
-.done .box{background:var(--accent);border-color:var(--accent);color:#fff}
-.done .name{text-decoration:line-through;color:var(--muted)}
+.done .box{background:#32965b;border-color:#32965b;color:#fff}
+.done .name{text-decoration:line-through;color:#548363}
+.item.done:not(.boss-item){background:#edf8ef;border-radius:10px}
+.item.boss-item.done{background:#e8f5eb;border:1px solid #78bd8c;box-shadow:inset 3px 0 0 #32965b}
+.item.boss-item.done .boss-image{filter:grayscale(.48);opacity:.72}
+.item.boss-item.done .boss-difficulty-image{opacity:1}
+body.dark .item.done:not(.boss-item){background:#203629}
+body.dark .item.boss-item.done{background:#203629;border-color:#3e8054;box-shadow:inset 3px 0 0 #58b878}
+body.dark .done .name{color:#9ad5a8}
 .day{margin-left:auto;flex:0 0 58px;text-align:right;color:var(--muted);font-size:12px;white-space:nowrap}.day.long{flex:0 0 200px;text-align:right}
 .disabled{opacity:var(--disabled);cursor:default}
 .disabled .name{text-decoration:none}
@@ -87,8 +94,27 @@ body.dark .section.weekly-incomplete .section-head{background:#44301a}
 .search-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}.search-input{flex:1;min-width:180px;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:11px;padding:10px 12px;font-size:14px;outline:none}.search-input:focus{border-color:var(--accent)}.favorite-filter{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:11px;padding:10px 12px;font-size:13px;cursor:pointer}.favorite-filter.active{background:var(--accent);color:#fff;border-color:var(--accent)}.item-actions{margin-left:auto;display:flex;align-items:center;gap:7px}.favorite-btn{border:0;background:transparent;color:#c5c9d2;font-size:18px;cursor:pointer;padding:2px 4px;line-height:1}.favorite-btn.active{color:#f5b942}.favorite-btn:hover{transform:scale(1.08)}.yesterday-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:var(--shadow)}.yesterday-title{font-weight:800;font-size:15px;margin-bottom:8px}.yesterday-list{display:flex;flex-wrap:wrap;gap:7px}.yesterday-item{font-size:12px;border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:6px 8px}.yesterday-empty{color:var(--muted);font-size:13px}.complete-banner{display:none;margin-top:12px;padding:13px;border-radius:13px;background:linear-gradient(135deg,#fff4c8,#f4edff);font-weight:800;text-align:center}.complete-banner.show{display:block}.dark .complete-banner{background:linear-gradient(135deg,#3a3420,#30283f)}.reminder-head{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}.reminder-toggle{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:9px;padding:5px 9px;font-size:12px;cursor:pointer}.reminder-body.closed{display:none}.reminder-arrow{color:var(--muted);margin-left:6px}.search-empty{text-align:center;color:var(--muted);padding:24px 10px}.favorite-empty{padding:10px 0;color:var(--muted);font-size:13px}.favorite-panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:0;margin-bottom:12px;box-shadow:var(--shadow)}.favorite-panel .section-head{padding:16px 18px}.favorite-panel .section-title{font-weight:800;font-size:18px}.favorite-panel .favorite-panel-arrow{font-size:18px;color:var(--muted);transition:.2s}.favorite-panel.closed .favorite-panel-arrow{transform:rotate(-90deg)}.favorite-panel-body{padding:0 12px 12px;max-height:330px;overflow-y:auto}.favorite-panel-title{font-weight:800;font-size:15px;margin-bottom:10px}.favorite-group{margin-top:8px}.favorite-group-title{font-size:12px;font-weight:800;padding:6px 9px;border-radius:8px;margin-bottom:5px}.favorite-group-title.pending{background:#fff1d6;color:#b45309}.favorite-group-title.finished{background:#edf8ef;color:#278244}.dark .favorite-group-title.pending{background:#44301a;color:#ffc966}.dark .favorite-group-title.finished{background:#203629;color:#8de0a6}.favorite-sync-list{display:flex;flex-wrap:wrap;gap:6px}.favorite-sync-item{display:inline-flex;align-items:center;gap:6px;width:auto;max-width:100%;padding:5px 8px;border:1px solid var(--line);background:var(--bg);border-radius:8px;cursor:pointer}.favorite-sync-item:hover{border-color:var(--accent);transform:translateY(-1px)}.favorite-sync-item.done{opacity:.72}.favorite-sync-box{width:15px;height:15px;border:1.5px solid #c7ccd6;border-radius:4px;display:grid;place-items:center;flex:none;font-size:9px;font-weight:900}.favorite-sync-item.done .favorite-sync-box{background:var(--accent);border-color:var(--accent);color:#fff}.favorite-sync-name{font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.favorite-sync-meta{font-size:9px;color:var(--muted);white-space:nowrap}.favorite-sync-item.done .favorite-sync-name{text-decoration:line-through;color:var(--muted)}@media(max-width:560px){body{padding:12px 8px 34px}.hero{padding:17px 14px;border-radius:15px}h1{font-size:21px}.controls{gap:6px}.control-btn{flex:1;padding:9px 7px}.search-row{display:grid;grid-template-columns:1fr}.search-input{min-width:0;width:100%;font-size:16px}.favorite-filter{width:100%}.section-head{padding:14px 12px}.section-title{font-size:15px}.section-head .summary{font-size:11px;margin-right:6px}.select-all-btn{padding:6px 7px;font-size:11px}.item{padding:12px 4px}.name{font-size:14px}.day{font-size:11px;flex-basis:58px}.favorite-btn{font-size:20px}.promo-wrap{margin-left:2px;margin-right:2px;padding:11px}.promo-text{font-size:12px;max-height:260px}.reminder-time{padding:5px 7px}.yesterday-card{border-radius:13px;padding:12px}}
 
 .note{text-align:center;color:var(--muted);font-size:12px;margin-top:16px;line-height:1.6}
-.guide-btn{border:1px solid #8ab4f8;background:#eef5ff;color:#2563c7;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:.18s}.guide-btn:hover{background:#dceaff;transform:translateY(-1px)}.notify-btn{border:1px solid #f2b84b;background:#fff6df;color:#a86400;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:800;cursor:pointer;transition:.18s}.notify-btn:hover{background:#ffedbf;transform:translateY(-1px)}.notify-btn.on{background:#f2a51a;color:#fff;border-color:#f2a51a}.dark .guide-btn{background:#1d2d49;color:#8ab9ff;border-color:#416fa8}.dark .guide-btn:hover{background:#243b60}.dark .notify-btn{background:#3b2d18;color:#ffc966;border-color:#9a6b20}.dark .notify-btn:hover{background:#4a381d}.dark .notify-btn.on{background:#d98d08;color:#fff;border-color:#d98d08}.analytics-row{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:12px;padding:10px 12px;border-radius:13px;background:var(--bg);font-size:13px;color:var(--muted)}.analytics-row strong{color:var(--text);font-weight:800}.analytics-sep{opacity:.45}.notify-toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(15px);background:var(--card);color:var(--text);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:14px;padding:12px 16px;font-size:14px;font-weight:700;opacity:0;pointer-events:none;transition:.2s;z-index:9999}.notify-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.guide-btn{border:1px solid #8ab4f8;background:#eef5ff;color:#2563c7;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:.18s}.guide-btn:hover{background:#dceaff;transform:translateY(-1px)}.official-btn{border:1px solid #65b982;background:#effaf2;color:#247744;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:.18s}.official-btn:hover{background:#ddf4e4;transform:translateY(-1px)}.dark .official-btn{background:#20392a;color:#8de0a6;border-color:#3e8054}.dark .official-btn:hover{background:#284a35}.notify-btn{border:1px solid #f2b84b;background:#fff6df;color:#a86400;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:800;cursor:pointer;transition:.18s}.notify-btn:hover{background:#ffedbf;transform:translateY(-1px)}.notify-btn.on{background:#f2a51a;color:#fff;border-color:#f2a51a}.dark .guide-btn{background:#1d2d49;color:#8ab9ff;border-color:#416fa8}.dark .guide-btn:hover{background:#243b60}.dark .notify-btn{background:#3b2d18;color:#ffc966;border-color:#9a6b20}.dark .notify-btn:hover{background:#4a381d}.dark .notify-btn.on{background:#d98d08;color:#fff;border-color:#d98d08}.analytics-row{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:12px;padding:10px 12px;border-radius:13px;background:var(--bg);font-size:13px;color:var(--muted)}.analytics-row strong{color:var(--text);font-weight:800}.analytics-sep{opacity:.45}.notify-toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(15px);background:var(--card);color:var(--text);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:14px;padding:12px 16px;font-size:14px;font-weight:700;opacity:0;pointer-events:none;transition:.2s;z-index:9999}.notify-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 @media(max-width:560px){.hero-top{align-items:center}.progress-row{grid-template-columns:1fr}.section-title{font-size:16px}}
+
+/* BOSS 清單：依參考圖採四分類切換、雙欄排列；保留原始 BOSS 與難易度圖片素材 */
+.boss-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:0 0 10px}
+.boss-tab{min-width:0;min-height:53px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--text);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:5px 3px;cursor:pointer;font:inherit}
+.boss-tab.active{border-color:#7b8cff;box-shadow:0 0 0 1px rgba(123,140,255,.16);background:var(--card)}
+.boss-tab-name{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:800;white-space:nowrap}
+.boss-tab-dot{width:11px;height:11px;border-radius:50%;border:1px solid rgba(0,0,0,.22);flex:none}
+.boss-tab-count{font-size:10px;color:var(--muted);line-height:1.2}
+.boss-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.item.boss-item{min-width:0;gap:7px;min-height:48px;padding:6px 7px;border:1px solid var(--line);border-radius:12px;background:var(--bg);cursor:pointer;overflow:hidden}
+.item.boss-item .box{width:20px;height:20px;border-radius:6px;flex:0 0 20px}
+.item.boss-item .boss-image{display:block;width:135px;height:30px;max-width:calc(100% - 80px);object-fit:contain;object-position:left center;flex:0 1 135px;min-width:0}
+.item.boss-item .boss-difficulty-image{display:block;width:46px;height:auto;max-height:13px;object-fit:contain;flex:0 0 46px;margin-left:auto}
+.item.boss-item .item-actions{margin-left:0;flex:0 0 18px;display:flex;align-items:center}
+.item.boss-item .favorite-btn{margin:0;padding:1px;font-size:16px;line-height:1}
+.item.boss-item.done .boss-image{opacity:.72}
+.boss-empty{grid-column:1/-1;padding:15px 8px;color:var(--muted);text-align:center;font-size:12px}
+@media(max-width:560px){.boss-grid{grid-template-columns:1fr}.boss-tab-name{font-size:12px}.item.boss-item .boss-image{max-width:calc(100% - 75px)}}
+
 </style>
 <script data-goatcounter="https://duoduovalley.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
@@ -105,6 +131,7 @@ body.dark .section.weekly-incomplete .section-head{background:#44301a}
     <div class="controls">
       <button class="control-btn" id="expandAll">⭐ 全部展開</button>
       <button class="control-btn" id="collapseAll">⭐ 全部收起</button>
+      <a class="official-btn" href="https://duoduovalley.github.io/duoduo-website/" target="_blank" rel="noopener noreferrer">🌐 官方網站</a>
       <a class="guide-btn" href="https://docs.google.com/document/d/13Ok02E9A_sS7LWrrFXw4S9jsPU6JWdTu6INpwuMlDdo/edit?tab=t.0#heading=h.abq713skdil9" target="_blank" rel="noopener">📖 遊玩指南</a>
       <button class="notify-btn" id="notifyBtn" type="button">🔔 開啟活動提醒</button>
     </div>
@@ -178,7 +205,6 @@ const sections = [
     ["露希妲（困難）", null, null, "", "🟠 高階"],
     ["威爾（普通）", null, null, "", "🟠 高階"],
     ["威爾（困難）", null, null, "", "🟠 高階"],
-    ["守護天使綠水靈（混沌）", null, null, "", "🟠 高階"],
     ["戴斯克（普通）", null, null, "", "🟠 高階"],
     ["戴斯克（混沌）", null, null, "", "🟠 高階"],
     ["頓凱爾（普通）", null, null, "", "🟠 高階"],
@@ -191,7 +217,8 @@ const sections = [
     ["林波（普通）", null, null, "", "🔴 終極"],
     ["巴德利斯（普通）", null, null, "", "🔴 終極"],
     ["最初的敵對者（普通）", null, null, "", "🔴 終極"],
-    ["凱伊（普通）", null, null, "", "🔴 終極"]
+    ["凱伊（普通）", null, null, "", "🔴 終極"],
+    ["守護天使綠水靈（混沌）", null, null, "", "🟠 高階"]
   ]],
   ["📆 每週任務", "weekly", [
     ["Roguelike 武陵道場"],
@@ -205,6 +232,89 @@ const sections = [
     ["燦爛的凶星（困難）"],["尤比太（普通）"],["尤比太（困難）"]
   ]]
 ];
+
+
+const BOSS_IMAGE_MAP = {
+    '凡雷恩': 'Boss/boss-00.png',
+    '尤比太': 'Boss/boss-01.png',
+    '巴德利斯': 'Boss/boss-02.png',
+    '比艾樂': 'Boss/boss-03.png',
+    '卡翁': 'Boss/boss-04.png',
+    '史烏': 'Boss/boss-05.png',
+    '守護天使綠水靈': 'Boss/boss-06.png',
+    '血腥皇后': 'Boss/boss-07.png',
+    '西格諾斯': 'Boss/boss-08.png',
+    '受選的賽蓮': 'Boss/boss-12.png',
+    '希拉': 'Boss/boss-10.png',
+    '貝倫': 'Boss/boss-11.png',
+    '咖凌': 'Boss/boss-13.png',
+    '拉圖斯': 'Boss/boss-14.png',
+    '林波': 'Boss/boss-15.png',
+    '阿卡伊農': 'Boss/boss-16.png',
+    '威爾': 'Boss/boss-17.png',
+    '真希拉': 'Boss/boss-18.png',
+    '粉豆': 'Boss/boss-19.png',
+    '梅格耐斯': 'Boss/boss-20.png',
+    '凱伊': 'Boss/boss-23.png',
+    '斑斑': 'Boss/boss-24.png',
+    '最初的敵對者': 'Boss/boss-26.png',
+    '森蘭丸': 'Boss/boss-27.png',
+    '黑魔法師': 'Boss/boss-28.png',
+    '頓凱爾': 'Boss/boss-29.png',
+    '瑪麗西亞': 'Boss/boss-30.png',
+    '監視者卡洛斯': 'Boss/boss-31.png',
+    '戴米安': 'Boss/boss-32.png',
+    '戴斯克': 'Boss/boss-33.png',
+    '燦爛的凶星': 'Boss/boss-34.png',
+    '露希妲': 'Boss/boss-36.png'
+  };
+const BOSS_DIFFICULTY_IMAGE_MAP = {
+    'HARD': 'Boss/boss-09.png',
+    'CHAOS': 'Boss/boss-21.png',
+    'EXTREME': 'Boss/boss-22.png',
+    'NORMAL': 'Boss/boss-25.png',
+    'EASY': 'Boss/boss-35.png'
+  };
+const BOSS_GROUP_LABELS = ["🔵 初階","🟢 中階","🟠 高階","🔴 終極"];
+const BOSS_GROUP_COLORS = {"🔵 初階":"#2196e8","🟢 中階":"#23b52d","🟠 高階":"#ff7900","🔴 終極":"#ed2445"};
+function getBossBaseName(name){
+  return name.replace(/[（(][^）)]*[）)]/g,"").replace(/^真‧希拉$/,"真希拉").trim();
+}
+function getBossDifficultyCode(name){
+  const m=name.match(/[（(]([^）)]+)[）)]/);
+  if(!m) return null;
+  return ({"簡單":"EASY","普通":"NORMAL","困難":"HARD","混沌":"CHAOS","終極":"EXTREME"})[m[1]]||null;
+}
+function getBossGroupForName(name){
+  const base=getBossBaseName(name);
+  const dailyBossSection=sections.find(s=>s[0]==="👑 每日 BOSS");
+  const matched=dailyBossSection?.[2]?.find(item=>getBossBaseName(item[0])===base);
+  if(matched) return matched[4]||"🔴 終極";
+  // 這些只出現在每週清單的 BOSS，沿用終局 BOSS 分類；既有每日分類不做改動。
+  return "🔴 終極";
+}
+function isBossTask(name){ return !!BOSS_IMAGE_MAP[getBossBaseName(name)] && !!getBossDifficultyCode(name); }
+function makeBossTabs(items,store,activeGroup,onSelect){
+  const tabs=document.createElement("div");tabs.className="boss-tabs";
+  // 只顯示此區塊實際有 BOSS 的分類；每日與每週各自依自己的資料決定。
+  BOSS_GROUP_LABELS.forEach(group=>{
+    const all=items.filter(x=>x.group===group);
+    if(!all.length) return;
+    const done=all.filter(x=>store[x.id]).length;
+    const tab=document.createElement("button");tab.type="button";tab.className="boss-tab"+(group===activeGroup?" active":"");
+    const color=BOSS_GROUP_COLORS[group];
+    tab.innerHTML=`<span class="boss-tab-name"><span class="boss-tab-dot" style="background:${color}"></span>${group.replace(/^[^ ]+ /,"")}</span><span class="boss-tab-count">${done} / ${all.length}</span>`;
+    tab.onclick=(e)=>{e.stopPropagation();onSelect(group);};tabs.appendChild(tab);
+  });
+  return tabs;
+}
+
+// 每日 BOSS 與每週 BOSS 的分類選擇分開保存，避免兩個區塊互相影響。
+const BOSS_ACTIVE_GROUP_KEYS = {daily:"dodogu_daily_boss_active_group",weekly:"dodogu_weekly_boss_active_group"};
+const bossActiveGroups = {
+  daily: localStorage.getItem("dodogu_daily_boss_active_group"),
+  weekly: localStorage.getItem("dodogu_weekly_boss_active_group")
+};
 
 const now = new Date();
 const weekdays = ["日","一","二","三","四","五","六"];
@@ -623,20 +733,34 @@ function render(){
       if(available) row.onclick=()=>{store[id]=!store[id];localStorage.setItem(storageKey,JSON.stringify(store));render();};
       return row;
     };
-
-    if(title==="👑 每日 BOSS") {
-      const groupOrder=["🔵 初階","🟢 中階","🟠 高階","🔴 終極"];
-      groupOrder.forEach(groupName=>{
-        const groupItems=visibleItems.filter(x=>x.group===groupName);
-        if(!groupItems.length) return;
-        const groupAll=items.filter(x=>x[4]===groupName);
-        const groupDone=groupAll.filter(x=>store[taskId(type,x[0])]).length;
-        const groupTitle=document.createElement("div");
-        groupTitle.className="boss-group-title";
-        groupTitle.innerHTML=`<span>${groupName}</span><span>${groupDone} / ${groupAll.length}</span>`;
-        body.appendChild(groupTitle);
-        groupItems.forEach(x=>body.appendChild(appendTaskRow(x)));
-      });
+    const appendBossTaskRow=(x)=>{
+      const checked=!!store[x.id],isFav=!!favorites[x.id],base=getBossBaseName(x.name),difficulty=getBossDifficultyCode(x.name);
+      const imgPath=BOSS_IMAGE_MAP[base],difficultyPath=BOSS_DIFFICULTY_IMAGE_MAP[difficulty];
+      const row=document.createElement("div");row.className="item boss-item"+(checked?" done":"");
+      row.innerHTML=`<div class="box">${checked?"✓":""}</div><img class="boss-image" src="${imgPath}" alt="${base}" title="${base}" loading="lazy"><img class="boss-difficulty-image" src="${difficultyPath}" alt="${difficulty}" title="${difficulty}" loading="lazy"><div class="item-actions"><button class="favorite-btn ${isFav?"active":""}" type="button" title="${isFav?"取消最愛":"加入最愛／置頂"}">${isFav?"★":"☆"}</button></div>`;
+      row.querySelector(".favorite-btn").onclick=(e)=>{e.stopPropagation();favorites[x.id]=!favorites[x.id];if(!favorites[x.id])delete favorites[x.id];localStorage.setItem("dodogu_checklist_favorites",JSON.stringify(favorites));render();};
+      row.onclick=()=>{store[x.id]=!store[x.id];localStorage.setItem(storageKey,JSON.stringify(store));render();};
+      return row;
+    };
+    if(title==="👑 每日 BOSS" || title==="📆 每週任務"){
+      const bossItems=visibleItems.filter(x=>isBossTask(x.name)).map(x=>({...x,group:x.group||getBossGroupForName(x.name)}));
+      const ordinaryItems=visibleItems.filter(x=>!isBossTask(x.name));
+      if(ordinaryItems.length) ordinaryItems.forEach(x=>body.appendChild(appendTaskRow(x)));
+      if(bossItems.length){
+        const allBossItems=items.filter(x=>isBossTask(x[0])).map(([name,daysText,days,dayStyle,group])=>({name,id:taskId(type,name),group:group||getBossGroupForName(name)}));
+        const availableGroups=BOSS_GROUP_LABELS.filter(group=>allBossItems.some(x=>x.group===group));
+        const activeGroupKey=BOSS_ACTIVE_GROUP_KEYS[type];
+        let activeGroup=bossActiveGroups[type]||localStorage.getItem(activeGroupKey);
+        // 每日與每週使用不同的選擇狀態；若記錄的分類在該區塊沒有項目，就切到第一個有資料的分類。
+        if(!availableGroups.includes(activeGroup)) activeGroup=availableGroups[0]||null;
+        body.appendChild(makeBossTabs(allBossItems,store,activeGroup,(group)=>{bossActiveGroups[type]=group;localStorage.setItem(activeGroupKey,group);render();}));
+        const grid=document.createElement("div");grid.className="boss-grid";
+        const filtered=bossItems.filter(x=>x.group===activeGroup);
+        if(filtered.length) filtered.forEach(x=>grid.appendChild(appendBossTaskRow(x)));
+        else if(!activeGroup){const empty=document.createElement("div");empty.className="boss-empty";empty.textContent="目前沒有符合條件的 BOSS";grid.appendChild(empty);}
+        else {const empty=document.createElement("div");empty.className="boss-empty";empty.textContent="此分類目前沒有符合條件的 BOSS";grid.appendChild(empty);}
+        body.appendChild(grid);
+      }
     } else {
       visibleItems.forEach(x=>body.appendChild(appendTaskRow(x)));
     }
