@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>多多谷ᵀᴹˢ｜每日 Checklist</title>
+<title>多多谷｜每日 Checklist</title>
 <style>
 *{box-sizing:border-box}
 :root{--bg:#f7f8fc;--card:#fff;--text:#30343b;--muted:#7b8290;--line:#eef0f4;--bar:#e9ecf2;--accent:#7b8cff;--disabled:.38;--shadow:0 5px 20px rgba(40,50,80,.07)}
@@ -15,6 +15,9 @@ body{margin:0;padding:24px 14px 48px;font-family:"Noto Sans TC","Microsoft Jheng
 .hero{padding:22px;margin-bottom:14px}
 .hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
 h1{margin:0 0 6px;font-size:26px}
+.brand-heading{display:flex;align-items:center;gap:10px;line-height:1.15}
+.brand-logo{display:block;width:104px;height:52px;object-fit:contain;flex:0 0 auto}
+@media(max-width:560px){.brand-logo{width:78px;height:39px}.brand-heading{gap:7px}.brand-heading span{font-size:23px}}
 .date{color:var(--muted);font-size:14px}
 .theme-btn{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:12px;padding:8px 11px;font-size:13px;cursor:pointer;white-space:nowrap}
 .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
@@ -32,8 +35,8 @@ h1{margin:0 0 6px;font-size:26px}
 .section{margin-bottom:12px;overflow:hidden}
 .section-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;cursor:pointer;user-select:none}
 .section-title{font-size:18px;font-weight:800}
-.arrow{font-size:18px;color:var(--muted);transition:.2s}
-.section.closed .arrow{transform:rotate(-90deg)}
+.arrow{display:inline-block;width:25px;height:13px;font-size:0;color:transparent;background:url("UI/展開.png") center/contain no-repeat;transition:opacity .18s ease;flex:0 0 25px}
+.section.closed .arrow{width:25px;height:13px;background-image:url("UI/收起.png");transform:none}
 .items{padding:0 12px 10px}
 .section.closed .items{display:none}\n.section-head + .items{padding-top:8px}
 
@@ -51,10 +54,19 @@ body.dark .section.weekly-incomplete .section-head{background:#44301a}
 .box{width:22px;height:22px;border:2px solid #c7ccd6;border-radius:7px;display:grid;place-items:center;flex:none;font-weight:900}
 .done .box{background:#32965b;border-color:#32965b;color:#fff}
 .done .name{text-decoration:line-through;color:#548363}
-.item.done:not(.boss-item){background:#edf8ef;border-radius:10px}
+.item.done:not(.boss-item){background:#edf8ef;border-radius:10px}.item.done .box{background: url("UI/任務完成.png") center/contain no-repeat;border-color:transparent;color:transparent}
+.item.just-completed{animation:task-complete-in .28s ease-out}
+.item.just-completed .box{animation:task-check-pop .3s cubic-bezier(.2,.8,.2,1)}
+.boss-item.done .box{background:url("UI/任務完成.png") center/contain no-repeat;border-color:transparent;color:transparent}
+.boss-item.just-completed{animation:task-complete-in .28s ease-out}
+@keyframes task-complete-in{0%{box-shadow:0 0 0 0 rgba(50,150,91,0)}45%{box-shadow:0 0 0 3px rgba(50,150,91,.18)}100%{box-shadow:inset 3px 0 0 #32965b}}
+@keyframes task-check-pop{0%{transform:scale(.72)}65%{transform:scale(1.14)}100%{transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){.item.just-completed,.item.just-completed .box,.boss-item.just-completed{animation:none}}
+.done .name{text-decoration:none;color:var(--text)}
+
 .item.boss-item.done{background:#e8f5eb;border:1px solid #78bd8c;box-shadow:inset 3px 0 0 #32965b}
 .item.boss-item.done .boss-image{filter:grayscale(.48);opacity:.72}
-.item.done:not(.boss-item) .task-ui-icon img{filter:grayscale(.48);opacity:.72;transition:filter .18s ease,opacity .18s ease}
+.item.done:not(.boss-item) .task-ui-icon img{filter:none;opacity:1;transition:filter .18s ease,opacity .18s ease}
 .item.boss-item.done .boss-difficulty-image{opacity:1}
 body.dark .item.done:not(.boss-item){background:#203629}
 body.dark .item.boss-item.done{background:#203629;border-color:#3e8054;box-shadow:inset 3px 0 0 #58b878}
@@ -99,7 +111,64 @@ body.dark .done .name{color:#9ad5a8}
 .yesterday-category-icon img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain}
 .yesterday-category-items{display:flex;flex-wrap:wrap;gap:5px}.yesterday-item-icon{width:16px;height:16px;flex:0 0 16px;display:inline-flex;align-items:center;justify-content:center;margin-right:4px}.yesterday-item-icon img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain}.yesterday-item-icon.facebook-ui-icon img{width:13px !important;height:13px !important;max-width:13px !important;max-height:13px !important;object-fit:contain}
 .yesterday-item{display:inline-flex;align-items:center;max-width:100%;font-size:12px;line-height:1.35;border:1px solid var(--line);background:var(--bg);border-radius:7px;padding:4px 7px;overflow-wrap:anywhere}
-@media(max-width:560px){.yesterday-list{grid-template-columns:minmax(0,1fr)}.yesterday-category-card{padding:8px}.yesterday-category-head{margin-bottom:6px}}.yesterday-empty{color:var(--muted);font-size:13px}.complete-banner{display:none;margin-top:12px;padding:13px;border-radius:13px;background:linear-gradient(135deg,#fff4c8,#f4edff);font-weight:800;text-align:center}.complete-banner.show{display:block}.dark .complete-banner{background:linear-gradient(135deg,#3a3420,#30283f)}.reminder-head{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}.reminder-toggle{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:9px;padding:5px 9px;font-size:12px;cursor:pointer}.reminder-body.closed{display:none}.reminder-arrow{color:var(--muted);margin-left:6px}.search-empty{text-align:center;color:var(--muted);padding:24px 10px}.favorite-empty{padding:10px 0;color:var(--muted);font-size:13px}.favorite-panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:0;margin-bottom:12px;box-shadow:var(--shadow)}.favorite-panel .section-head{padding:16px 18px}.favorite-panel .section-title{font-weight:800;font-size:18px}.favorite-panel .favorite-panel-arrow{font-size:18px;color:var(--muted);transition:.2s}.favorite-panel.closed .favorite-panel-arrow{transform:rotate(-90deg)}.favorite-panel-body{padding:0 12px 12px;max-height:330px;overflow-y:auto}.favorite-panel-title{font-weight:800;font-size:15px;margin-bottom:10px}.favorite-group{margin-top:8px}.favorite-group-title{font-size:12px;font-weight:800;padding:6px 9px;border-radius:8px;margin-bottom:5px}.favorite-group-title.pending{background:#fff1d6;color:#b45309}.favorite-group-title.finished{background:#edf8ef;color:#278244}.dark .favorite-group-title.pending{background:#44301a;color:#ffc966}.dark .favorite-group-title.finished{background:#203629;color:#8de0a6}.favorite-sync-list{display:flex;flex-wrap:wrap;gap:6px}.favorite-sync-item{display:inline-flex;align-items:center;gap:6px;width:auto;max-width:100%;padding:5px 8px;border:1px solid var(--line);background:var(--bg);border-radius:8px;cursor:pointer}.favorite-sync-icon{width:18px;height:18px;flex:0 0 18px;display:inline-flex;align-items:center;justify-content:center;overflow:hidden}.favorite-sync-icon img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain}.favorite-sync-icon.facebook-ui-icon img{width:14px !important;height:14px !important;max-width:14px !important;max-height:14px !important;object-fit:contain}.favorite-sync-item:hover{border-color:var(--accent);transform:translateY(-1px)}.favorite-sync-item.done{opacity:.72}.favorite-sync-box{width:15px;height:15px;border:1.5px solid #c7ccd6;border-radius:4px;display:grid;place-items:center;flex:none;font-size:9px;font-weight:900}.favorite-sync-item.done .favorite-sync-box{background:var(--accent);border-color:var(--accent);color:#fff}.favorite-sync-name{font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.favorite-sync-meta{font-size:9px;color:var(--muted);white-space:nowrap}.favorite-sync-item.done .favorite-sync-name{text-decoration:line-through;color:var(--muted)}@media(max-width:560px){body{padding:12px 8px 34px}.hero{padding:17px 14px;border-radius:15px}h1{font-size:21px}.controls{gap:6px}.control-btn{flex:1;padding:9px 7px}.search-row{display:grid;grid-template-columns:1fr}.search-input{min-width:0;width:100%;font-size:16px}.favorite-filter{width:100%}.section-head{padding:14px 12px}.section-title{font-size:15px}.section-head .summary{font-size:11px;margin-right:6px}.select-all-btn{padding:6px 7px;font-size:11px}.item{padding:12px 4px}.name{font-size:14px}.day{font-size:11px;flex-basis:58px}.favorite-btn{font-size:20px}.promo-wrap{margin-left:2px;margin-right:2px;padding:11px}.promo-text{font-size:12px;max-height:260px}.reminder-time{padding:5px 7px}.yesterday-card{border-radius:13px;padding:12px}}
+@media(max-width:560px){.yesterday-list{grid-template-columns:minmax(0,1fr)}.yesterday-category-card{padding:8px}.yesterday-category-head{margin-bottom:6px}}.yesterday-empty{color:var(--muted);font-size:13px}.complete-banner{display:none;margin-top:12px;padding:13px;border-radius:13px;background:linear-gradient(135deg,#fff4c8,#f4edff);font-weight:800;text-align:center}.complete-banner.show{display:block}.dark .complete-banner{background:linear-gradient(135deg,#3a3420,#30283f)}.reminder-head{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}.reminder-toggle{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:9px;padding:5px 9px;font-size:12px;cursor:pointer}.reminder-body.closed{display:none}.reminder-arrow{color:var(--muted);margin-left:6px}.search-empty{text-align:center;color:var(--muted);padding:24px 10px}.favorite-empty{padding:10px 0;color:var(--muted);font-size:13px}.favorite-panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:0;margin-bottom:12px;box-shadow:var(--shadow)}.favorite-panel .section-head{padding:16px 18px}.favorite-panel .section-title{font-weight:800;font-size:18px}.favorite-panel .favorite-panel-arrow{display:inline-block;width:25px;height:13px;flex:0 0 25px;font-size:0!important;color:transparent!important;background:url("UI/展開.png") center/contain no-repeat;transition:opacity .18s ease;transform:none!important}.favorite-panel.closed .favorite-panel-arrow{background-image:url("UI/收起.png");transform:none!important}.favorite-panel-body{padding:0 12px 12px;max-height:330px;overflow-y:auto}.favorite-panel-title{font-weight:800;font-size:15px;margin-bottom:10px}.favorite-group{margin-top:8px}.favorite-group-title{font-size:12px;font-weight:800;padding:6px 9px;border-radius:8px;margin-bottom:5px}.favorite-group-title.pending{background:#fff1d6;color:#b45309}.favorite-group-title.finished{background:#edf8ef;color:#278244}.dark .favorite-group-title.pending{background:#44301a;color:#ffc966}.dark .favorite-group-title.finished{background:#203629;color:#8de0a6}.favorite-sync-list{display:flex;flex-wrap:wrap;gap:6px}.favorite-sync-item{display:inline-flex;align-items:center;gap:6px;width:auto;max-width:100%;padding:5px 8px;border:1px solid var(--line);background:var(--bg);border-radius:8px;cursor:pointer}.favorite-sync-icon{width:18px;height:18px;flex:0 0 18px;display:inline-flex;align-items:center;justify-content:center;overflow:hidden}.favorite-sync-icon img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain}.favorite-sync-icon.facebook-ui-icon img{width:14px !important;height:14px !important;max-width:14px !important;max-height:14px !important;object-fit:contain}.favorite-sync-item:hover{border-color:var(--accent);transform:translateY(-1px)}.favorite-sync-item.done{opacity:.72}.favorite-sync-box{width:15px;height:15px;border:1.5px solid #c7ccd6;border-radius:4px;display:grid;place-items:center;flex:none;font-size:9px;font-weight:900}.favorite-sync-item.done .favorite-sync-box{background:var(--accent);border-color:var(--accent);color:#fff}.favorite-sync-name{font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.favorite-sync-meta{font-size:9px;color:var(--muted);white-space:nowrap}.favorite-sync-item.done .favorite-sync-name{text-decoration:line-through;color:var(--muted)}@media(max-width:560px){body{padding:12px 8px 34px}.hero{padding:17px 14px;border-radius:15px}h1{font-size:21px}.controls{gap:6px}.control-btn{flex:1;padding:9px 7px}.search-row{display:grid;grid-template-columns:1fr}.search-input{min-width:0;width:100%;font-size:16px}.favorite-filter{width:100%}.section-head{padding:14px 12px}.section-title{font-size:15px}.section-head .summary{font-size:11px;margin-right:6px}.select-all-btn{padding:6px 7px;font-size:11px}.item{padding:12px 4px}.name{font-size:14px}.day{font-size:11px;flex-basis:58px}.favorite-btn{font-size:20px}.promo-wrap{margin-left:2px;margin-right:2px;padding:11px}.promo-text{font-size:12px;max-height:260px}.reminder-time{padding:5px 7px}.yesterday-card{border-radius:13px;padding:12px}}
+
+
+/* 今日冒險：任務清單之外的每日互動與永久成長 */
+.adventure-card{margin-top:12px;margin-bottom:12px;padding:14px;border:1px solid #d8c58b;border-radius:15px;background:linear-gradient(135deg,rgba(246,190,66,.13),rgba(123,140,255,.07));box-shadow:var(--shadow);overflow:hidden}
+body.dark .adventure-card{border-color:#65502b;background:linear-gradient(135deg,rgba(217,141,8,.13),rgba(143,156,255,.07))}
+.adventure-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.adventure-brand{display:flex;align-items:center;gap:10px;min-width:0}
+.adventure-spark{display:grid;place-items:center;width:38px;height:38px;flex:0 0 38px;border-radius:12px;background:linear-gradient(135deg,#f8c64e,#ef9826);color:#3b2a08;font-size:24px;box-shadow:0 3px 10px rgba(220,150,30,.22)}
+.adventure-title{font-size:17px;font-weight:900;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.adventure-kicker{font-size:9px;letter-spacing:1px;color:var(--muted);font-weight:800}
+.adventure-subtitle{font-size:11px;color:var(--muted);margin-top:2px}
+.adventure-collapse{border:0;background:transparent url("UI/展開.png") center/25px 13px no-repeat;color:transparent;border-radius:9px;padding:8px 14px;font-size:0;cursor:pointer;white-space:nowrap;min-width:32px;min-height:30px}.adventure-card.collapsed .adventure-collapse{background-image:url("UI/收起.png")}
+.adventure-content{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:10px}
+.adventure-event,.adventure-challenge,.adventure-profile,.adventure-achievements{min-width:0;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:12px}
+.adventure-event{background:linear-gradient(120deg,rgba(255,198,72,.13),var(--card) 75%)}
+body.dark .adventure-event{background:linear-gradient(120deg,rgba(217,141,8,.12),var(--card) 75%)}
+.adventure-label{font-size:10px;font-weight:900;letter-spacing:.4px;color:var(--muted);margin-bottom:7px}
+.adventure-event-title{font-size:15px;font-weight:900;margin-bottom:5px}
+.adventure-event-desc{font-size:12px;line-height:1.55;color:var(--muted)}
+.adventure-challenge{display:flex;flex-direction:column;gap:7px}
+.adventure-challenge-title{font-size:14px;font-weight:900}
+.adventure-challenge-desc{font-size:12px;color:var(--muted);line-height:1.45}
+.adventure-challenge-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11px;font-weight:800}
+.adventure-challenge-bar,.adventure-level-bar{height:7px;border-radius:99px;background:var(--bar);overflow:hidden}
+.adventure-challenge-fill{height:100%;width:0;background:linear-gradient(90deg,#e5a323,#f3c85b);border-radius:99px;transition:width .3s ease}
+.adventure-reward{font-size:11px;color:#b77913;font-weight:800}
+body.dark .adventure-reward{color:#ffd06b}
+.adventure-done-pill{display:inline-flex;align-items:center;gap:4px;align-self:flex-start;padding:4px 7px;border-radius:7px;background:#e7f6eb;color:#217b40;font-size:11px;font-weight:900}
+body.dark .adventure-done-pill{background:#203629;color:#8de0a6}
+.adventure-profile{grid-column:1 / -1;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px}
+.adventure-level-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.adventure-level-badge{display:inline-flex;align-items:center;gap:5px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:5px 8px;font-size:12px;font-weight:900}
+.adventure-level-title{font-size:13px;font-weight:900}
+.adventure-xp-text{font-size:11px;color:var(--muted);margin-top:5px}
+.adventure-level-bar{margin-top:7px}
+.adventure-level-fill{height:100%;width:0;background:linear-gradient(90deg,#7b8cff,#a78bfa);border-radius:99px;transition:width .3s ease}
+.adventure-achievement-toggle{border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:9px;padding:8px 10px;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap}
+.adventure-achievement-toggle::after{content:"";display:inline-block;width:25px;height:13px;margin-left:8px;vertical-align:middle;background:url("UI/收起.png") center/contain no-repeat}.adventure-achievement-toggle.is-open::after{background-image:url("UI/展開.png")}
+.adventure-achievements{grid-column:1 / -1}
+.adventure-achievements[hidden]{display:none}
+.adventure-achievement-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.adventure-achievement{display:grid;grid-template-columns:34px minmax(0,1fr);gap:8px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:8px;background:var(--bg);min-width:0}
+.adventure-achievement.unlocked{border-color:#d7b75c;background:linear-gradient(120deg,rgba(246,190,66,.12),var(--bg))}
+body.dark .adventure-achievement.unlocked{border-color:#7d622b;background:linear-gradient(120deg,rgba(217,141,8,.13),var(--bg))}
+.adventure-achievement-icon{width:34px;height:34px;display:grid;place-items:center;border-radius:9px;background:var(--card);font-size:19px}
+.adventure-achievement-name{font-size:11px;font-weight:900;overflow-wrap:anywhere}
+.adventure-achievement-desc{font-size:10px;color:var(--muted);margin-top:2px;line-height:1.35}
+.adventure-achievement-state{font-size:10px;font-weight:800;margin-top:4px;color:var(--muted)}
+.adventure-achievement.unlocked .adventure-achievement-state{color:#23824a}
+body.dark .adventure-achievement.unlocked .adventure-achievement-state{color:#8de0a6}
+.adventure-achievement-mini-bar{height:4px;border-radius:99px;background:var(--bar);overflow:hidden;margin-top:5px}
+.adventure-achievement-mini-fill{height:100%;background:#e5a323;border-radius:99px}
+.adventure-card.adventure-celebrate{animation:adventureCelebrate 1.1s ease}
+@keyframes adventureCelebrate{0%{box-shadow:var(--shadow)}35%{box-shadow:0 0 0 3px rgba(229,163,35,.28),0 0 24px rgba(229,163,35,.28)}100%{box-shadow:var(--shadow)}}
+.adventure-card.collapsed .adventure-content{display:none}
+.adventure-card.collapsed .adventure-head{margin-bottom:0}
+@media(max-width:560px){.adventure-card{padding:11px}.adventure-content{grid-template-columns:minmax(0,1fr)}.adventure-profile{grid-column:auto;grid-template-columns:minmax(0,1fr)}.adventure-achievements{grid-column:auto}.adventure-achievement-grid{grid-template-columns:minmax(0,1fr)}.adventure-title{font-size:16px}.adventure-event,.adventure-challenge,.adventure-profile,.adventure-achievements{padding:10px}.adventure-achievement-toggle{width:100%}}
 
 .note{text-align:center;color:var(--muted);font-size:12px;margin-top:16px;line-height:1.6}
 .guide-btn{border:1px solid #8ab4f8;background:#eef5ff;color:#2563c7;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:.18s}.guide-btn:hover{background:#dceaff;transform:translateY(-1px)}.official-btn{border:1px solid #65b982;background:#effaf2;color:#247744;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:.18s}.official-btn:hover{background:#ddf4e4;transform:translateY(-1px)}.dark .official-btn{background:#20392a;color:#8de0a6;border-color:#3e8054}.dark .official-btn:hover{background:#284a35}.notify-btn{border:1px solid #f2b84b;background:#fff6df;color:#a86400;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:800;cursor:pointer;transition:.18s}.notify-btn:hover{background:#ffedbf;transform:translateY(-1px)}.notify-btn.on{background:#f2a51a;color:#fff;border-color:#f2a51a}.dark .guide-btn{background:#1d2d49;color:#8ab9ff;border-color:#416fa8}.dark .guide-btn:hover{background:#243b60}.dark .notify-btn{background:#3b2d18;color:#ffc966;border-color:#9a6b20}.dark .notify-btn:hover{background:#4a381d}.dark .notify-btn.on{background:#d98d08;color:#fff;border-color:#d98d08}.analytics-row{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:12px;padding:10px 12px;border-radius:13px;background:var(--bg);font-size:13px;color:var(--muted)}.analytics-row strong{color:var(--text);font-weight:800}.analytics-sep{opacity:.45}.notify-toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(15px);background:var(--card);color:var(--text);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:14px;padding:12px 16px;font-size:14px;font-weight:700;opacity:0;pointer-events:none;transition:.2s;z-index:9999}.notify-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -124,6 +193,24 @@ body.dark .done .name{color:#9ad5a8}
 .boss-empty{grid-column:1/-1;padding:15px 8px;color:var(--muted);text-align:center;font-size:12px}
 @media(max-width:560px){.boss-grid{grid-template-columns:1fr}.boss-tab-name{font-size:12px}.item.boss-item .boss-image{max-width:calc(100% - 75px)}}
 
+
+/* Checklist category hierarchy refresh: preserve existing content and compact accordion behavior. */
+.category-card{overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow);}
+.category-card .section-head{position:relative;gap:12px;min-height:66px;padding:12px 16px 12px 18px;background:linear-gradient(100deg,var(--category-tint,#f5f7fb),var(--card) 68%);border-left:5px solid var(--category-accent,#6b7c93);}
+.category-card .section-title{display:flex;align-items:center;gap:9px;}
+.category-card .section-head::after{content:attr(data-category-number);display:none;}
+.category-card[data-category="每日推廣"]{--category-accent:#2da879;--category-tint:#edf9f2}
+.category-card[data-category="組隊任務"]{--category-accent:#3988e8;--category-tint:#eef6ff}
+.category-card[data-category="委託任務"]{--category-accent:#8a63df;--category-tint:#f5f0ff}
+.category-card[data-category="檔期活動"]{--category-accent:#ef8737;--category-tint:#fff5eb}
+.category-card[data-category="獎勵列表"]{--category-accent:#e3a321;--category-tint:#fff9e8}
+.category-card[data-category="每日 BOSS"],.category-card[data-category="每日BOSS"]{--category-accent:#e84e54;--category-tint:#fff0f1}
+.category-card[data-category="每週任務"]{--category-accent:#5367cf;--category-tint:#f0f2ff}
+.category-card .section-head .summary{margin-left:auto;white-space:nowrap}
+.category-card .items{padding:10px 12px 12px}
+body.dark .category-card .section-head{background:linear-gradient(100deg,color-mix(in srgb,var(--category-accent) 16%,var(--card)),var(--card) 72%)}
+@media(max-width:600px){.category-card .section-head{min-height:58px;padding:10px 11px}.category-card .items{padding:8px}.category-card .section-title{font-size:16px}}
+
 </style>
 <script data-goatcounter="https://duoduovalley.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
@@ -132,7 +219,7 @@ body.dark .done .name{color:#9ad5a8}
   <div class="hero">
     <div class="hero-top">
       <div>
-        <h1>🍀 多多谷ᵀᴹˢ｜每日 Checklist</h1>
+        <h1 class="brand-heading"><img class="brand-logo" src="UI/多多谷Logo.png" alt="多多谷"> <span>每日 Checklist</span></h1>
         <div class="date" id="today"></div>
       </div>
       <button class="theme-btn" id="themeBtn">🌙 深色模式</button>
@@ -161,6 +248,13 @@ body.dark .done .name{color:#9ad5a8}
       </div>
     </div>
     <div class="remaining" id="remaining"></div>
+    <section class="adventure-card" id="adventureCard" aria-label="今日冒險">
+      <div class="adventure-head">
+        <div class="adventure-brand"><span class="adventure-spark">✦</span><div><div class="adventure-title">今日冒險 <span class="adventure-kicker">DAILY ADVENTURE</span></div><div class="adventure-subtitle">每天完成任務，累積你的冒險歷程</div></div></div>
+        <button class="adventure-collapse" id="adventureCollapse" type="button" aria-label="展開或收起今日冒險"></button>
+      </div>
+      <div class="adventure-content" id="adventureContent"></div>
+    </section>
     <div class="complete-banner" id="completeBanner">🎉 今日任務全部完成！今天也辛苦啦 🍀</div>
     <div class="reset">📅 每日任務每日 00:00 重置　｜　每週任務每週一 00:00 重置</div>
     <div class="analytics-row" id="analyticsRow" title="由 GoatCounter 提供網站瀏覽統計">👀 瀏覽統計　<span>今日 <strong id="todayVisitors">—</strong></span><span class="analytics-sep">｜</span><span>累計 <strong id="totalVisitors">—</strong></span></div>
@@ -171,6 +265,7 @@ body.dark .done .name{color:#9ad5a8}
 </div>
 
 <script>
+let pendingCompletionAnimationId = null;
 const UI_ICON_MAP = {
   "Facebook": "facebook.PNG",
   "Discord": "discord、五星好評.PNG",
@@ -539,6 +634,187 @@ function migrateV38Storage(){
 }
 migrateV38Storage();
 
+
+// 🍀 今日冒險：每日事件、挑戰、永久冒險經驗與成就（僅保存在目前瀏覽器）
+const ADVENTURE_PROFILE_KEY = "dodogu_adventure_profile_v1";
+const ADVENTURE_CHALLENGES = [
+  {event:"冒險者集結",eventDesc:"今天適合踏出熟悉的路線，完成幾項任務累積冒險經驗。",title:"完成 5 項每日任務",desc:"任意完成 5 項今天可進行的每日任務。",kind:"daily",target:5,icon:"🧭"},
+  {event:"BOSS 觀測日",eventDesc:"整理今日的挑戰清單，向強敵踏出一步。",title:"完成 3 個每日 BOSS",desc:"在每日 BOSS 分類完成任意 3 個 BOSS。",kind:"boss",target:3,icon:"👑"},
+  {event:"委託日誌",eventDesc:"小小委託也能累積成大冒險，今天來整理委託吧。",title:"完成 2 項委託任務",desc:"完成「委託任務」分類中的任意 2 項。",kind:"section",section:"委託任務",target:2,icon:"📜"},
+  {event:"獎勵巡禮",eventDesc:"別忘了簽到與福利，讓今天的冒險收穫更完整。",title:"完成 3 項獎勵選項",desc:"完成「獎勵列表」中的任意 3 項。",kind:"section",section:"獎勵列表",target:3,icon:"🎁"},
+  {event:"組隊集結",eventDesc:"今天召集夥伴、完成幾項組隊內容，為冒險加點進度。",title:"完成 2 項組隊任務",desc:"完成「組隊任務」分類中的任意 2 項可用任務。",kind:"section",section:"組隊任務",target:2,icon:"🤝"},
+  {event:"跨界探索",eventDesc:"跨出單一類別，今天也試著探索不同玩法。",title:"完成 1 項每週任務",desc:"在每週任務中完成任意 1 項挑戰。",kind:"weekly",target:1,icon:"🌌"},
+  {event:"全能冒險家",eventDesc:"今日目標不必一次完成，按自己的節奏累積就好。",title:"完成 8 項每日任務",desc:"任意完成 8 項今天可進行的每日任務。",kind:"daily",target:8,icon:"✨"}
+];
+const ADVENTURE_ACHIEVEMENTS = [
+  {id:"first_step",name:"初次出發",desc:"首次完成一項任務",icon:"🧭",target:1,metric:"totalCompletions"},
+  {id:"task_50",name:"任務新星",desc:"累計完成 50 項任務",icon:"⭐",target:50,metric:"totalCompletions"},
+  {id:"task_200",name:"百項達人",desc:"累計完成 200 項任務",icon:"🏅",target:200,metric:"totalCompletions"},
+  {id:"boss_10",name:"BOSS 初獵",desc:"累計完成 10 次 BOSS 挑戰",icon:"⚔️",target:10,metric:"bossCompletions"},
+  {id:"boss_50",name:"BOSS 征服者",desc:"累計完成 50 次 BOSS 挑戰",icon:"👑",target:50,metric:"bossCompletions"},
+  {id:"active_7",name:"堅持冒險",desc:"在 7 個不同日期完成過任務",icon:"🔥",target:7,metric:"activeDays"},
+  {id:"challenge_7",name:"挑戰收藏家",desc:"完成 7 次每日冒險挑戰",icon:"🗺️",target:7,metric:"challengeCompletions"},
+  {id:"perfect_day",name:"每日制霸",desc:"完成某一天所有可用每日任務",icon:"🍀",target:1,metric:"perfectDays"}
+];
+function loadAdventureProfile(){
+  const defaults={xp:0,totalCompletions:0,bossCompletions:0,activeDays:{},perfectDays:{},rewardedTasks:{},claimedChallenges:{},challengeCompletions:0,unlockedAchievements:{}};
+  try{
+    const saved=JSON.parse(localStorage.getItem(ADVENTURE_PROFILE_KEY)||"{}");
+    return {...defaults,...saved,
+      activeDays:saved.activeDays||{},perfectDays:saved.perfectDays||{},rewardedTasks:saved.rewardedTasks||{},
+      claimedChallenges:saved.claimedChallenges||{},unlockedAchievements:saved.unlockedAchievements||{}};
+  }catch(e){return defaults;}
+}
+let adventureProfile=loadAdventureProfile();
+function saveAdventureProfile(){localStorage.setItem(ADVENTURE_PROFILE_KEY,JSON.stringify(adventureProfile));}
+function recordAdventureTaskCompletion(type,id){
+  const period=type==="weekly"?"w:"+weekKey:"d:"+todayKey;
+  if(!Array.isArray(adventureProfile.rewardedTasks[period])) adventureProfile.rewardedTasks[period]=[];
+  if(adventureProfile.rewardedTasks[period].includes(id)) return;
+  adventureProfile.rewardedTasks[period].push(id);
+  adventureProfile.totalCompletions+=1;
+  adventureProfile.xp+=1;
+  const name=String(id).split("::").slice(1).join("::");
+  if(isBossTask(name)) adventureProfile.bossCompletions+=1;
+  adventureProfile.activeDays[todayKey]=true;
+  // 限制去重紀錄大小；永久累計數不會因此減少。
+  Object.keys(adventureProfile.rewardedTasks).forEach(key=>{
+    const parts=key.split(":");
+    const stamp=parts.slice(1).join(":");
+    const date=Date.parse(stamp+"T00:00:00");
+    const age=(Date.now()-date)/86400000;
+    if(Number.isFinite(date)&&((parts[0]==="d"&&age>45)||(parts[0]==="w"&&age>210))) delete adventureProfile.rewardedTasks[key];
+  });
+  saveAdventureProfile();
+}
+function adventureLevelForXP(xp){
+  let level=1;
+  while(level<100 && xp>=30*level*(level+1)/2) level++;
+  const currentFloor=30*(level-1)*level/2;
+  const nextFloor=30*level*(level+1)/2;
+  const names=["","初出茅廬","任務新手","冒險學徒","任務達人","BOSS 獵手","冒險專家","傳奇冒險者","多多英雄","傳說冒險者","永恆探索者"];
+  return {level,title:names[level]||"傳奇冒險者",currentFloor,nextFloor,progress:Math.max(0,Math.min(100,(xp-currentFloor)/(nextFloor-currentFloor)*100))};
+}
+function getTodayAdventureChallenge(){
+  const dayIndex=Math.floor(Date.parse(todayKey+"T00:00:00Z")/86400000);
+  const challenge=ADVENTURE_CHALLENGES[((dayIndex%ADVENTURE_CHALLENGES.length)+ADVENTURE_CHALLENGES.length)%ADVENTURE_CHALLENGES.length];
+  let progress=0;
+  sections.forEach(([title,type,items])=>{
+    const store=type==="weekly"?weekly:daily;
+    items.forEach(([name,daysText,days])=>{
+      const available=type==="weekly"||!days||days.includes(now.getDay());
+      if(!available||!store[taskId(type,name)]) return;
+      if(challenge.kind==="daily"&&type==="daily") progress++;
+      else if(challenge.kind==="weekly"&&type==="weekly") progress++;
+      else if(challenge.kind==="boss"&&title==="每日 BOSS") progress++;
+      else if(challenge.kind==="section"&&title===challenge.section) progress++;
+    });
+  });
+  return {...challenge,progress:Math.min(progress,challenge.target),rawProgress:progress,done:progress>=challenge.target};
+}
+function adventureMetricValue(metric){
+  if(metric==="activeDays") return Object.keys(adventureProfile.activeDays).length;
+  if(metric==="perfectDays") return Object.keys(adventureProfile.perfectDays).length;
+  return Number(adventureProfile[metric]||0);
+}
+function updateAdventureAchievements(){
+  const newlyUnlocked=[];
+  ADVENTURE_ACHIEVEMENTS.forEach(a=>{
+    if(adventureMetricValue(a.metric)>=a.target&&!adventureProfile.unlockedAchievements[a.id]){
+      adventureProfile.unlockedAchievements[a.id]=todayKey;
+      newlyUnlocked.push(a);
+    }
+  });
+  if(newlyUnlocked.length) saveAdventureProfile();
+  return newlyUnlocked;
+}
+function renderAdventure(dailyDone,dailyTotal){
+  const card=document.getElementById("adventureCard");
+  const content=document.getElementById("adventureContent");
+  if(!card||!content)return;
+  const challenge=getTodayAdventureChallenge();
+  let challengeJustClaimed=false;
+  if(challenge.done&&!adventureProfile.claimedChallenges[todayKey]){
+    adventureProfile.claimedChallenges[todayKey]=true;
+    adventureProfile.challengeCompletions+=1;
+    adventureProfile.xp+=10;
+    challengeJustClaimed=true;
+    saveAdventureProfile();
+  }
+  if(dailyTotal>0&&dailyDone===dailyTotal&&!adventureProfile.perfectDays[todayKey]){
+    adventureProfile.perfectDays[todayKey]=true;
+    saveAdventureProfile();
+  }
+  const newlyUnlocked=updateAdventureAchievements();
+  const level=adventureLevelForXP(adventureProfile.xp);
+  const achievementOpen=localStorage.getItem("dodogu_adventure_achievements_open")==="1";
+  const collapsed=localStorage.getItem("dodogu_adventure_collapsed")==="1";
+  card.classList.toggle("collapsed",collapsed);
+  const collapseBtn=document.getElementById("adventureCollapse");
+  if(collapseBtn) collapseBtn.textContent=collapsed?"展開":"收起";
+  content.innerHTML=`
+    <div class="adventure-event">
+      <div class="adventure-label">🌟 今日事件 · ${todayKey.replace(/-/g," / ")}</div>
+      <div class="adventure-event-title">${challenge.icon} ${challenge.event}</div>
+      <div class="adventure-event-desc">${challenge.eventDesc}</div>
+    </div>
+    <div class="adventure-challenge">
+      <div class="adventure-label">🎯 今日小挑戰</div>
+      <div class="adventure-challenge-title">${challenge.title}</div>
+      <div class="adventure-challenge-desc">${challenge.desc}</div>
+      <div class="adventure-challenge-meta"><span>挑戰進度</span><span>${challenge.progress} / ${challenge.target}</span></div>
+      <div class="adventure-challenge-bar"><div class="adventure-challenge-fill" style="width:${challenge.done?100:challenge.progress/challenge.target*100}%"></div></div>
+      ${challenge.done?'<span class="adventure-done-pill">✓ 今日挑戰完成</span>':'<div class="adventure-reward">🏅 完成可獲得 +10 冒險經驗</div>'}
+    </div>
+    <div class="adventure-profile">
+      <div>
+        <div class="adventure-level-row"><span class="adventure-level-badge">🍀 冒險 Lv.${level.level}</span><span class="adventure-level-title">${level.title}</span></div>
+        <div class="adventure-xp-text">累積 ${adventureProfile.xp} XP · 下一級還需 ${Math.max(0,level.nextFloor-adventureProfile.xp)} XP</div>
+        <div class="adventure-level-bar"><div class="adventure-level-fill" style="width:${level.progress}%"></div></div>
+      </div>
+      <button class="adventure-achievement-toggle ${achievementOpen?"is-open":""}" id="adventureAchievementToggle" type="button">🏅 ${achievementOpen?"收起成就":"我的成就"} (${Object.keys(adventureProfile.unlockedAchievements).length}/${ADVENTURE_ACHIEVEMENTS.length})</button>
+    </div>
+    <div class="adventure-achievements" id="adventureAchievements" ${achievementOpen?"":"hidden"}>
+      <div class="adventure-label">🏆 冒險者成就收藏館</div>
+      <div class="adventure-achievement-grid">
+        ${ADVENTURE_ACHIEVEMENTS.map(a=>{
+          const value=adventureMetricValue(a.metric),done=value>=a.target,percent=Math.max(0,Math.min(100,value/a.target*100));
+          return `<div class="adventure-achievement ${done?"unlocked":""}">
+            <div class="adventure-achievement-icon">${done?a.icon:"🔒"}</div>
+            <div><div class="adventure-achievement-name">${a.name}</div><div class="adventure-achievement-desc">${a.desc}</div>
+            <div class="adventure-achievement-state">${done?"✓ 已解鎖":`${Math.min(value,a.target)} / ${a.target}`}</div>
+            <div class="adventure-achievement-mini-bar"><div class="adventure-achievement-mini-fill" style="width:${percent}%"></div></div></div>
+          </div>`;
+        }).join("")}
+      </div>
+    </div>`;
+  const adventureCollapseButton=document.getElementById("adventureCollapse");
+  if(adventureCollapseButton) adventureCollapseButton.onclick=()=>{
+    const next=!card.classList.contains("collapsed");
+    localStorage.setItem("dodogu_adventure_collapsed",next?"1":"0");
+    card.classList.toggle("collapsed",next);
+    adventureCollapseButton.textContent=next?"展開":"收起";
+  };
+  document.getElementById("adventureAchievementToggle")?.addEventListener("click",()=>{
+    const next=localStorage.getItem("dodogu_adventure_achievements_open")!=="1";
+    localStorage.setItem("dodogu_adventure_achievements_open",next?"1":"0");
+    const panel=document.getElementById("adventureAchievements");
+    if(panel)panel.hidden=!next;
+    const button=document.getElementById("adventureAchievementToggle");
+    if(button){button.textContent=`🏅 ${next?"收起成就":"我的成就"} (${Object.keys(adventureProfile.unlockedAchievements).length}/${ADVENTURE_ACHIEVEMENTS.length})`;button.classList.toggle("is-open",next);}
+  });
+  if(challengeJustClaimed){
+    card.classList.remove("adventure-celebrate");
+    void card.offsetWidth;
+    card.classList.add("adventure-celebrate");
+    setTimeout(()=>card.classList.remove("adventure-celebrate"),1200);
+    const unlockedText=newlyUnlocked.length?` · 解鎖成就：${newlyUnlocked[0].name}`:"";
+    notifyToast(`🎉 今日冒險挑戰完成！+10 XP${unlockedText}`);
+  }else if(newlyUnlocked.length){
+    notifyToast(`🏅 成就解鎖：${newlyUnlocked[0].name}`);
+  }
+}
+
 const PROMO_FOOTER = `
 ###  🙌🏻 期待與你在多多谷相遇。
 ### 🔗 加入多多谷：https://discord.gg/snfvrB7kXC`;
@@ -654,6 +930,22 @@ function setAllSections(closed){
   document.querySelectorAll("#app > .section").forEach(card=>{
     card.classList.toggle("closed",closed);
   });
+  // 將新增的今日冒險與成就收藏納入全站展開／收起。
+  const adventure=document.getElementById("adventureCard");
+  if(adventure){
+    adventure.classList.toggle("collapsed",closed);
+    localStorage.setItem("dodogu_adventure_collapsed",closed?"1":"0");
+  }
+  const achievementPanel=document.getElementById("adventureAchievements");
+  const achievementButton=document.getElementById("adventureAchievementToggle");
+  if(achievementPanel){
+    achievementPanel.hidden=closed;
+    localStorage.setItem("dodogu_adventure_achievements_open",closed?"0":"1");
+  }
+  if(achievementButton){
+    achievementButton.classList.toggle("is-open",!closed);
+    achievementButton.textContent=`🏅 ${closed?"我的成就":"收起成就"} (${Object.keys(adventureProfile.unlockedAchievements).length}/${ADVENTURE_ACHIEVEMENTS.length})`;
+  }
 }
 
 document.getElementById("expandAll").onclick=()=>setAllSections(false);
@@ -749,7 +1041,7 @@ function render(){
       el.onclick=()=>{
           const store=x.type==="weekly" ? weekly : daily;
           const storageKey=x.type==="weekly" ? "dodogu_weekly_"+weekKey : "dodogu_daily_"+todayKey;
-          store[x.id]=!store[x.id];
+          const nextChecked=!store[x.id];if(nextChecked)recordAdventureTaskCompletion(x.type,x.id);store[x.id]=nextChecked;
           localStorage.setItem(storageKey,JSON.stringify(store));
           render();
       };
@@ -894,31 +1186,32 @@ function render(){
     const allChecked=totalInSection>0&&doneInSection===totalInSection;
     const incomplete=totalInSection>0 && !allChecked;
     const card=document.createElement("div");
-    card.className="section"+(foldState[sectionIndex] ? " closed" : "")+(incomplete ? " incomplete" : "")+(incomplete && type==="weekly" ? " weekly-incomplete" : "");
+    card.className="section category-card"+(foldState[sectionIndex] ? " closed" : "")+(incomplete ? " incomplete" : "")+(incomplete && type==="weekly" ? " weekly-incomplete" : "");
+    card.dataset.category=title;
     card.dataset.section=sectionIndex;
     const head=document.createElement("div"); head.className="section-head";
     head.innerHTML=`<span class="section-title">${title}</span><span class="summary">${doneInSection} / ${totalInSection}</span><button class="select-all-btn" type="button">${allChecked?"↩ 全部取消":"☑ 全選"}</button><span class="arrow">⌄</span>`;
     addSectionTitleIcon(head.querySelector(".section-title"), title);
     const selectAllBtn=head.querySelector(".select-all-btn");
-    selectAllBtn.onclick=(e)=>{e.stopPropagation();items.forEach(([name,daysText,days],li)=>{const available=!days||days.includes(now.getDay());if(available)store[taskId(type,name)]=!allChecked;});localStorage.setItem(storageKey,JSON.stringify(store));render();};
+    selectAllBtn.onclick=(e)=>{e.stopPropagation();items.forEach(([name,daysText,days],li)=>{const available=!days||days.includes(now.getDay());if(available){const id=taskId(type,name);if(!allChecked&&!store[id])recordAdventureTaskCompletion(type,id);store[id]=!allChecked;}});localStorage.setItem(storageKey,JSON.stringify(store));render();};
     const body=document.createElement("div");body.className="items";
     const appendTaskRow=({name,daysText,days,id,dayStyle})=>{
       const available=!days||days.includes(now.getDay()); const checked=!!store[id]; const isFav=!!favorites[id];
       const uiIconFile=UI_ICON_MAP[name]||null;
-      const row=document.createElement("div");row.className="item"+(uiIconFile?" has-ui-icon":"")+(checked?" done":"")+(!available?" disabled":"");
+      const row=document.createElement("div");row.className="item"+(uiIconFile?" has-ui-icon":"")+(checked?" done":"")+(!available?" disabled":"")+(checked&&pendingCompletionAnimationId===id?" just-completed":"");
       row.innerHTML=`<div class="box">${checked?"✓":""}</div>${uiIconFile?`<span class="task-ui-icon"><img src="${UI_ICON_BASE+uiIconFile}" alt="" loading="lazy" decoding="async"></span>`:""}<div class="name">${name}</div>${daysText?`<div class="day ${dayStyle||""}">${daysText}</div>`:""}<div class="item-actions"><button class="favorite-btn ${isFav?"active":""}" type="button" title="${isFav?"取消最愛":"加入最愛／置頂"}">${isFav?"★":"☆"}</button></div>`;
       const favBtn=row.querySelector(".favorite-btn");
       favBtn.onclick=(e)=>{e.stopPropagation();favorites[id]=!favorites[id];if(!favorites[id])delete favorites[id];localStorage.setItem("dodogu_checklist_favorites",JSON.stringify(favorites));render();};
-      if(available) row.onclick=()=>{store[id]=!store[id];localStorage.setItem(storageKey,JSON.stringify(store));render();};
+      if(available) row.onclick=()=>{const nextChecked=!store[id];pendingCompletionAnimationId=nextChecked?id:null;if(nextChecked)recordAdventureTaskCompletion(type,id);store[id]=nextChecked;localStorage.setItem(storageKey,JSON.stringify(store));render();pendingCompletionAnimationId=null;};
       return row;
     };
     const appendBossTaskRow=(x)=>{
       const checked=!!store[x.id],isFav=!!favorites[x.id],base=getBossBaseName(x.name),difficulty=getBossDifficultyCode(x.name);
       const imgPath=BOSS_IMAGE_MAP[base],difficultyPath=BOSS_DIFFICULTY_IMAGE_MAP[difficulty];
-      const row=document.createElement("div");row.className="item boss-item"+(checked?" done":"");
+      const row=document.createElement("div");row.className="item boss-item"+(checked?" done":"")+(checked&&pendingCompletionAnimationId===x.id?" just-completed":"");
       row.innerHTML=`<div class="box">${checked?"✓":""}</div><img class="boss-image" src="${imgPath}" alt="${base}" title="${base}" loading="lazy"><img class="boss-difficulty-image" src="${difficultyPath}" alt="${difficulty}" title="${difficulty}" loading="lazy"><div class="item-actions"><button class="favorite-btn ${isFav?"active":""}" type="button" title="${isFav?"取消最愛":"加入最愛／置頂"}">${isFav?"★":"☆"}</button></div>`;
       row.querySelector(".favorite-btn").onclick=(e)=>{e.stopPropagation();favorites[x.id]=!favorites[x.id];if(!favorites[x.id])delete favorites[x.id];localStorage.setItem("dodogu_checklist_favorites",JSON.stringify(favorites));render();};
-      row.onclick=()=>{store[x.id]=!store[x.id];localStorage.setItem(storageKey,JSON.stringify(store));render();};
+      row.onclick=()=>{const nextChecked=!store[x.id];pendingCompletionAnimationId=nextChecked?x.id:null;if(nextChecked)recordAdventureTaskCompletion(x.type,x.id);store[x.id]=nextChecked;localStorage.setItem(storageKey,JSON.stringify(store));render();pendingCompletionAnimationId=null;};
       return row;
     };
     if(title==="每日 BOSS" || title==="每週任務"){
@@ -965,6 +1258,7 @@ function render(){
   document.getElementById("weeklyFill").style.width=(weeklyTotal?weeklyDone/weeklyTotal*100:0)+"%";
   document.getElementById("remaining").innerHTML=remaining.length?`🟢 今日還有 <strong>${remaining.length}</strong> 項任務尚未完成`:`🎉 今日任務全部完成！`;
   document.getElementById("completeBanner").classList.toggle("show",dailyTotal>0&&dailyDone===dailyTotal);
+  renderAdventure(dailyDone,dailyTotal);
   const ff=document.getElementById("favoriteFilter");ff.classList.toggle("active",onlyFavorites);ff.textContent=onlyFavorites?"⭐ 顯示全部任務":"⭐ 只看最愛";
 }
 
