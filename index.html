@@ -36,9 +36,11 @@ h1{margin:0 0 6px;font-size:26px}
 .section-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;cursor:pointer;user-select:none}
 .section-title{font-size:18px;font-weight:800}
 .arrow{display:inline-block;width:25px;height:13px;font-size:0;color:transparent;background:url("UI/展開.png") center/contain no-repeat;transition:opacity .18s ease;flex:0 0 25px}
+.category-toggle{border:0;padding:0;appearance:none;cursor:pointer;background-color:transparent}
 .section.closed .arrow{width:25px;height:13px;background-image:url("UI/收起.png");transform:none}
 .items{padding:0 12px 10px}
-.section.closed .items{display:none}\n.section-head + .items{padding-top:8px}
+.section.closed > .items{display:none}
+.section-head + .items{padding-top:8px}
 
 .section.incomplete .section-head{background:#fff8e8;border-left:4px solid #f2a51a;padding-left:14px}
 .section.incomplete .section-title{color:#a86400}
@@ -1207,7 +1209,7 @@ function render(){
     card.dataset.category=title;
     card.dataset.section=sectionIndex;
     const head=document.createElement("div"); head.className="section-head";
-    head.innerHTML=`<span class="section-title">${title}</span><span class="summary">${doneInSection} / ${totalInSection}</span><button class="select-all-btn" type="button">${allChecked?"↩ 全部取消":"☑ 全選"}</button><span class="arrow">⌄</span>`;
+    head.innerHTML=`<span class="section-title">${title}</span><span class="summary">${doneInSection} / ${totalInSection}</span><button class="select-all-btn" type="button">${allChecked?"↩ 全部取消":"☑ 全選"}</button><button class="arrow category-toggle" type="button" aria-label="展開或收起${title}" aria-expanded="${!foldState[sectionIndex]}">⌄</button>`;
     addSectionTitleIcon(head.querySelector(".section-title"), title);
     const selectAllBtn=head.querySelector(".select-all-btn");
     selectAllBtn.onclick=(e)=>{e.stopPropagation();items.forEach(([name,daysText,days],li)=>{const available=!days||days.includes(now.getDay());if(available){const id=taskId(type,name);if(!allChecked&&!store[id])recordAdventureTaskCompletion(type,id);store[id]=!allChecked;}});localStorage.setItem(storageKey,JSON.stringify(store));render();};
@@ -1253,13 +1255,22 @@ function render(){
     } else {
       visibleItems.forEach(x=>body.appendChild(appendTaskRow(x)));
     }
-    // 分類標題與箭頭共用同一個展開／收起事件，避免按鈕點擊漏接。
-    head.addEventListener("click",(event)=>{
-      if(event.target.closest(".select-all-btn")) return;
+    // 分類箭頭與標題共用同一處理函式；直接控制可見狀態與無障礙屬性。
+    const categoryToggle=head.querySelector(".category-toggle");
+    const toggleCategory=()=>{
       const next=!card.classList.contains("closed");
-      foldState[sectionIndex]=next;
-      saveFolds();
       card.classList.toggle("closed",next);
+      categoryToggle.setAttribute("aria-expanded",String(!next));
+      foldState[sectionIndex]=next;
+      try { saveFolds(); } catch (error) { console.warn("Checklist fold state could not be saved",error); }
+    };
+    head.addEventListener("click",(event)=>{
+      if(event.target.closest(".select-all-btn, .category-toggle")) return;
+      toggleCategory();
+    });
+    categoryToggle.addEventListener("click",(event)=>{
+      event.stopPropagation();
+      toggleCategory();
     });
     card.appendChild(head);card.appendChild(body);
 
