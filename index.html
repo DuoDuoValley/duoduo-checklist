@@ -1253,7 +1253,14 @@ function render(){
     } else {
       visibleItems.forEach(x=>body.appendChild(appendTaskRow(x)));
     }
-    head.onclick=()=>{foldState[sectionIndex]=!foldState[sectionIndex];saveFolds();card.classList.toggle("closed",!!foldState[sectionIndex]);};
+    // 分類標題與箭頭共用同一個展開／收起事件，避免按鈕點擊漏接。
+    head.addEventListener("click",(event)=>{
+      if(event.target.closest(".select-all-btn")) return;
+      const next=!card.classList.contains("closed");
+      foldState[sectionIndex]=next;
+      saveFolds();
+      card.classList.toggle("closed",next);
+    });
     card.appendChild(head);card.appendChild(body);
 
     if(title==="每日推廣"){
