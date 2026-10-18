@@ -973,25 +973,24 @@ updateThemeButton();
 
 let reminderCountdownTimer=null;
 
-// 三個獨立資訊區塊統一使用事件委派；重新 render 後也不會遺失點擊事件。
-document.addEventListener("click", function(event){
+// 三個獨立資訊區塊：單一事件委派，避免重複切換。
+// 綁在 app 上，重繪後也能處理新產生的標題列。
+document.getElementById("app").addEventListener("click", function(event){
   const head=event.target.closest(".section-head");
-  if(!head || !head.closest("#app")) return;
+  if(!head || !this.contains(head)) return;
   const card=head.parentElement;
   if(!card) return;
-  let key=null;
+  let key="";
   if(card.classList.contains("favorite-panel")) key="dodogu_favorites_closed";
-  else if(card.classList.contains("info-section")){
+  else if(card.classList.contains("info-section")) {
     const title=head.querySelector(".section-title")?.textContent?.trim() || "";
     if(title.includes("昨日漏掉的任務")) key="dodogu_yesterday_closed";
     else if(title.includes("每日活動提醒")) key="dodogu_reminder_closed";
   }
   if(!key) return;
-  event.preventDefault();
-  event.stopImmediatePropagation();
   const closed=card.classList.toggle("closed");
   localStorage.setItem(key,closed?"1":"0");
-},true);
+});
 
 function render(){
   if(reminderCountdownTimer){clearInterval(reminderCountdownTimer);reminderCountdownTimer=null;}
