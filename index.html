@@ -973,6 +973,26 @@ updateThemeButton();
 
 let reminderCountdownTimer=null;
 
+// 三個獨立資訊區塊統一使用事件委派；重新 render 後也不會遺失點擊事件。
+document.addEventListener("click", function(event){
+  const head=event.target.closest(".section-head");
+  if(!head || !head.closest("#app")) return;
+  const card=head.parentElement;
+  if(!card) return;
+  let key=null;
+  if(card.classList.contains("favorite-panel")) key="dodogu_favorites_closed";
+  else if(card.classList.contains("info-section")){
+    const title=head.querySelector(".section-title")?.textContent?.trim() || "";
+    if(title.includes("昨日漏掉的任務")) key="dodogu_yesterday_closed";
+    else if(title.includes("每日活動提醒")) key="dodogu_reminder_closed";
+  }
+  if(!key) return;
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  const closed=card.classList.toggle("closed");
+  localStorage.setItem(key,closed?"1":"0");
+},true);
+
 function render(){
   if(reminderCountdownTimer){clearInterval(reminderCountdownTimer);reminderCountdownTimer=null;}
   const app=document.getElementById("app");
@@ -1019,10 +1039,6 @@ function render(){
       <div class="items favorite-panel-body"><div class="favorite-group"><div class="favorite-group-title pending">⏳ 未完成 <span class="favorite-pending-count"></span></div><div class="favorite-sync-list pending-list"></div></div>
       <div class="favorite-group"><div class="favorite-group-title finished">✅ 已完成 <span class="favorite-finished-count"></span></div><div class="favorite-sync-list finished-list"></div></div></div>`;
     addSectionTitleIcon(favCard.querySelector(".section-title"), "我的最愛／置頂任務");
-    favCard.querySelector(".section-head").onclick=()=>{
-      const c=favCard.classList.toggle("closed");
-      localStorage.setItem("dodogu_favorites_closed",c?"1":"0");
-    };
     const pending=favEntries.filter(x=>!x.checked);
     const finished=favEntries.filter(x=>x.checked);
     favCard.querySelector(".favorite-pending-count").textContent=`${pending.length}`;
@@ -1107,10 +1123,6 @@ function render(){
       });
     }
     else{const el=document.createElement("div");el.className="yesterday-empty";el.textContent="昨天沒有未完成的每日任務 🎉";list.appendChild(el);}
-    info.querySelector(".section-head").onclick=()=>{
-      const c=info.classList.toggle("closed");
-      localStorage.setItem("dodogu_yesterday_closed",c?"1":"0");
-    };
     app.appendChild(info);
   }
 
@@ -1175,10 +1187,6 @@ function render(){
     });
     updateReminderCountdown();
     reminderCountdownTimer=setInterval(updateReminderCountdown,1000);
-    info.querySelector(".section-head").onclick=()=>{
-      const c=info.classList.toggle("closed");
-      localStorage.setItem("dodogu_reminder_closed",c?"1":"0");
-    };
     app.appendChild(info);
   }
 
