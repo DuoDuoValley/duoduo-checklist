@@ -1415,6 +1415,42 @@ initAnalytics();
 
 render();
 
+// Checklist 版本偵測：僅在 GitHub Pages 已提供不同版本時自動重新載入。
+(()=>{
+  const currentVersion = "ddv-e6182fcb4bf641ee";
+  const versionPattern = /const currentVersion = "(ddv-[a-f0-9]{16})";/;
+  const pageUrl = new URL("index.html", document.baseURI);
+  let checking = false;
+  let refreshing = false;
+  async function checkForUpdate(){
+    if(checking || refreshing || !navigator.onLine) return;
+    checking = true;
+    try{
+      const requestUrl = new URL(pageUrl.href);
+      requestUrl.searchParams.set("_ddv_check", Date.now().toString());
+      const response = await fetch(requestUrl.href, {cache:"no-store"});
+      if(!response.ok) return;
+      const remoteHtml = await response.text();
+      const remoteVersion = remoteHtml.match(versionPattern)?.[1];
+      if(remoteVersion && remoteVersion !== currentVersion){
+        refreshing = true;
+        const nextUrl = new URL(location.href);
+        nextUrl.searchParams.set("_ddv_refresh", Date.now().toString());
+        location.replace(nextUrl.href);
+      }
+    }catch(error){
+      console.warn("Checklist 更新檢查暫時失敗：",error);
+    }finally{
+      checking = false;
+    }
+  }
+  setInterval(checkForUpdate, 60000);
+  window.addEventListener("online", checkForUpdate);
+  document.addEventListener("visibilitychange", ()=>{
+    if(!document.hidden) checkForUpdate();
+  });
+})();
+
 // 頁面若跨過午夜，重新載入以切換到新的每日日期與任務紀錄。
 setInterval(()=>{
   if(new Date().toLocaleDateString("sv-SE") !== todayKey) location.reload();
