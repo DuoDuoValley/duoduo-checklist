@@ -224,7 +224,7 @@ body.dark .category-card .section-head{background:linear-gradient(100deg,color-m
 /* Independent floating BGM iframe; no selectors affect Checklist tasks or cards. */
 #ddChecklistBgmFrame{
   position:fixed;z-index:10050;bottom:0;right:0;
-  width:96px;height:100px;max-width:100vw;max-height:100dvh;
+  width:112px;height:112px;max-width:100vw;max-height:100dvh;
   border:0;background:transparent;overflow:hidden;
   opacity:0;transition:opacity .16s ease;
   color-scheme:dark;
@@ -1515,15 +1515,17 @@ setInterval(()=>{
   const overlay=document.getElementById('ddChecklistCoverDialog');
   const image=document.getElementById('ddChecklistCoverImg');
   const closeButton=document.getElementById('ddChecklistCoverClose');
-  let currentMode='collapsed',currentHeight=100,previewToken=0,previousFocus=null;
+  let currentMode='collapsed',currentHeight=420,previewToken=0,previousFocus=null;
+  let preparingExpand=false,expandRequest=0;
   function applyFrameSize(){
-    if(currentMode==='collapsed'){
-      frame.style.width='96px';frame.style.height='100px';
+    if(currentMode==='collapsed'&&!preparingExpand){
+      // The mini's 58px circle gets 36px of breathing room on every side.
+      // Prevents the native iframe rectangle from clipping the soft shadow.
+      frame.style.width='112px';frame.style.height='112px';
     }else{
-      // More transparent room for the existing 50px diffused shadow, so it
-      // does not become a visible square clipped by the iframe boundary.
+      // Reserve enough space for the expanded panel's diffused shadow.
       frame.style.width='min(450px, 100vw)';
-      frame.style.height=Math.min(window.innerHeight,Math.max(100,currentHeight+62))+'px';
+      frame.style.height=Math.min(window.innerHeight,Math.max(540,currentHeight+100))+'px';
     }
   }
   function closePreview(){
@@ -1565,8 +1567,22 @@ setInterval(()=>{
     if(data.action==='cover-open'&&typeof data.src==='string'){
       openPreview(data.src);return;
     }
+    if(data.action==='prepare-expand'){
+      preparingExpand=true;
+      const request=++expandRequest;
+      applyFrameSize();
+      // Give layout and paint two frames to commit the larger viewport while
+      // the mini remains visible, then let the official player open normally.
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        if(request!==expandRequest)return;
+        frame.contentWindow?.postMessage({channel,action:'host-expand-ready'},location.origin);
+      }));
+      return;
+    }
     if(!['collapsed','expanded'].includes(data.mode))return;
     if(!Number.isFinite(data.height)||data.height<30||data.height>2000)return;
+    if(preparingExpand&&data.mode==='collapsed')return;
+    preparingExpand=false;
     currentMode=data.mode;currentHeight=data.height;
     applyFrameSize();frame.classList.add('dd-bgm-ready');
   });
