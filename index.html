@@ -318,8 +318,8 @@ body.dark .category-card .section-head{background:linear-gradient(100deg,color-m
   <button id="ddChecklistCoverClose" type="button" aria-label="關閉封面預覽" title="關閉">×</button></figure>
 </div>
 
-<!-- DuoDuo BGM 2.1.7: independent, isolated player; Checklist task DOM is untouched. -->
-<iframe id="ddChecklistBgmFrame" title="多多谷 BGM 2.1.7 音樂播放器" src="bgm-player.html" allow="autoplay" loading="eager" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+<!-- Checklist embeds the canonical BGM shell from the OFFICIAL site. Checklist task DOM is untouched. -->
+<iframe id="ddChecklistBgmFrame" title="多多谷官網共用 BGM 播放器" src="https://duoduovalley.github.io/duoduo-website/index.html?bgm_embed=checklist" allow="autoplay" loading="eager" referrerpolicy="strict-origin-when-cross-origin"></iframe>
 
 <script>
 let pendingCompletionAnimationId = null;
@@ -1464,7 +1464,7 @@ render();
 
 // Checklist 版本偵測：僅在 GitHub Pages 已提供不同版本時自動重新載入。
 (()=>{
-  const currentVersion = "ddv-2df143b7a0eb4f1e";
+  const currentVersion = "ddv-e1867edf59b64456";
   const versionPattern = /const currentVersion = "(ddv-[a-f0-9]{16})";/;
   const pageUrl = new URL("index.html", document.baseURI);
   let checking = false;
@@ -1570,8 +1570,13 @@ setInterval(()=>{
     currentMode=data.mode;currentHeight=data.height;
     applyFrameSize();frame.classList.add('dd-bgm-ready');
   });
-  window.addEventListener('resize',applyFrameSize);
-  applyFrameSize();
+  function notifyHostSize(){
+    try{frame.contentWindow?.postMessage({channel,action:'host-size',width:window.innerWidth},location.origin);}catch(_){}
+    applyFrameSize();
+  }
+  frame.addEventListener('load',notifyHostSize);
+  window.addEventListener('resize',notifyHostSize);
+  notifyHostSize();
 })();
 </script>
 </body>
