@@ -1,0 +1,1013 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#102137">
+<meta name="duoduo-shell-version" content="BGM-2.1.7-checklist-isolated-20261027">
+<title>多多谷 Checklist｜BGM 播放器</title>
+<link rel="stylesheet" href="cursor-ui/cursor.css">
+<script defer src="cursor-ui/cursor.js"></script>
+<script>(()=>{const update=()=>document.documentElement.classList.toggle('dd-bgm-host-desktop',window.parent.innerWidth>480);update();window.parent.addEventListener('resize',update);})();</script>
+<style>
+:root { color-scheme:dark; --panel:#101d2d; --line:rgba(175,205,245,.22); --text:#f5f7ff; --muted:#a8b7cc; --accent:#82c9ff; }
+* { box-sizing:border-box; }
+html,body { height:100%; margin:0; overflow:hidden; font-family:system-ui,-apple-system,"Microsoft JhengHei",sans-serif; }
+body { background:#07111f; }
+/* Match the visible outer canvas to the actual site's initial color scheme. */
+:root[data-site-theme="light"] body { background:#f4f7fa; }
+#player { position:fixed; bottom:max(18px,env(safe-area-inset-bottom)); right:max(18px,env(safe-area-inset-right)); z-index:2147483000; width:min(355px,calc(100vw - 36px)); color:var(--text); background:linear-gradient(145deg,rgba(23,39,61,.98),rgba(11,23,39,.98)); border:1px solid var(--line); box-shadow:0 12px 45px rgba(0,0,0,.48); border-radius:19px; padding:15px; backdrop-filter:blur(16px); }
+/* 2.1.3: adjustable frosted glass. The dark glass itself stays opaque enough
+   that page text behind it cannot compete with BGM labels. */
+#player {
+  --glass-opacity:.84;
+  background:linear-gradient(153deg,rgba(30,48,72,var(--glass-opacity)),rgba(9,22,41,var(--glass-opacity)));
+  border-color:color-mix(in srgb,var(--song-accent,#98cef8) 28%,rgba(221,237,255,.34));
+  -webkit-backdrop-filter:blur(28px) saturate(132%);
+  backdrop-filter:blur(28px) saturate(132%);
+  box-shadow:0 18px 50px rgba(0,0,0,.42),inset 0 1px rgba(255,255,255,.14),0 0 22px var(--song-glow,transparent);
+}
+@supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+  #player{background:linear-gradient(145deg,#1b304a,#0e1d30);}
+}
+#player[hidden] { display:none; }
+#topline { display:flex; gap:12px; align-items:flex-start; position:relative; }
+#musicCircle { width:76px;height:76px;border:0;padding:0;border-radius:13px;display:grid;place-items:center;background:rgba(86,159,236,.2); color:#b1d9ff; flex:none;cursor:pointer;transition:box-shadow .3s ease; }
+#musicCircle svg {width:30px;height:30px;}
+#headTitles {flex:1; min-width:0; }
+#headTitles strong { display:block; font-size:14px; letter-spacing:.35px; padding-right:38px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+#headTitles small {display:block; margin-top:3px; color:var(--muted);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:38px; }
+button { font:inherit;cursor:pointer; }
+.iconButton { width:33px;height:33px;border:1px solid rgba(173,198,230,.17);border-radius:10px;display:grid;place-items:center;color:#d1e2f6;background:rgba(255,255,255,.045); }
+.iconButton:hover,.actionBtn:hover { background:rgba(125,176,249,.17); }
+.iconButton svg { width:17px; height:17px; }
+#details { padding-top:13px; }
+#trackName {font-size:13px;font-weight:650;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
+#status { color:var(--muted);font-size:11px; margin-top:5px;line-height:1.5;overflow-wrap:anywhere; }
+#controls {display:flex;gap:9px;align-items:center;margin-top:12px;}
+#play {width:40px;height:40px;border:0;border-radius:12px;background:#98cef8;color:#092039; display:grid;place-items:center; flex:none;}
+#play:disabled{opacity:.48; cursor:not-allowed;}
+#play svg {width:21px;height:21px;}
+#timeline { flex:1;min-width:0; }
+#times {display:flex;justify-content:space-between;color:var(--muted);font-size:10px;margin-bottom:5px;font-variant-numeric:tabular-nums;}
+input[type=range] {width:100%;accent-color:#91c9ff; cursor:pointer;}
+#seek {margin:0;height:12px;}
+#bottomline {display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;}
+#fileLabel {display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:9px;padding:7px 10px;background:rgba(255,255,255,.045);font-size:11px;white-space:nowrap;cursor:pointer;}
+#fileLabel:hover {background:rgba(125,176,249,.17);}
+#fileLabel svg {width:15px;height:15px;}
+#fileInput {position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;pointer-events:none;}
+#volumeBox {display:flex;align-items:center;gap:7px; min-width:100px; max-width:135px;}
+#volumeBox svg {flex:none;width:16px;height:16px;color:var(--muted);}
+#volumeMute{width:27px;height:28px;flex:0 0 27px;display:grid;place-items:center;border:1px solid transparent;border-radius:8px;background:transparent;color:var(--muted);padding:0;cursor:pointer;}
+#volumeMute:hover,#volumeMute:focus-visible{background:rgba(176,208,244,.15);color:#fff;border-color:rgba(214,234,255,.18);}
+#volumeMute svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+#volumeMute[aria-pressed="true"]{color:var(--song-accent,#98cef8);}
+#volumeMute:focus-visible{outline:2px solid var(--song-accent,#98cef8);outline-offset:2px;}
+#volume {min-width:45px;}
+#hint {font-size:10px; color:#b1c5df;border-top:1px solid rgba(255,255,255,.09);padding-top:11px;margin-top:12px;line-height:1.7;}
+#mini {display:none;position:fixed;right:max(18px,env(safe-area-inset-right));bottom:max(18px,env(safe-area-inset-bottom));border:1px solid rgba(149,208,255,.36);background:#102137;color:white;box-shadow:0 8px 25px rgba(0,0,0,.42);height:58px;width:58px;border-radius:50%;z-index:2147483000;place-items:center;cursor:pointer;}
+#mini{
+  background:rgba(15,33,53,var(--glass-opacity,.84));
+  -webkit-backdrop-filter:blur(22px) saturate(130%);
+  backdrop-filter:blur(22px) saturate(130%);
+  box-shadow:0 8px 25px rgba(0,0,0,.40),inset 0 1px rgba(255,255,255,.14);
+}
+#mini svg {width:24px;height:24px;}
+body.collapsed #player {display:none;}
+body.collapsed #mini {display:grid;}
+#label {font-size:10px; color:#94c8fc; margin-left:4px;font-weight:500;}
+@media(max-width:480px){#player{right:10px;bottom:max(10px,env(safe-area-inset-bottom));width:min(355px,calc(100vw - 20px));padding:12px;}#mini{right:12px;bottom:max(12px,env(safe-area-inset-bottom));}}
+
+#playlistArea { min-width:0; flex:1; display:grid; gap:4px; }
+#playlistLabel {font-size:10px;color:var(--muted);}
+#trackList {font:inherit;font-size:12px;color:var(--text);background:#17283e;border:1px solid var(--line);border-radius:8px;padding:8px 7px;width:100%;min-width:0;max-width:100%;}
+#trackList option {background:#102137;color:white;}
+/* BGM 2.1.2: browser-native <select> popups use the operating system cursor.
+   Use a DOM-based song list so the site's white-glove cursor remains visible. */
+#playlistArea {position:relative;}
+#trackList[hidden],#trackPicker[hidden],#trackOptions[hidden]{display:none!important;}
+#trackPicker{width:100%;min-height:36px;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:7px 10px;border-radius:8px;border:1px solid var(--line);background:#17283e;color:var(--text);
+  text-align:left;font:inherit;font-size:12px;cursor:pointer;}
+#trackPicker:hover:not(:disabled),#trackPicker[aria-expanded="true"]{border-color:color-mix(in srgb,var(--song-accent) 55%,var(--line));background:#20354f;}
+#trackPicker:focus-visible,#trackOptions .dd-song-option:focus-visible{outline:2px solid var(--song-accent);outline-offset:2px;}
+#trackPicker:disabled{opacity:.65;cursor:not-allowed;}
+#trackPickerText{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+#trackPicker svg{flex:none;width:15px;height:15px;transition:transform .18s ease;}
+#trackPicker[aria-expanded="true"] svg{transform:rotate(180deg);}
+#trackOptions{position:absolute;bottom:calc(100% + 6px);left:0;right:0;z-index:10;
+  max-height:min(172px,40vh);overflow-y:auto;overscroll-behavior:contain;padding:5px;border:1px solid rgba(164,197,240,.35);
+  border-radius:10px;background:#102137;box-shadow:0 13px 32px rgba(0,0,0,.55);scrollbar-color:#57708f #17283e;}
+#trackOptions .dd-song-option{display:block;width:100%;padding:9px 10px;margin:0;border:0;border-radius:6px;
+  background:transparent;color:var(--text);font:inherit;font-size:12px;text-align:left;line-height:1.35;
+  white-space:normal;overflow-wrap:anywhere;cursor:pointer;}
+#trackOptions .dd-song-option:hover,#trackOptions .dd-song-option:focus-visible{background:rgba(148,194,254,.19);}
+#trackOptions .dd-song-option[aria-selected="true"]{background:color-mix(in srgb,var(--song-accent) 23%,#17283e);color:#fff;}
+#trackOptions .dd-song-option[aria-selected="true"]:hover{background:color-mix(in srgb,var(--song-accent) 32%,#17283e);}
+#playlistTitleRow{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+#glassToggle{border:0;background:transparent;color:#b4cce5;font-size:10px;padding:2px 4px;display:inline-flex;align-items:center;gap:4px;border-radius:5px;cursor:pointer;}
+#glassToggle:hover,#glassToggle[aria-expanded="true"]{color:#f5f9ff;background:rgba(203,230,255,.1);}
+#glassToggle:focus-visible{outline:2px solid var(--song-accent);outline-offset:2px;}
+#glassToggle svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;}
+#glassSettings[hidden]{display:none!important;}
+#glassSettings{display:flex;align-items:center;gap:10px;margin-top:4px;padding:8px 10px;border:1px solid rgba(193,222,248,.19);border-radius:9px;background:rgba(6,17,32,.46);}
+#glassSettings label{font-size:11px;white-space:nowrap;color:#e2efff;}
+#glassAmount{font-size:11px;min-width:26px;text-align:right;color:#d4eaff;font-variant-numeric:tabular-nums;}
+#glassSlider{flex:1;min-width:52px;margin:0;height:14px;accent-color:var(--song-accent);}
+@media(max-width:480px){#volumeBox{display:flex!important;max-width:28px!important;flex:0 0 28px!important;min-width:28px!important;margin-left:auto;}#volume{display:none!important;}#volumeMute{width:28px;height:30px;}}
+@media(prefers-reduced-motion:reduce){#trackPicker svg{transition:none;}}
+#skipButtons {display:flex;gap:4px;}
+#skipButtons .iconButton {width:34px;height:34px;padding:0;}
+#skipButtons .iconButton svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+#modeRow{display:flex;align-items:center;margin-top:10px;gap:9px;}
+#modeCycle{display:inline-flex;align-items:center;gap:7px;min-height:30px;padding:4px 9px;background:rgba(255,255,255,.055);border:1px solid var(--line);border-radius:9px;color:#d1e2f6;font-size:11px;}
+#modeCycle svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+#modeExplanation{color:var(--muted);font-size:10px;line-height:1.3;}
+#skipButtons .iconButton:disabled {opacity:.35;cursor:not-allowed;}
+#volumeBox {min-width:72px!important;max-width:90px!important;}
+@media(max-width:480px){#bottomline{gap:8px;}#volumeBox{display:none!important;}#skipButtons .iconButton{width:34px;height:34px;}#hint{display:none;}#modeExplanation{display:none;}#modeCycle{min-height:34px;} }
+
+/* BGM V7 small fix: range sliders are controls, not text inputs.
+   The shared cursor stylesheet intentionally applies an I-beam to inputs;
+   override it only inside this BGM player, without changing site cursors. */
+@media (hover: hover) and (pointer: fine) {
+  html.duoduo-cursor-ready #player input[type="range"] {
+    cursor: url("cursor-ui/cursor-hover-1.png") 3 2, pointer !important;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  /* Match the existing glove blink cycle (hover 1 ↔ hover 2, every 500ms).
+     Explicit tabindex on these native sliders lets cursor.js see them as
+     interactive, without changing its behavior for other inputs. */
+  html.duoduo-cursor-ready.duoduo-cursor-hover-alt #player input[type="range"] {
+    cursor: url("cursor-ui/cursor-hover-2.png") 3 2, pointer !important;
+  }
+  html.duoduo-cursor-ready.duoduo-cursor-pressed #player input[type="range"] {
+    cursor: url("cursor-ui/cursor-pressed.png") 3 2, grabbing !important;
+  }
+  html.duoduo-cursor-ready #player input[type="range"]::-webkit-slider-thumb {
+    cursor: url("cursor-ui/cursor-hover-1.png") 3 2, pointer !important;
+  }
+  html.duoduo-cursor-ready.duoduo-cursor-hover-alt #player input[type="range"]::-webkit-slider-thumb {
+    cursor: url("cursor-ui/cursor-hover-2.png") 3 2, pointer !important;
+  }
+  html.duoduo-cursor-ready.duoduo-cursor-pressed #player input[type="range"]::-webkit-slider-thumb {
+    cursor: url("cursor-ui/cursor-pressed.png") 3 2, grabbing !important;
+  }
+  html.duoduo-cursor-ready #player input[type="range"]::-moz-range-thumb {
+    cursor: url("cursor-ui/cursor-hover-1.png") 3 2, pointer !important;
+  }
+  html.duoduo-cursor-ready.duoduo-cursor-hover-alt #player input[type="range"]::-moz-range-thumb {
+    cursor: url("cursor-ui/cursor-hover-2.png") 3 2, pointer !important;
+  }
+  html.duoduo-cursor-ready.duoduo-cursor-pressed #player input[type="range"]::-moz-range-thumb {
+    cursor: url("cursor-ui/cursor-pressed.png") 3 2, grabbing !important;
+  }
+}
+
+/* BGM V7: group transport controls together, keep the track picker on its own row. */
+#modeRow { gap:8px; justify-content:flex-start; min-width:0; }
+#modeCycle { flex:0 0 auto; white-space:nowrap; }
+#skipButtons { flex:0 0 auto; gap:6px; }
+#volumeBox { margin-left:auto; flex:0 1 92px; min-width:0!important; max-width:92px!important; }
+#bottomline { margin-top:12px; }
+#playlistArea { width:100%; }
+.visuallyHidden { position:absolute!important; width:1px!important; height:1px!important; padding:0!important; margin:-1px!important; overflow:hidden!important; clip:rect(0,0,0,0)!important; white-space:nowrap!important; border:0!important; }
+@media (max-width:480px) {
+  #modeRow { gap:6px; }
+  #skipButtons { margin-left:auto; gap:7px; }
+  #modeCycle { padding:5px 8px; }
+}
+
+/* BGM 2.0 — track artwork, restrained track-specific accents, reduced-motion support. */
+#player { --song-accent:#98cef8; --song-glow:color-mix(in srgb,var(--song-accent) 16%,transparent);
+  border-color:color-mix(in srgb,var(--song-accent) 29%,rgba(175,205,245,.22));
+  box-shadow:0 18px 50px rgba(0,0,0,.42),inset 0 1px rgba(255,255,255,.14),0 0 22px var(--song-glow);transition:border-color .35s,box-shadow .35s; }
+#musicCircle {overflow:hidden;position:relative;isolation:isolate;}
+#collapse {position:absolute;top:0;right:0;}
+#musicCircle svg {flex:none;}
+#musicCircle img {width:100%;height:100%;display:none;object-fit:cover;border-radius:12px;position:absolute;inset:0;}
+#songCoverIncoming {opacity:0;transition:opacity .32s ease;}
+#musicCircle.is-crossfading #songCoverIncoming {opacity:1;}
+#musicCircle.has-cover {background:#14253a;}
+#musicCircle.has-cover img {display:block;}
+#musicCircle:disabled {cursor:default;}
+#musicCircle.has-cover:hover {box-shadow:0 0 0 2px color-mix(in srgb,var(--song-accent) 50%,transparent),0 0 15px var(--song-glow);}
+#musicCircle.has-cover:focus-visible {outline:2px solid var(--song-accent);outline-offset:3px;}
+#musicCircle.has-cover svg {display:none;}
+#play {background:var(--song-accent);color:var(--song-ink,#092039);transition:background .35s,filter .2s;}
+#play:hover:not(:disabled) {filter:brightness(1.09);}
+#player input[type=range] {accent-color:var(--song-accent);}
+#nowPlayingRow {display:flex;align-items:center;gap:6px;min-width:0;margin-top:9px;}
+#nowPlayingRow #trackName {min-width:0;}
+#trackCaption {font-size:10px;color:var(--muted);margin-top:3px;line-height:1.45;overflow-wrap:anywhere;}
+#trackCaption[hidden]{display:none;}
+#bgmEqualizer {display:inline-flex;flex:0 0 auto;gap:2px;height:14px;align-items:flex-end;opacity:.72;}
+#bgmEqualizer span {display:block;width:2px;height:4px;background:#9bbcd7;border-radius:2px;animation:bgm-bars .8s ease-in-out infinite alternate;animation-play-state:paused;}
+#bgmEqualizer span:nth-child(2){animation-delay:.22s;}
+#bgmEqualizer span:nth-child(3){animation-delay:.45s;}
+#bgmEqualizer span:nth-child(4){animation-delay:.11s;}
+#player.is-playing #bgmEqualizer span{animation-play-state:running;}
+@keyframes bgm-bars {from{height:3px}to{height:13px}}
+/* BGM 2.1: enlarged artwork / integrated metadata / accessible artwork preview. */
+#coverPreview[hidden]{display:none!important;}
+#coverPreview {position:fixed;inset:0;z-index:2147483200;display:grid;place-items:center;background:rgba(3,9,18,.86);padding:24px;backdrop-filter:blur(7px);}
+#coverPreview figure{position:relative;margin:0;max-width:min(512px,90vw);width:100%;max-height:90vh;display:grid;place-items:center;}
+#coverPreview img{display:block;width:100%;max-height:calc(90vh - 36px);object-fit:contain;border-radius:14px;box-shadow:0 12px 38px rgba(0,0,0,.55);}
+#coverPreviewClose{position:absolute;top:-14px;right:-14px;width:34px;height:34px;border-radius:50%;border:1px solid rgba(230,243,255,.32);background:#1c2c40;color:white;display:grid;place-items:center;font-size:24px;line-height:1;}
+#coverPreviewClose:hover{background:#344a64;}
+/* Keep mute icon available on phones (old V7 rule hides its container). */
+@media(max-width:480px){#volumeBox{display:flex!important;max-width:28px!important;flex:0 0 28px!important;min-width:28px!important;margin-left:auto;}#volume{display:none!important;}#volumeMute{width:28px;height:30px;}}
+@media (prefers-reduced-motion:reduce){#bgmEqualizer span{animation:none!important;height:5px!important}#player,#musicCircle,#songCoverIncoming{transition:none!important}}
+
+/* BGM 2.1.6 — song-toned frosted glass, safely darkened for readable controls.
+   The theme is derived from the existing track accent and NEVER changes site CSS. */
+#player {
+  --bgm-glass-top:29,45,65;
+  --bgm-glass-bottom:13,26,43;
+  --bgm-glass-control:13,29,47;
+  background:linear-gradient(148deg,
+    rgba(var(--bgm-glass-top),var(--glass-opacity,.84)) 0%,
+    rgba(var(--bgm-glass-bottom),var(--glass-opacity,.84)) 100%);
+  color:#f6f9ff;
+  border-color:color-mix(in srgb,var(--song-accent,#98cef8) 33%,rgba(223,240,255,.38));
+  box-shadow:0 18px 50px rgba(0,0,0,.46), inset 0 1px rgba(255,255,255,.16),
+    0 0 21px color-mix(in srgb,var(--song-accent,#98cef8) 16%,transparent);
+}
+/* Secondary controls use a separate dark neutral surface, not the accent fill.
+   This gives hover/focus, outlines, and white glyphs contrast for ALL song colors. */
+#player .iconButton,
+#player #modeCycle,
+#player #trackPicker,
+#player #fileLabel {
+  background:rgba(var(--bgm-glass-control),.94);
+  border-color:rgba(221,238,255,.34);
+  color:#f4f9ff;
+  box-shadow:inset 0 1px rgba(255,255,255,.055);
+}
+#player .iconButton:hover,
+#player #modeCycle:hover,
+#player #trackPicker:hover:not(:disabled),
+#player #fileLabel:hover {
+  background:color-mix(in srgb,var(--song-accent,#98cef8) 14%,#14273d);
+  border-color:rgba(235,245,255,.55);
+}
+#player .iconButton:focus-visible,
+#player #modeCycle:focus-visible,
+#player #trackPicker:focus-visible,
+#player #fileLabel:focus-visible,
+#player #volumeMute:focus-visible {
+  outline:2px solid #f6fbff;
+  outline-offset:2px;
+}
+#player #trackPicker[aria-expanded="true"] {
+  border-color:color-mix(in srgb,var(--song-accent,#98cef8) 58%,#e6f4ff);
+}
+#player #trackOptions {
+  background:rgb(var(--bgm-glass-bottom)); /* no page text visible through list */
+  border-color:rgba(224,239,255,.42);
+  box-shadow:0 16px 35px rgba(0,0,0,.65);
+}
+#player #trackOptions .dd-song-option:hover,
+#player #trackOptions .dd-song-option:focus-visible {background:rgba(232,243,255,.16);}
+#player #trackOptions .dd-song-option[aria-selected="true"] {
+  background:color-mix(in srgb,var(--song-accent,#98cef8) 25%,#19293d);
+  box-shadow:inset 3px 0 0 var(--song-accent,#98cef8);
+  color:#fff;
+}
+#player #trackOptions .dd-song-option[aria-selected="true"]:hover {
+  background:color-mix(in srgb,var(--song-accent,#98cef8) 32%,#19293d);
+}
+#player #glassSettings {background:rgba(5,15,29,.62);border-color:rgba(221,238,255,.28);}
+#player #volumeMute {color:#dcecff;}
+#player #volumeMute:hover {background:rgba(236,245,255,.15);color:#fff;}
+#player #volumeMute[aria-pressed="true"] {color:var(--song-accent,#98cef8);}
+#player #play {
+  box-shadow:0 3px 16px color-mix(in srgb,var(--song-accent,#98cef8) 15%,transparent);
+}
+#mini {
+  --bgm-glass-top:29,45,65;
+  background:rgba(var(--bgm-glass-top),var(--glass-opacity,.84));
+  border-color:color-mix(in srgb,var(--song-accent,#98cef8) 42%,rgba(223,240,255,.40));
+  color:#f6faff;
+}
+@supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))) {
+  #player { background:linear-gradient(148deg,rgb(var(--bgm-glass-top)),rgb(var(--bgm-glass-bottom))); }
+  #mini { background:rgb(var(--bgm-glass-top)); }
+}
+/* BGM 2.1.6: a barely visible glass sheen on actual song-color changes.
+   No overlay or clipping affects the popup outside the card. */
+#player {isolation:isolate;transition:none;}
+#player::before {
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:inherit;
+  background:linear-gradient(110deg,transparent 25%,rgba(255,255,255,.07) 49%,transparent 68%);
+  background-size:260% 100%;background-position:140% 0;opacity:0;
+}
+#player > #topline,#player > #details{position:relative;z-index:1;}
+#player.bgm-theme-shifting::before{animation:bgm-theme-glimmer .78s ease-out both;}
+@keyframes bgm-theme-glimmer{
+  0%{opacity:0;background-position:140% 0}
+  20%{opacity:.7}
+  65%{opacity:.5}
+  100%{opacity:0;background-position:-125% 0}
+}
+/* The RAF palette animates button, glow, sliders and glass in sync.
+   Do not stack a second CSS transition on every individual frame. */
+#player #play{transition:filter .2s ease;}
+@media(prefers-reduced-motion:reduce){
+ #player.bgm-theme-shifting::before{animation:none!important}
+}
+
+
+/* BGM 2.1.7: mobile Safari / Android: composite the glass palettes instead of
+   repainting a variable-driven blurred gradient every requestAnimationFrame.
+   The opaque paint INSIDE a fixed-alpha layer maintains legibility throughout. */
+#bgmGlassLayers{display:none;}
+#player.bgm-composited-glass{background:transparent!important;
+  transition:border-color .76s ease,box-shadow .76s ease;}
+#player.bgm-composited-glass #bgmGlassLayers{
+  display:block;position:absolute;inset:0;border-radius:inherit;overflow:hidden;
+  z-index:0;pointer-events:none;opacity:var(--glass-opacity,.84);
+  transform:translateZ(0);-webkit-transform:translateZ(0);
+}
+#player.bgm-composited-glass #bgmGlassLayers > div{
+  position:absolute;inset:0;border-radius:inherit;
+  will-change:opacity;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  transform:translateZ(0);-webkit-transform:translateZ(0);
+}
+#player.bgm-composited-glass #bgmGlassIncoming{opacity:0;}
+#player.bgm-composited-glass::before{z-index:1;}
+#player.bgm-composited-glass > #topline,#player.bgm-composited-glass > #details{
+  position:relative;z-index:2;
+}
+#player.bgm-composited-glass #play{transition:background-color .76s ease,color .16s,filter .2s ease;}
+#player.bgm-composited-glass .iconButton,#player.bgm-composited-glass #modeCycle,
+#player.bgm-composited-glass #trackPicker,#player.bgm-composited-glass #fileLabel{
+  transition:background-color .76s ease,border-color .76s ease;
+}
+#player.bgm-composited-glass input[type=range]{transition:accent-color .76s ease;}
+#player.bgm-composited-glass #volumeMute{transition:color .76s ease;}
+#mini.bgm-composited-mini{transition:background-color .76s ease,border-color .76s ease;}
+@supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+  #player.bgm-composited-glass{background:rgba(7,14,26,.35)!important;}
+}
+@media(prefers-reduced-motion:reduce){
+  #player.bgm-composited-glass,#player.bgm-composited-glass #play,
+  #player.bgm-composited-glass .iconButton,#player.bgm-composited-glass #modeCycle,
+  #player.bgm-composited-glass #trackPicker,#player.bgm-composited-glass #fileLabel{
+    transition:none!important;
+  }
+}
+
+
+/* Checklist-specific iframe isolation: do not draw a second website behind BGM. */
+html,body{background:transparent!important;width:100%;height:100%;overflow:hidden;}
+#player{max-height:calc(100dvh - 30px);}
+#mini{cursor:pointer;}
+/* The player lives in a 396px iframe, but desktop should retain desktop controls. */
+html.dd-bgm-host-desktop #player{right:18px;bottom:18px;width:min(355px,calc(100% - 36px));padding:15px;}
+html.dd-bgm-host-desktop #mini{right:18px;bottom:18px;}
+html.dd-bgm-host-desktop #volumeBox{display:flex!important;max-width:92px!important;min-width:0!important;flex:0 1 92px!important;margin-left:auto!important;}
+html.dd-bgm-host-desktop #volume{display:block!important;}
+html.dd-bgm-host-desktop #hint{display:block!important;}
+html.dd-bgm-host-desktop #skipButtons{margin-left:0;}
+html.dd-bgm-host-desktop #modeCycle{padding:4px 9px;}
+@media(max-width:480px){#player{max-height:calc(100dvh - 18px);}}
+</style>
+</head>
+<body>
+<div id="player" role="region" aria-label="多多谷常駐背景音樂播放器">
+  <div id="bgmGlassLayers" aria-hidden="true"><div id="bgmGlassBase"></div><div id="bgmGlassIncoming"></div></div>
+  <div id="topline">
+    <button id="musicCircle" type="button" aria-label="查看歌曲封面大圖" title="查看歌曲封面" disabled><img id="songCover" alt=""><img id="songCoverIncoming" alt="" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><ellipse cx="6" cy="18" rx="3" ry="2"/><ellipse cx="18" cy="16" rx="3" ry="2"/></svg></button>
+    <div id="headTitles">
+      <strong>DuoDuo BGM <span id="label">雲端播放清單</span></strong><small id="pageTitle">目前：Checklist</small>
+      <div id="nowPlayingRow"><div id="trackName">正在載入播放清單…</div><span id="bgmEqualizer" aria-hidden="true"><span></span><span></span><span></span><span></span></span></div>
+      <div id="trackCaption" hidden></div>
+      <div id="status" role="status">從多多谷後台取得上架歌曲。</div>
+    </div>
+    <button id="collapse" class="iconButton" type="button" title="收合播放器" aria-label="收合播放器"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+  </div>
+  <div id="details">
+    <div id="controls">
+      <button type="button" id="play" aria-label="播放或暫停" title="播放／暫停" disabled><svg viewBox="0 0 24 24" fill="currentColor"><path d="m8 5 12 7-12 7z"/></svg></button>
+      <div id="timeline"><div id="times"><span id="elapsed">0:00</span><span id="duration">0:00</span></div><input id="seek" type="range" tabindex="0" min="0" max="1000" value="0" aria-label="音樂進度" disabled></div>
+    </div>
+    <div id="modeRow">
+      <button id="modeCycle" type="button" title="切換播放模式" aria-label="切換播放模式"><svg id="modeIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span id="modeLabel">循環播放</span></button>
+      <div id="skipButtons"><button class="iconButton" id="prev" type="button" title="上一首" aria-label="上一首" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v14M19 5l-10 7 10 7z"/></svg></button><button class="iconButton" id="next" type="button" title="下一首" aria-label="下一首" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 5v14M5 5l10 7-10 7z"/></svg></button></div>
+      <div id="volumeBox"><button id="volumeMute" type="button" aria-label="靜音" aria-pressed="false" title="一鍵靜音／恢復聲音"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5zM15 9a5 5 0 0 1 0 6m3-9a9 9 0 0 1 0 12"/></svg></button><input id="volume" type="range" tabindex="0" min="0" max="100" step="1" value="40" aria-label="音量"></div>
+      <span id="modeExplanation" class="visuallyHidden">點擊可切換播放模式</span>
+    </div>
+    <div id="bottomline">
+      <div id="playlistArea"><div id="playlistTitleRow"><span id="playlistLabel">選擇曲目</span><button id="glassToggle" type="button" title="調整播放器透明度" aria-expanded="false" aria-controls="glassSettings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M7 7v-3m10 8H4m10 0V9m-10 8h16m-5 0v-3"/></svg>透明度</button></div>
+        <!-- The native select remains the playlist state and no-JS fallback. -->
+        <select id="trackList" aria-label="選擇後台上架 BGM"><option value="">正在載入…</option></select>
+        <button id="trackPicker" type="button" hidden disabled aria-haspopup="listbox" aria-expanded="false" aria-controls="trackOptions" aria-labelledby="playlistLabel trackPickerText"><span id="trackPickerText">正在載入…</span><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+        <div id="trackOptions" role="listbox" aria-label="選擇歌曲" hidden></div>
+        <div id="glassSettings" hidden><label for="glassSlider">玻璃透明度</label><input id="glassSlider" type="range" min="8" max="26" step="1" value="16" aria-label="播放器玻璃透明度（最多 26%）"><output id="glassAmount" for="glassSlider">16%</output></div>
+      </div>
+    </div>
+    <div id="hint">多多谷背景音樂由官網後台同步。若瀏覽器阻擋自動播放，點一下播放鍵即可；勾選任務不會中斷音樂。</div>
+  </div>
+</div>
+<div id="coverPreview" hidden role="dialog" aria-modal="true" aria-label="歌曲封面預覽" tabindex="-1"><figure><img id="coverPreviewImage" alt="歌曲封面大圖"><button id="coverPreviewClose" type="button" aria-label="關閉封面預覽" title="關閉">×</button></figure></div>
+<button type="button" id="mini" title="展開 BGM 播放器" aria-label="展開 BGM 播放器"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><ellipse cx="6" cy="18" rx="3" ry="2"/><ellipse cx="18" cy="16" rx="3" ry="2"/></svg></button>
+<audio id="music" preload="none"></audio>
+<script>
+(()=>{
+'use strict';
+// Record the pristine page source before player state, theme, and cloud data
+// mutate the live DOM. This detects real GitHub index.html updates without
+// requiring a developer to remember to bump a manual meta-version each time.
+function shellSourceSignature(doc){
+  const nodes=[...doc.querySelectorAll('script, style, link[rel="stylesheet"]')];
+  const immutableSource=nodes.map(node=>[
+    node.tagName, node.getAttribute('src')||node.getAttribute('href')||'', node.textContent||''
+  ]);
+  return JSON.stringify([
+    doc.querySelector('meta[name="duoduo-shell-version"]')?.getAttribute('content')||'',
+    immutableSource,
+    doc.getElementById('player')?.outerHTML||'',
+    doc.getElementById('mini')?.outerHTML||''
+  ]);
+}
+const loadedShellSignature=shellSourceSignature(document);
+const byId=id=>document.getElementById(id);
+const audio=byId('music'),play=byId('play'),seek=byId('seek'),vol=byId('volume'),status=byId('status');
+const title=byId('trackName'),select=byId('trackList');
+const previous=byId('prev'),next=byId('next');
+const apiBase=location.hostname.endsWith('github.io')?'https://duoduo-website.onrender.com':'';
+const coverNode=byId('musicCircle'),coverImage=byId('songCover'),incomingCover=byId('songCoverIncoming'),captionNode=byId('trackCaption'),playerNode=byId('player');
+const coverPreview=byId('coverPreview'),coverPreviewImage=byId('coverPreviewImage'),coverPreviewClose=byId('coverPreviewClose');
+let artworkRequest=0,artworkTimer=0;
+const closeCoverPreview=()=>{if(coverPreview.hidden)return;coverPreview.hidden=true;coverPreviewImage.removeAttribute('src');coverNode.focus({preventScroll:true});};
+coverNode.addEventListener('click',()=>{if(coverNode.disabled||!coverImage.dataset.loaded)return;coverPreviewImage.src=coverImage.dataset.loaded;coverPreview.hidden=false;coverPreviewClose.focus({preventScroll:true});});
+coverPreviewClose.addEventListener('click',closeCoverPreview);
+coverPreview.addEventListener('click',e=>{if(e.target===coverPreview)closeCoverPreview();});
+document.addEventListener('keydown',e=>{if(coverPreview.hidden)return;if(e.key==='Escape'){e.preventDefault();closeCoverPreview();}else if(e.key==='Tab'){e.preventDefault();coverPreviewClose.focus({preventScroll:true});}});
+const icons={play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="m8 5 12 7-12 7z"/></svg>',pause:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 5h4v14H7zm6 0h4v14h-4z"/></svg>'};
+const storage={volume:'duoduo_bgm_volume',muted:'duoduo_bgm_muted',lastVolume:'duoduo_bgm_last_volume',glass:'duoduo_bgm_glass_transparency',collapsed:'duoduo_bgm_collapsed',paused:'duoduo_bgm_paused',track:'duoduo_bgm_track',mode:'duoduo_bgm_player_mode'};
+const restoreStorageKey='duoduo_bgm_tab_resume_v6';
+const read=(key,fallback)=>{try{return localStorage.getItem(key)??fallback;}catch{return fallback;}};
+const save=(key,value)=>{try{localStorage.setItem(key,String(value));}catch{}};
+let playlist=[],selectedId='',defaultId='',mode='loop',initialLoad=true,cloudLoading=false,playlistSnapshot='';
+// Per-player preference overrides the admin default. These are distinct behaviors:
+// once = one track then stop; order = play rest of list then stop;
+// loop = loop playlist; shuffle = random; repeat-one = replay same track.
+const playbackModes=[
+  {id:'once',label:'單曲播放',hint:'目前這首播放完就停止'},
+  {id:'order',label:'順序播放',hint:'依序播放到最後一首停止'},
+  {id:'loop',label:'循環播放',hint:'播放清單播完後重頭開始'},
+  {id:'shuffle',label:'隨機播放',hint:'隨機切換下一首'},
+  {id:'repeat-one',label:'單曲循環',hint:'重複播放目前這首'}
+];
+function useMode(nextMode,remember=true){
+  mode=playbackModes.some(m=>m.id===nextMode)?nextMode:'loop';
+  const item=playbackModes.find(m=>m.id===mode);
+  byId('modeLabel').textContent=item.label;
+  byId('modeExplanation').textContent=item.hint;
+  byId('modeCycle').title=`${item.label}｜${item.hint}（點擊切換）`;
+  byId('modeCycle').setAttribute('aria-label',`播放模式：${item.label}。點擊切換`);
+  const paths={once:'M7 5v14m5-14 7 7-7 7',order:'M4 6h16M4 12h16M4 18h12',loop:'M4 10V7a3 3 0 0 1 3-3h11l-3-3m3 3-3 3M20 14v3a3 3 0 0 1-3 3H6l3 3m-3-3 3-3',shuffle:'M4 4l5 5m3 3 8 8m-5 0h5v-5M4 20l16-16m-5 0h5v5', 'repeat-one':'M4 10V7a3 3 0 0 1 3-3h11l-3-3m3 3-3 3M20 14v3a3 3 0 0 1-3 3H6l3 3m-3-3 3-3M12 9v7'};
+  byId('modeIcon').innerHTML=`<path d="${paths[mode]}"/>`;
+  if(remember)save(storage.mode,mode);
+}
+byId('modeCycle').addEventListener('click',()=>{
+  const idx=playbackModes.findIndex(m=>m.id===mode);
+  useMode(playbackModes[(idx+1)%playbackModes.length].id);
+});
+// Tab-scoped restoration avoids carrying an obsolete position across fresh visits.
+let pendingResume=null,lastResumeSave=0;
+function storePlaybackPosition(){
+  if(!selectedId||!Number.isFinite(audio.currentTime))return;
+  try{
+    if(audio.ended){sessionStorage.removeItem(restoreStorageKey);return;}
+    sessionStorage.setItem(restoreStorageKey,JSON.stringify({id:selectedId,seconds:audio.currentTime,at:Date.now()}));
+  }catch{}
+}
+function readPlaybackPosition(id){
+  try{
+    const record=JSON.parse(sessionStorage.getItem(restoreStorageKey)||'null');
+    if(record&&record.id===id&&Date.now()-record.at<5*60*1000&&Number.isFinite(record.seconds)&&record.seconds>0)return record;
+  }catch{}
+  return null;
+}
+window.addEventListener('pagehide',storePlaybackPosition);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')storePlaybackPosition();});
+
+const validUrl=value=>{try{const url=new URL(String(value),location.href);return (url.protocol==='https:'||((url.hostname==='localhost'||url.hostname==='127.0.0.1')&&url.protocol==='http:'))?url.href:'';}catch{return '';}};
+const format=v=>Number.isFinite(v)?`${Math.floor(v/60)}:${String(Math.floor(v%60)).padStart(2,'0')}`:'0:00';
+let activeGlassPalette=null,glassTweenFrame=0,lastGlassAccent=null,glassSheenTimer=0;
+// A compositor-friendly background crossfade is used on touch / narrow screens.
+// Desktop keeps the existing 2.1.6 palette tween exactly as before.
+let compositeMobileGlass=window.matchMedia('(hover: none) and (pointer: coarse)').matches || (window.parent.innerWidth<=600);
+const glassBaseLayer=byId('bgmGlassBase'),glassIncomingLayer=byId('bgmGlassIncoming');
+if(compositeMobileGlass){playerNode.classList.add('bgm-composited-glass');byId('mini').classList.add('bgm-composited-mini');}
+window.parent.addEventListener('resize',()=>{
+  const mobile=window.matchMedia('(hover: none) and (pointer: coarse)').matches||window.parent.innerWidth<=600;
+  if(mobile===compositeMobileGlass)return;
+  compositeMobileGlass=mobile;
+  playerNode.classList.toggle('bgm-composited-glass',mobile);
+  byId('mini').classList.toggle('bgm-composited-mini',mobile);
+  if(mobile&&activeGlassPalette){glassBaseLayer.style.background=glassGradient(activeGlassPalette);glassIncomingLayer.style.opacity='0';}
+});
+let mobileGlassFrom=null,mobileGlassTo=null,mobileGlassStarted=0;
+let mobileGlassDone=0,mobileGlassToken=0;
+const cssRgb=values=>values.map(Math.round).join(',');
+const rgbHex=values=>'#'+values.map(x=>Math.max(0,Math.min(255,Math.round(x))).toString(16).padStart(2,'0')).join('');
+const contrastLuminance=values=>values.map(v=>{v/=255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4;}).reduce((a,v,i)=>a+v*[.2126,.7152,.0722][i],0);
+function paintGlassPalette(palette){
+  activeGlassPalette=palette;
+  const miniNode=byId('mini');
+  for(const element of [playerNode,miniNode]){
+    element.style.setProperty('--bgm-glass-top',cssRgb(palette.top));
+    element.style.setProperty('--bgm-glass-bottom',cssRgb(palette.bottom));
+    element.style.setProperty('--bgm-glass-control',cssRgb(palette.control));
+    element.style.setProperty('--song-accent',rgbHex(palette.accent));
+  }
+  // Choose contrast using the *current interpolated* button color, so the
+  // pause/play icon stays visible even halfway between opposite hues.
+  const luminosity=contrastLuminance(palette.accent);
+  const whiteContrast=1.05/(luminosity+.05);
+  const darkContrast=(luminosity+.05)/(contrastLuminance([9,25,39])+.05);
+  playerNode.style.setProperty('--song-ink',whiteContrast>darkContrast?'#ffffff':'#091927');
+}
+// The glass layer itself has one constant alpha; only the fully-opaque theme
+// gradients inside it crossfade. This prevents midway transparency fluctuations.
+const glassGradient=p=>`linear-gradient(148deg,rgb(${cssRgb(p.top)}),rgb(${cssRgb(p.bottom)}))`;
+const blendGlass=(a,b,t)=>{
+  const m=(x,y)=>x.map((v,i)=>v+(y[i]-v)*t);
+  return {top:m(a.top,b.top),bottom:m(a.bottom,b.bottom),
+    control:m(a.control,b.control),accent:m(a.accent,b.accent)};
+};
+function animateMobileGlassPalette(palette,accent){
+  ++mobileGlassToken;
+  const token=mobileGlassToken;
+  clearTimeout(mobileGlassDone);
+  cancelAnimationFrame(glassTweenFrame);
+  const old=activeGlassPalette;
+  const changed=lastGlassAccent!==null&&lastGlassAccent!==accent;
+  const reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  lastGlassAccent=accent;
+  let from=old;
+  if(mobileGlassFrom&&mobileGlassTo&&mobileGlassStarted){
+    const t=Math.max(0,Math.min(1,(performance.now()-mobileGlassStarted)/760));
+    const ease=t*t*(3-2*t);
+    from=blendGlass(mobileGlassFrom,mobileGlassTo,ease);
+  }
+  // CSS handles the contrasting controls while the GPU handles the panel fill.
+  paintGlassPalette(palette);
+  if(!from||!changed||reduced){
+    mobileGlassFrom=palette;mobileGlassTo=palette;mobileGlassStarted=0;
+    glassBaseLayer.style.background=glassGradient(palette);
+    glassIncomingLayer.style.transition='none';
+    glassIncomingLayer.style.opacity='0';
+    glassIncomingLayer.style.background=glassGradient(palette);
+    return;
+  }
+  mobileGlassFrom=from;mobileGlassTo=palette;mobileGlassStarted=performance.now();
+  glassBaseLayer.style.background=glassGradient(from);
+  glassIncomingLayer.style.transition='none';
+  glassIncomingLayer.style.opacity='0';
+  glassIncomingLayer.style.background=glassGradient(palette);
+  // Explicit flush: Safari must commit the 0-opacity frame before transitioning.
+  void glassIncomingLayer.offsetWidth;
+  requestAnimationFrame(()=>{
+    if(token!==mobileGlassToken)return;
+    glassIncomingLayer.style.transition='opacity 760ms cubic-bezier(.45,0,.25,1)';
+    glassIncomingLayer.style.opacity='1';
+  });
+  mobileGlassDone=setTimeout(()=>{
+    if(token!==mobileGlassToken)return;
+    glassBaseLayer.style.background=glassGradient(palette);
+    glassIncomingLayer.style.transition='none';
+    glassIncomingLayer.style.opacity='0';
+    mobileGlassFrom=palette;mobileGlassTo=palette;mobileGlassStarted=0;
+  },840);
+  playerNode.classList.remove('bgm-theme-shifting');
+  void playerNode.offsetWidth;
+  playerNode.classList.add('bgm-theme-shifting');
+  clearTimeout(glassSheenTimer);
+  glassSheenTimer=setTimeout(()=>playerNode.classList.remove('bgm-theme-shifting'),800);
+}
+function animateGlassPalette(palette,accent){
+  if(compositeMobileGlass){animateMobileGlassPalette(palette,accent);return;}
+  cancelAnimationFrame(glassTweenFrame);
+  const start=activeGlassPalette;
+  const changed=lastGlassAccent!==null&&lastGlassAccent!==accent;
+  const reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  lastGlassAccent=accent;
+  if(!start||!changed||reduced){
+    paintGlassPalette(palette);
+    return;
+  }
+  const old={top:[...start.top],bottom:[...start.bottom],control:[...start.control],accent:[...start.accent]};
+  const started=performance.now(),duration=760;
+  const tween=now=>{
+    const t=Math.max(0,Math.min(1,(now-started)/duration));
+    const eased=t*t*(3-2*t);
+    const mix=(a,b)=>a.map((c,i)=>c+(b[i]-c)*eased);
+    paintGlassPalette({top:mix(old.top,palette.top),bottom:mix(old.bottom,palette.bottom),
+      control:mix(old.control,palette.control),accent:mix(old.accent,palette.accent)});
+    if(t<1)glassTweenFrame=requestAnimationFrame(tween);
+    else glassTweenFrame=0;
+  };
+  glassTweenFrame=requestAnimationFrame(tween);
+  playerNode.classList.remove('bgm-theme-shifting');
+  void playerNode.offsetWidth;
+  playerNode.classList.add('bgm-theme-shifting');
+  clearTimeout(glassSheenTimer);
+  glassSheenTimer=setTimeout(()=>playerNode.classList.remove('bgm-theme-shifting'),800);
+}
+const refreshPlayback=()=>{
+  play.innerHTML=audio.paused?icons.play:icons.pause;
+  play.setAttribute('aria-label',audio.paused?'播放':'暫停');
+  playerNode.classList.toggle('is-playing',!audio.paused);
+};
+function showArtwork(track){
+  const accent=/^#[0-9a-fA-F]{6}$/.test(track?.accent||'')?track.accent:'#98cef8';
+  // Build a dark, tone-matched glass palette from the admin's song color.
+  // Text/control backgrounds remain dark; the accent button remains vivid.
+  const rgb=[1,3,5].map(i=>parseInt(accent.slice(i,i+2),16));
+  const toHsl=([r,g,b])=>{
+    r/=255;g/=255;b/=255;
+    const max=Math.max(r,g,b),min=Math.min(r,g,b),d=max-min;
+    let h=0,s=0,l=(max+min)/2;
+    if(d){
+      s=d/(1-Math.abs(2*l-1));
+      switch(max){case r:h=((g-b)/d)%6;break;case g:h=(b-r)/d+2;break;default:h=(r-g)/d+4;}
+      h=(h*60+360)%360;
+    }
+    return [h,s,l];
+  };
+  const fromHsl=(h,s,l)=>{
+    const c=(1-Math.abs(2*l-1))*s,x=c*(1-Math.abs((h/60)%2-1)),m=l-c/2;
+    let v=h<60?[c,x,0]:h<120?[x,c,0]:h<180?[0,c,x]:h<240?[0,x,c]:h<300?[x,0,c]:[c,0,x];
+    return v.map(n=>Math.round((n+m)*255));
+  };
+  const luminance=c=>c.map(n=>{n/=255;return n<=.04045?n/12.92:((n+.055)/1.055)**2.4;}).reduce((a,v,i)=>a+v*[.2126,.7152,.0722][i],0);
+  const [h,s,l]=toHsl(rgb);
+  const top=fromHsl(h,Math.min(.58,s*.70),.18);
+  const bottom=fromHsl(h,Math.min(.47,s*.56),.105);
+  const control=fromHsl(h,Math.min(.40,s*.42),.115);
+
+  // Only brighten an unusually dark admin color when needed for a legible
+  // play button and slider. Normal colors stay exactly as configured.
+  let controlAccent=rgb.slice(),lightness=l;
+  while(luminance(controlAccent)<.20&&lightness<.93){
+    lightness=Math.min(.94,lightness+.025);
+    controlAccent=fromHsl(h,s,lightness);
+  }
+  animateGlassPalette({top,bottom,control,accent:controlAccent},accent);
+  captionNode.textContent=String(track?.caption||'').slice(0,80);
+  captionNode.hidden=!captionNode.textContent;
+  const requested=validUrl(track?.cover||'');
+  const serial=++artworkRequest;
+  clearTimeout(artworkTimer);
+  coverNode.classList.remove('is-crossfading');
+  incomingCover.removeAttribute('src');
+  closeCoverPreview();
+  if(!requested){
+    coverImage.removeAttribute('src');delete coverImage.dataset.loaded;
+    coverNode.classList.remove('has-cover');coverNode.disabled=true;return;
+  }
+  if(coverImage.dataset.loaded===requested&&coverNode.classList.contains('has-cover'))return;
+  // Decode new artwork in the background, then crossfade without blanking the old cover.
+  const preload=new Image();
+  preload.onload=async()=>{
+    try{if(typeof preload.decode==='function')await preload.decode();}catch(_){/* onload already succeeded */}
+    if(serial!==artworkRequest)return;
+    incomingCover.src=requested;
+    coverNode.classList.add('has-cover');coverNode.disabled=false;
+    // A layout read establishes opacity 0 before the transition begins.
+    void incomingCover.offsetWidth;
+    requestAnimationFrame(()=>{
+      if(serial!==artworkRequest)return;
+      coverNode.classList.add('is-crossfading');
+      artworkTimer=setTimeout(async()=>{
+        if(serial!==artworkRequest)return;
+        // Keep the opaque incoming cover visible until the base <img> has
+        // decoded and the browser has had a chance to paint that bitmap.
+        // Otherwise replacing src and removing the overlay in one task can
+        // briefly expose an unpainted image (the post-transition flash).
+        coverImage.src=requested;
+        try{if(typeof coverImage.decode==='function')await coverImage.decode();}
+        catch(_){if(!coverImage.complete||!coverImage.naturalWidth)return;}
+        if(serial!==artworkRequest)return;
+        await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+        if(serial!==artworkRequest)return;
+        coverImage.dataset.loaded=requested;
+        // Both layers now display the same bitmap. Drop the overlay without
+        // a reverse fade, then restore its fade-in transition for next time.
+        incomingCover.style.transition='none';
+        coverNode.classList.remove('is-crossfading');
+        incomingCover.removeAttribute('src');
+        requestAnimationFrame(()=>{
+          if(serial===artworkRequest)incomingCover.style.removeProperty('transition');
+        });
+      },window.matchMedia('(prefers-reduced-motion:reduce)').matches?0:350);
+    });
+  };
+  preload.onerror=()=>{
+    if(serial!==artworkRequest)return;
+    coverImage.removeAttribute('src');delete coverImage.dataset.loaded;
+    coverNode.classList.remove('has-cover');coverNode.disabled=true;
+  };
+  preload.src=requested;
+}
+const applyCollapsed=collapsed=>{document.body.classList.toggle('collapsed',collapsed);save(storage.collapsed,collapsed?'1':'0');};
+byId('collapse').onclick=()=>applyCollapsed(true);byId('mini').onclick=()=>applyCollapsed(false);
+applyCollapsed(read(storage.collapsed,'1')==='1');
+// Volume icon is a real mute toggle. Keep the selected volume so unmuting
+// restores the exact level; moving the slider while muted unmutes naturally.
+const muteButton=byId('volumeMute');
+const soundIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5zM15 9a5 5 0 0 1 0 6m3-9a9 9 0 0 1 0 12"/></svg>';
+const mutedIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5zM16 9l5 6m0-6-5 6"/></svg>';
+const oldVolume=Number(read(storage.volume,'40'));
+vol.value=String(Number.isFinite(oldVolume)?Math.max(0,Math.min(100,oldVolume)):40);
+const mobileVolume={get matches(){return window.parent.innerWidth<=480;}};
+audio.muted=read(storage.muted,'0')==='1';
+function syncMuteUI(){
+  const silent=audio.muted||(!mobileVolume.matches&&Number(vol.value)===0);
+  muteButton.innerHTML=silent?mutedIcon:soundIcon;
+  muteButton.setAttribute('aria-pressed',String(silent));
+  muteButton.setAttribute('aria-label',silent?'恢復聲音':'靜音');
+  muteButton.title=silent?'恢復聲音':'一鍵靜音';
+}
+function syncDeviceVolume(){audio.volume=mobileVolume.matches?1:Number(vol.value)/100;syncMuteUI();}
+syncDeviceVolume();
+window.parent.addEventListener('resize',syncDeviceVolume);
+muteButton.addEventListener('click',()=>{
+  const silent=audio.muted||(!mobileVolume.matches&&Number(vol.value)===0);
+  if(silent){
+    if(Number(vol.value)===0){const last=Number(read(storage.lastVolume,'40'));vol.value=String(Number.isFinite(last)&&last>0?Math.min(100,last):40);save(storage.volume,vol.value);}
+    audio.muted=false;
+  }else{
+    if(Number(vol.value)>0)save(storage.lastVolume,vol.value);
+    audio.muted=true;
+  }
+  save(storage.muted,audio.muted?'1':'0');
+  syncDeviceVolume();
+});
+vol.addEventListener('input',()=>{
+  save(storage.volume,vol.value);
+  if(Number(vol.value)>0){save(storage.lastVolume,vol.value);if(audio.muted){audio.muted=false;save(storage.muted,'0');}}
+  syncDeviceVolume();
+});
+// Player-local preference only: no admin, database or other visitors are changed.
+const glassToggle=byId('glassToggle'),glassSettings=byId('glassSettings'),glassSlider=byId('glassSlider'),glassAmount=byId('glassAmount');
+function setGlassTransparency(value,remember=true){
+  const n=Number(value);
+  const transparency=Math.round(Math.max(8,Math.min(26,Number.isFinite(n)?n:16)));
+  glassSlider.value=String(transparency);
+  glassAmount.textContent=`${transparency}%`;
+  playerNode.style.setProperty('--glass-opacity',(1-transparency/100).toFixed(2));
+  byId('mini').style.setProperty('--glass-opacity',(1-transparency/100).toFixed(2));
+  if(remember)save(storage.glass,transparency);
+}
+setGlassTransparency(read(storage.glass,'16'),false);
+glassSlider.addEventListener('input',()=>setGlassTransparency(glassSlider.value));
+glassToggle.addEventListener('click',()=>{
+  const open=glassSettings.hidden;
+  glassSettings.hidden=!open;
+  glassToggle.setAttribute('aria-expanded',String(open));
+  if(!trackOptions.hidden)positionTrackOptions();
+});
+async function tryPlay(){
+  if(!audio.src)return;
+  try{await audio.play();status.textContent=`正在播放：${playlist.find(t=>t.id===selectedId)?.title||'多多谷 BGM'}`;}
+  catch{status.textContent='瀏覽器阻擋了自動播放，請按播放鍵啟動 BGM。';}
+  refreshPlayback();
+}
+function setTrack(id,{autoplay=true}={}){
+  const track=playlist.find(t=>t.id===id);if(!track)return;
+  const changed=track.id!==selectedId||audio.src!==track.url;
+  selectedId=track.id;select.value=track.id;syncTrackPicker();title.textContent=track.title;showArtwork(track);save(storage.track,track.id);
+  if(changed){audio.src=track.url;audio.load();seek.value='0';byId('elapsed').textContent='0:00';byId('duration').textContent='0:00';}
+  play.disabled=false;seek.disabled=false;previous.disabled=playlist.length<2;next.disabled=playlist.length<2;
+  if(autoplay)tryPlay();else refreshPlayback();
+}
+function nextTrack(delta=1){
+  if(!playlist.length)return;
+  const index=playlist.findIndex(t=>t.id===selectedId);
+  let nextIndex;
+  if(mode==='shuffle'&&playlist.length>1){nextIndex=Math.floor(Math.random()*(playlist.length-1));if(nextIndex>=(index<0?0:index))nextIndex++;}
+  else nextIndex=((index<0?0:index)+delta+playlist.length)%playlist.length;
+  setTrack(playlist[nextIndex]?.id||playlist[0].id,{autoplay:read(storage.paused,'0')!=='1'});
+}
+previous.onclick=()=>nextTrack(-1);next.onclick=()=>nextTrack(1);
+// Keep the real <select> as the source of truth. The custom list only
+// replaces the operating-system popup, which cannot show our glove cursor.
+const trackPicker=byId('trackPicker'),trackPickerText=byId('trackPickerText'),trackOptions=byId('trackOptions'),playlistArea=byId('playlistArea');
+select.hidden=true;
+select.setAttribute('aria-hidden','true');
+select.tabIndex=-1;
+trackPicker.hidden=false;
+function closeTrackOptions(returnFocus=false){
+  if(!trackOptions.hidden){trackOptions.hidden=true;trackPicker.setAttribute('aria-expanded','false');}
+  if(returnFocus)trackPicker.focus();
+}
+function syncTrackPicker(rebuild=false){
+  if(rebuild){
+    trackOptions.replaceChildren();
+    for(const option of select.options){
+      if(!option.value)continue;
+      const entry=document.createElement('button');
+      entry.type='button';entry.className='dd-song-option';
+      entry.setAttribute('role','option');entry.setAttribute('aria-selected','false');
+      entry.dataset.trackId=option.value;
+      entry.textContent=option.textContent;
+      trackOptions.append(entry);
+    }
+  }
+  const selected=Array.from(select.options).find(option=>option.value===select.value);
+  trackPickerText.textContent=selected?.textContent||'正在載入…';
+  trackPicker.disabled=select.disabled||!trackOptions.childElementCount;
+  for(const entry of trackOptions.children){entry.setAttribute('aria-selected',String(entry.dataset.trackId===select.value));}
+  if(trackPicker.disabled)closeTrackOptions();
+}
+function positionTrackOptions(){
+  // Compact menu immediately adjacent to the picker, not detached above
+  // the entire player. It temporarily overlays controls while picking.
+  const area=playlistArea.getBoundingClientRect();
+  const picker=trackPicker.getBoundingClientRect();
+  trackOptions.style.bottom=`${Math.round(area.bottom-picker.top+6)}px`;
+  trackOptions.style.maxHeight=`${Math.max(60,Math.min(172,picker.top-12))}px`;
+}
+function openTrackOptions(focusIndex=null){
+  if(trackPicker.disabled)return;
+  positionTrackOptions();
+  trackOptions.hidden=false;
+  trackPicker.setAttribute('aria-expanded','true');
+  const items=Array.from(trackOptions.children);
+  const selected=items.findIndex(item=>item.dataset.trackId===select.value);
+  const index=focusIndex===null?(selected<0?0:selected):Math.min(Math.max(0,focusIndex),items.length-1);
+  if(items[index]){items[index].focus({preventScroll:true});items[index].scrollIntoView({block:'end',inline:'nearest'});}
+}
+trackPicker.addEventListener('click',()=>{
+  if(trackOptions.hidden)openTrackOptions();else closeTrackOptions(true);
+});
+trackPicker.addEventListener('keydown',event=>{
+  if(['ArrowDown','ArrowUp','Home','End'].includes(event.key)){
+    event.preventDefault();
+    const last=trackOptions.childElementCount-1;
+    openTrackOptions(event.key==='End'?last:event.key==='Home'?0:null);
+  }
+});
+trackOptions.addEventListener('click',event=>{
+  const entry=event.target.closest('.dd-song-option');
+  if(!entry||!trackOptions.contains(entry))return;
+  if(Array.from(select.options).some(option=>option.value===entry.dataset.trackId)){
+    select.value=entry.dataset.trackId;
+    select.dispatchEvent(new Event('change',{bubbles:true}));
+  }
+  closeTrackOptions(true);
+});
+trackOptions.addEventListener('keydown',event=>{
+  const entries=Array.from(trackOptions.children);
+  if(event.key==='Escape'){event.preventDefault();closeTrackOptions(true);return;}
+  if(event.key==='Tab'){closeTrackOptions();return;}
+  if(!['ArrowDown','ArrowUp','Home','End'].includes(event.key))return;
+  event.preventDefault();
+  const current=entries.indexOf(document.activeElement);
+  const index=event.key==='Home'?0:event.key==='End'?entries.length-1:event.key==='ArrowDown'?Math.min(current+1,entries.length-1):Math.max(current-1,0);
+  if(entries[index]){entries[index].focus({preventScroll:true});entries[index].scrollIntoView({block:'nearest'});}
+});
+document.addEventListener('pointerdown',event=>{if(!playlistArea.contains(event.target))closeTrackOptions();},true);
+window.addEventListener('blur',()=>closeTrackOptions());
+window.addEventListener('resize',()=>{if(!trackOptions.hidden)positionTrackOptions();});
+select.onchange=()=>setTrack(select.value,{autoplay:read(storage.paused,'0')!=='1'});
+play.onclick=async()=>{
+  if(!audio.src)return;
+  if(!audio.paused){save(storage.paused,'1');audio.pause();status.textContent='已暫停 BGM，網站會記住你的選擇。';}
+  else{save(storage.paused,'0');if(audio.ended){try{audio.currentTime=0;}catch{}}await tryPlay();}
+};
+audio.addEventListener('play',refreshPlayback);audio.addEventListener('pause',refreshPlayback);
+audio.addEventListener('ended',()=>{
+  try{sessionStorage.removeItem(restoreStorageKey);}catch{}
+  if(mode==='repeat-one'){audio.currentTime=0;tryPlay();return;}
+  if(mode==='once'||(mode==='order'&&playlist.findIndex(t=>t.id===selectedId)>=playlist.length-1)){
+    save(storage.paused,'1');status.textContent='播放已結束，可按播放鍵重新播放。';refreshPlayback();return;
+  }
+  nextTrack(1);
+});
+audio.addEventListener('timeupdate',()=>{
+  byId('elapsed').textContent=format(audio.currentTime);
+  if(Number.isFinite(audio.duration)&&audio.duration>0)seek.value=String(Math.floor(audio.currentTime/audio.duration*1000));
+  if(Date.now()-lastResumeSave>=4000){lastResumeSave=Date.now();storePlaybackPosition();}
+});
+audio.addEventListener('loadedmetadata',()=>{
+  byId('duration').textContent=format(audio.duration);
+  if(pendingResume&&pendingResume.id===selectedId){
+    const record=pendingResume;pendingResume=null;
+    try{audio.currentTime=Math.min(record.seconds,Math.max(0,audio.duration-0.25));}catch{}
+    byId('elapsed').textContent=format(audio.currentTime);
+    if(record.autoplay)tryPlay();
+    else status.textContent='已恢復上次播放位置，按播放即可繼續。';
+  }
+});
+audio.addEventListener('error',()=>{if(audio.src)status.textContent='此歌曲載入失敗，請選擇其他曲目，或請管理員確認音訊網址。';});
+seek.oninput=()=>{if(Number.isFinite(audio.duration)&&audio.duration>0)audio.currentTime=Number(seek.value)/1000*audio.duration;};
+function refreshListUI(){
+  select.replaceChildren();
+  for(const t of playlist){const option=document.createElement('option');option.value=t.id;option.textContent=t.title;select.append(option);}
+  if(!playlist.length){const option=document.createElement('option');option.value='';option.textContent='尚無上架歌曲';select.append(option);}
+  select.disabled=!playlist.length;
+  if(playlist.some(t=>t.id===selectedId))select.value=selectedId;
+  syncTrackPicker(true);
+}
+async function fetchCloud(){
+  if(cloudLoading||document.visibilityState==='hidden'||!navigator.onLine)return;
+  cloudLoading=true;
+  try{
+    const response=await fetch(`${apiBase}/api/site-data`,{cache:'no-store',headers:{Accept:'application/json'}});
+    if(!response.ok)throw new Error(`HTTP ${response.status}`);
+    const json=await response.json();
+    if(!json.ok)throw new Error('雲端資料格式錯誤');
+    const config=json.data?.duoduo_bgm||{};
+    const incoming=(Array.isArray(config.tracks)?config.tracks:[]).filter(t=>t&&t.enabled!==false&&t.id&&t.title&&validUrl(t.url)).map(t=>({id:String(t.id),title:String(t.title),url:validUrl(t.url),cover:validUrl(t.cover||''),accent:/^#[0-9a-fA-F]{6}$/.test(t.accent||'')?t.accent:'#98cef8',caption:String(t.caption||'').slice(0,80)}));
+    const fingerprint=JSON.stringify({incoming,defaultId:config.defaultId,mode:config.mode});
+    if(!initialLoad&&fingerprint===playlistSnapshot)return;
+    playlistSnapshot=fingerprint;playlist=incoming;defaultId=String(config.defaultId||'');
+    const adminDefaultMode=config.mode==='shuffle'?'shuffle':config.mode==='single'?'repeat-one':'loop';
+    useMode(read(storage.mode,adminDefaultMode),false);
+    const active=playlist.find(t=>t.id===selectedId);
+    if(!playlist.length){audio.pause();audio.removeAttribute('src');audio.load();selectedId='';play.disabled=true;seek.disabled=true;previous.disabled=true;next.disabled=true;title.textContent='尚未上架 BGM';showArtwork(null);status.textContent='管理員尚未發布任何歌曲。';refreshListUI();refreshPlayback();initialLoad=false;return;}
+    const preferred=initialLoad?(playlist.find(t=>t.id===read(storage.track,''))?.id||playlist.find(t=>t.id===defaultId)?.id||playlist[0].id):active?.id||playlist.find(t=>t.id===defaultId)?.id||playlist[0].id;
+    const changed=!active||audio.src!==active.url;
+    const wasPlaying=!audio.paused;
+    refreshListUI();
+    if(initialLoad){
+      const remembered=readPlaybackPosition(preferred);
+      if(remembered){
+        pendingResume={...remembered,autoplay:read(storage.paused,'0')!=='1'};
+        setTrack(preferred,{autoplay:false});
+      }else setTrack(preferred,{autoplay:read(storage.paused,'0')!=='1'});
+      if(read(storage.paused,'0')==='1'&&!remembered)status.textContent='你上次暫停了 BGM，按播放鍵即可繼續。';
+    }
+    else if(changed){setTrack(preferred,{autoplay:(wasPlaying||!selectedId)&&read(storage.paused,'0')!=='1'});}
+    else{select.value=selectedId;syncTrackPicker();showArtwork(playlist.find(t=>t.id===selectedId));previous.disabled=playlist.length<2;next.disabled=playlist.length<2;}
+    initialLoad=false;
+  }catch(error){if(initialLoad)status.textContent='暫時無法讀取後台播放清單，請確認雲端服務，稍後可重新整理。';}
+  finally{cloudLoading=false;}
+}
+// Standalone Checklist integration: obtain the exact same published BGM data.
+// Checklist does not use the official site's nested-page router.
+setTimeout(fetchCloud,500);
+setInterval(fetchCloud,60000);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')fetchCloud();});
+window.addEventListener('online',fetchCloud);
+
+// Auto-refresh the standalone player if its deployed code changes on GitHub.
+// Checklist page itself stays intact and task data is never reset by this check.
+let shellChecking=false;
+async function checkShellVersion(){
+  if(shellChecking||document.visibilityState==='hidden'||!navigator.onLine)return;
+  shellChecking=true;
+  try {
+    const response=await fetch(new URL('bgm-player.html',location.href),{cache:'no-store'});
+    if(!response.ok)return;
+    const remoteDoc=new DOMParser().parseFromString(await response.text(),'text/html');
+    if(!remoteDoc.getElementById('player')||!remoteDoc.getElementById('mini'))return;
+    if(shellSourceSignature(remoteDoc)!==loadedShellSignature){
+      storePlaybackPosition();location.reload();
+    }
+  }catch(_){/* Leave a working player running if the network is unavailable. */}
+  finally{shellChecking=false;}
+}
+setInterval(checkShellVersion,60000);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkShellVersion();});
+window.addEventListener('online',checkShellVersion);
+})();
+</script>
+
+<script>
+(()=>{
+  'use strict';
+  const channel='duoduo-checklist-bgm-217';
+  const card=document.getElementById('player');
+  const preview=document.getElementById('coverPreview');
+  let queued=false,last='';
+  function notifyLayout(){
+    queued=false;
+    const mode=preview.hidden?(document.body.classList.contains('collapsed')?'collapsed':'expanded'):'preview';
+    const cardHeight=mode==='collapsed'?58:Math.ceil(card.getBoundingClientRect().height);
+    const height=mode==='collapsed'?100:Math.max(100,cardHeight+(window.innerWidth<=480?30:43));
+    const signature=mode+':'+height;
+    if(signature===last)return;
+    last=signature;
+    window.parent.postMessage({channel,mode,height},location.origin);
+  }
+  function queueLayout(){if(queued)return;queued=true;requestAnimationFrame(notifyLayout);}
+  new MutationObserver(queueLayout).observe(document.body,{attributes:true,attributeFilter:['class']});
+  new MutationObserver(queueLayout).observe(preview,{attributes:true,attributeFilter:['hidden']});
+  new ResizeObserver(queueLayout).observe(card);
+  window.addEventListener('resize',queueLayout);
+  queueLayout();
+  window.addEventListener('load',queueLayout);
+})();
+</script>
+</body>
+</html>
