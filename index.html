@@ -1512,6 +1512,60 @@ setInterval(()=>{
 (()=>{
   const frame=document.getElementById('ddChecklistBgmFrame');
   const channel='duoduo-checklist-bgm-217';
+  // The official BGM stays the only source for the player. The Checklist
+  // parent only pins its white-glove cursors within the SAME-ORIGIN iframe.
+  // This avoids pointer flicker when Chrome moves focus between the iframe,
+  // native slider thumbs and the site's alternating hover-cursor states.
+  function installChecklistPlayerCursor(){
+    try{
+      const doc=frame.contentDocument;
+      if(!doc || doc.location.origin !== location.origin || !doc.head)return;
+      const root=doc.documentElement;
+      if(!root.classList.contains('dd-bgm-embed'))return;
+      root.classList.add('dd-bgm-checklist-cursor');
+      if(doc.getElementById('dd-checklist-player-cursor-style'))return;
+      const cursorFile=name=>new URL('cursor-ui/'+name, document.baseURI).href;
+      const normal=cursorFile('cursor-default.png');
+      const hover=cursorFile('cursor-hover-1.png');
+      const pressed=cursorFile('cursor-pressed.png');
+      const style=doc.createElement('style');
+      style.id='dd-checklist-player-cursor-style';
+      style.textContent=`
+        @media (hover:hover) and (pointer:fine){
+          html.dd-bgm-checklist-cursor #player,
+          html.dd-bgm-checklist-cursor #player *,
+          html.dd-bgm-checklist-cursor #mini,
+          html.dd-bgm-checklist-cursor #mini *{
+            cursor:url("${normal}") 2 2,auto!important;
+          }
+          html.dd-bgm-checklist-cursor #player :is(button,a,select,summary,[role="button"],input[type="range"]),
+          html.dd-bgm-checklist-cursor #player :is(button,a,select,summary,[role="button"],input[type="range"]) *,
+          html.dd-bgm-checklist-cursor #mini,
+          html.dd-bgm-checklist-cursor #mini *{
+            cursor:url("${hover}") 3 2,pointer!important;
+          }
+          html.dd-bgm-checklist-cursor #player :is(button,a,select,summary,[role="button"],input[type="range"]):active,
+          html.dd-bgm-checklist-cursor #player :is(button,a,select,summary,[role="button"],input[type="range"]):active *,
+          html.dd-bgm-checklist-cursor #mini:active,
+          html.dd-bgm-checklist-cursor #mini:active *{
+            cursor:url("${pressed}") 3 2,grabbing!important;
+          }
+          html.dd-bgm-checklist-cursor #player input[type="range"]::-webkit-slider-thumb,
+          html.dd-bgm-checklist-cursor #player input[type="range"]::-moz-range-thumb{
+            cursor:url("${hover}") 3 2,pointer!important;
+          }
+          html.dd-bgm-checklist-cursor #player input[type="range"]:active::-webkit-slider-thumb,
+          html.dd-bgm-checklist-cursor #player input[type="range"]:active::-moz-range-thumb{
+            cursor:url("${pressed}") 3 2,grabbing!important;
+          }
+        }`;
+      doc.head.appendChild(style);
+    }catch(_){
+      // A different origin cannot be styled by the parent. Never interfere
+      // with audio playback or the Checklist task controls in that case.
+    }
+  }
+
   const overlay=document.getElementById('ddChecklistCoverDialog');
   const image=document.getElementById('ddChecklistCoverImg');
   const closeButton=document.getElementById('ddChecklistCoverClose');
@@ -1590,9 +1644,10 @@ setInterval(()=>{
     try{frame.contentWindow?.postMessage({channel,action:'host-size',width:window.innerWidth},location.origin);}catch(_){}
     applyFrameSize();
   }
-  frame.addEventListener('load',notifyHostSize);
+  frame.addEventListener('load',()=>{installChecklistPlayerCursor();notifyHostSize();});
   window.addEventListener('resize',notifyHostSize);
   notifyHostSize();
+  installChecklistPlayerCursor();
 })();
 </script>
 </body>
