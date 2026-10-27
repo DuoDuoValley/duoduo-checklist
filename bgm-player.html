@@ -480,7 +480,15 @@ const coverNode=byId('musicCircle'),coverImage=byId('songCover'),incomingCover=b
 const coverPreview=byId('coverPreview'),coverPreviewImage=byId('coverPreviewImage'),coverPreviewClose=byId('coverPreviewClose');
 let artworkRequest=0,artworkTimer=0;
 const closeCoverPreview=()=>{if(coverPreview.hidden)return;coverPreview.hidden=true;coverPreviewImage.removeAttribute('src');coverNode.focus({preventScroll:true});};
-coverNode.addEventListener('click',()=>{if(coverNode.disabled||!coverImage.dataset.loaded)return;coverPreviewImage.src=coverImage.dataset.loaded;coverPreview.hidden=false;coverPreviewClose.focus({preventScroll:true});});
+coverNode.addEventListener('click',()=>{
+  if(coverNode.disabled||!coverImage.dataset.loaded)return;
+  window.parent.postMessage({channel:'duoduo-checklist-bgm-217',action:'cover-open',src:coverImage.dataset.loaded},location.origin);
+});
+window.addEventListener('message',event=>{
+  if(event.origin===location.origin&&event.source===window.parent&&event.data?.channel==='duoduo-checklist-bgm-217'&&event.data.action==='cover-closed'){
+    coverNode.focus({preventScroll:true});
+  }
+});
 coverPreviewClose.addEventListener('click',closeCoverPreview);
 coverPreview.addEventListener('click',e=>{if(e.target===coverPreview)closeCoverPreview();});
 document.addEventListener('keydown',e=>{if(coverPreview.hidden)return;if(e.key==='Escape'){e.preventDefault();closeCoverPreview();}else if(e.key==='Tab'){e.preventDefault();coverPreviewClose.focus({preventScroll:true});}});

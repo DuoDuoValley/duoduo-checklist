@@ -230,6 +230,32 @@ body.dark .category-card .section-head{background:linear-gradient(100deg,color-m
   color-scheme:dark;
 }
 #ddChecklistBgmFrame.dd-bgm-ready{opacity:1;}
+/* Album preview is hosted on the top-level Checklist page, not inside the
+   cropped BGM iframe. This eliminates the full-iframe resize / flash. */
+#ddChecklistCoverDialog[hidden]{display:none!important;}
+#ddChecklistCoverDialog{
+  position:fixed;inset:0;z-index:10060;display:grid;place-items:center;
+  padding:24px;background:rgba(3,9,18,.86);
+  -webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);
+}
+#ddChecklistCoverDialog figure{
+  margin:0;position:relative;width:100%;max-width:min(512px,90vw);
+  max-height:90dvh;display:grid;place-items:center;
+}
+#ddChecklistCoverDialog img{
+  display:block;width:100%;height:auto;max-height:calc(90dvh - 36px);
+  object-fit:contain;border-radius:14px;
+  box-shadow:0 12px 38px rgba(0,0,0,.55);
+}
+#ddChecklistCoverClose{
+  position:absolute;right:-14px;top:-14px;display:grid;place-items:center;
+  width:34px;height:34px;border-radius:50%;font-size:24px;line-height:1;
+  color:#fff;background:#1c2c40;border:1px solid rgba(230,243,255,.32);
+  cursor:pointer;
+}
+#ddChecklistCoverClose:hover{background:#344a64;}
+#ddChecklistCoverClose:focus-visible{outline:2px solid #b6dfff;outline-offset:3px;}
+
 @media(prefers-reduced-motion:reduce){#ddChecklistBgmFrame{transition:none;}}
 </style>
 <script data-goatcounter="https://duoduovalley.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
@@ -283,6 +309,13 @@ body.dark .category-card .section-head{background:linear-gradient(100deg,color-m
   <div class="notify-toast" id="notifyToast"></div>
   <div id="app"></div>
   <div class="note">點擊分類標題即可收起／展開。<br>勾選紀錄儲存在目前裝置的瀏覽器中。</div>
+</div>
+
+<!-- The cover is previewed in the host document to avoid resizing the
+     audio iframe or moving the player during an album-art click. -->
+<div id="ddChecklistCoverDialog" hidden role="dialog" aria-modal="true" aria-label="歌曲封面預覽" tabindex="-1">
+  <figure><img id="ddChecklistCoverImg" alt="歌曲封面大圖">
+  <button id="ddChecklistCoverClose" type="button" aria-label="關閉封面預覽" title="關閉">×</button></figure>
 </div>
 
 <!-- DuoDuo BGM 2.1.7: independent, isolated player; Checklist task DOM is untouched. -->
@@ -1474,26 +1507,65 @@ setInterval(()=>{
 <script src="cursor-ui/cursor.js" defer></script>
 
 <script>
-// Checklist integration bridge: the embedded BGM can resize only its own box.
-// No Checklist storage, tasks, counters, dates or existing JS are changed.
+// Checklist BGM bridge: resize only the player canvas and show the cover
+// on the host page, without changing Checklist task storage or layout.
 (()=>{
   const frame=document.getElementById('ddChecklistBgmFrame');
   const channel='duoduo-checklist-bgm-217';
-  let currentMode='collapsed',currentHeight=100;
+  const overlay=document.getElementById('ddChecklistCoverDialog');
+  const image=document.getElementById('ddChecklistCoverImg');
+  const closeButton=document.getElementById('ddChecklistCoverClose');
+  let currentMode='collapsed',currentHeight=100,previewToken=0,previousFocus=null;
   function applyFrameSize(){
-    if(currentMode==='preview'){
-      frame.style.width='100vw';frame.style.height='100dvh';
-    }else if(currentMode==='collapsed'){
+    if(currentMode==='collapsed'){
       frame.style.width='96px';frame.style.height='100px';
     }else{
-      frame.style.width='min(396px, 100vw)';
-      frame.style.height=Math.min(window.innerHeight,Math.max(100,currentHeight))+'px';
+      // More transparent room for the existing 50px diffused shadow, so it
+      // does not become a visible square clipped by the iframe boundary.
+      frame.style.width='min(450px, 100vw)';
+      frame.style.height=Math.min(window.innerHeight,Math.max(100,currentHeight+62))+'px';
     }
   }
+  function closePreview(){
+    ++previewToken;
+    if(overlay.hidden)return;
+    overlay.hidden=true;
+    image.removeAttribute('src');
+    if(previousFocus&&previousFocus.isConnected){previousFocus.focus({preventScroll:true});}
+    frame.contentWindow?.postMessage({channel,action:'cover-closed'},location.origin);
+  }
+  async function openPreview(raw){
+    const token=++previewToken;
+    let url;
+    try{
+      url=new URL(raw,location.href);
+      if(url.protocol!=='https:'&&!(url.protocol==='http:'&&url.origin===location.origin))return;
+    }catch{return;}
+    // Wait for a decoded image before showing anything. This avoids a black
+    // empty preview or a second flash for a slow remote cover image.
+    const upcoming=new Image();upcoming.decoding='async';upcoming.src=url.href;
+    try{await upcoming.decode();}catch{return;}
+    if(token!==previewToken)return;
+    previousFocus=document.activeElement;
+    image.src=url.href;
+    overlay.hidden=false;
+    closeButton.focus({preventScroll:true});
+  }
+  closeButton.addEventListener('click',closePreview);
+  overlay.addEventListener('click',event=>{if(event.target===overlay)closePreview();});
+  document.addEventListener('keydown',event=>{
+    if(overlay.hidden)return;
+    if(event.key==='Escape'){event.preventDefault();closePreview();}
+    else if(event.key==='Tab'){event.preventDefault();closeButton.focus({preventScroll:true});}
+  });
   window.addEventListener('message',event=>{
     if(event.origin!==location.origin||event.source!==frame.contentWindow)return;
     const data=event.data;
-    if(!data||data.channel!==channel||!['preview','collapsed','expanded'].includes(data.mode))return;
+    if(!data||data.channel!==channel)return;
+    if(data.action==='cover-open'&&typeof data.src==='string'){
+      openPreview(data.src);return;
+    }
+    if(!['collapsed','expanded'].includes(data.mode))return;
     if(!Number.isFinite(data.height)||data.height<30||data.height>2000)return;
     currentMode=data.mode;currentHeight=data.height;
     applyFrameSize();frame.classList.add('dd-bgm-ready');
