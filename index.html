@@ -1485,51 +1485,73 @@ initAnalytics();
 
 render();
 
-// Checklist code update: compare the published HTML, not a forgotten manual
-// version tag. A normalized build checksum recognizes this exact release.
-// The URL receipt prevents reload loops if a future manual edit forgets to
-// regenerate the checksum; each subsequent GitHub edit still triggers once.
+// Checklist active-page update monitor (2026-10-28).
+// Keep checking while the Checklist is OPEN and VISIBLE; switching tabs is
+// not required to receive a new deployed release. Never refresh for playlist
+// data changes alone; the shared official BGM still owns its own updates.
 (()=>{
-  const checklistBuildHash = "4a45848b03e040f1ed48ecbc46eced3ab2b12ab84b2b48ea33c81feae7c7f4bb";
+  const checklistBuildHash = "9a749dc8b15d87210c507b0a4f672dde53a8adc27026dd8111cdea3c0f46803b";
   const pageUrl = new URL('index.html',document.baseURI);
+  const retryKey='ddChecklist_update_receipt_v4';
   let checking=false,refreshing=false;
   const normalize=text=>text.replace(/^  const checklistBuildHash = "[a-f0-9_]{22,64}";/m,
-    '  const checklistBuildHash = "__CHECKLIST_BUILD_SHA256__";');
+    '  const checklistBuildHash = "__CHECKLIST_BUILD_SHA256__";').replace(/\r\n/g,'\n');
   async function hash(text){
     const bytes=new TextEncoder().encode(normalize(text));
     const digest=await crypto.subtle.digest('SHA-256',bytes);
     return Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
   }
+  function readAttempts(){
+    try{return JSON.parse(sessionStorage.getItem(retryKey)||'null');}catch{return null;}
+  }
+  function saveAttempts(value){
+    try{sessionStorage.setItem(retryKey,JSON.stringify(value));}catch{}
+  }
   async function checkForUpdate(){
-    if(checking||refreshing||!navigator.onLine||document.hidden)return;
+    // Hidden tabs may have throttled timers; visible tabs continue polling.
+    if(checking||refreshing||document.hidden||!navigator.onLine)return;
     checking=true;
+    const controller=new AbortController();
+    const abortTimer=setTimeout(()=>controller.abort(),12000);
     try{
       const remoteUrl=new URL(pageUrl.href);
-      remoteUrl.searchParams.set('_ddv_check',Date.now().toString());
-      const response=await fetch(remoteUrl.href,{cache:'no-store'});
+      remoteUrl.searchParams.set('_ddv_check',String(Date.now()));
+      const response=await fetch(remoteUrl.href,{
+        cache:'no-store',credentials:'same-origin',signal:controller.signal,
+        headers:{'Cache-Control':'no-cache'}
+      });
       if(!response.ok)return;
       const html=await response.text();
       if(!html.includes('ddChecklistBgmFrame')||!html.includes('cursor-ui/cursor.js'))return;
       const remoteHash=await hash(html);
-      // After a newly deployed page reloads, even a manually edited release
-      // missing a build-stamp update must not cause an endless refresh loop.
-      const receipt=new URL(location.href).searchParams.get('_ddv_refresh');
-      if(remoteHash===checklistBuildHash||receipt===remoteHash.slice(0,16))return;
+      if(remoteHash===checklistBuildHash)return;
+      // Pages served during a CDN transition may still be old even though a
+      // fresh check found the new version. Retry a few times, never loop fast.
+      const now=Date.now();
+      const previous=readAttempts();
+      const attempts=previous?.hash===remoteHash&&now-previous.firstSeen<15*60*1000
+        ? previous : {hash:remoteHash,attempts:0,firstSeen:now,lastAttempt:0};
+      if(attempts.attempts>=3&&now-attempts.lastAttempt<3*60*1000)return;
+      if(now-attempts.lastAttempt<25000)return;
+      if(attempts.attempts>=3){attempts.attempts=0;attempts.firstSeen=now;}
+      attempts.attempts++;
+      attempts.lastAttempt=now;
+      saveAttempts(attempts);
       refreshing=true;
       const next=new URL(location.href);
       next.searchParams.set('_ddv_refresh',remoteHash.slice(0,16));
-      // Cache-busting URL causes the top-level Checklist and embedded BGM
-      // frame to reload only after an actual new Checklist release.
+      next.searchParams.set('_ddv_load',String(now));
       location.replace(next.href);
-    }catch(error){console.warn('Checklist 更新檢查暫時失敗：',error);}
-    finally{checking=false;}
+    }catch(error){
+      if(error?.name!=='AbortError')console.warn('Checklist 版本檢查暫時失敗：',error);
+    }finally{clearTimeout(abortTimer);checking=false;}
   }
-  setInterval(checkForUpdate,60000);
+  // Poll *even if the player is playing and the user has not moved away*.
+  setInterval(checkForUpdate,30000);
   window.addEventListener('online',checkForUpdate);
-  document.addEventListener('visibilitychange',()=>{
-    if(!document.hidden)checkForUpdate();
-  });
-  // Also catch the case where a cached older Checklist page was opened.
+  window.addEventListener('focus',checkForUpdate);
+  window.addEventListener('pageshow',event=>{if(event.persisted)checkForUpdate();});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkForUpdate();});
   setTimeout(checkForUpdate,3000);
 })();
 
