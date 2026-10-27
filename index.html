@@ -1462,40 +1462,52 @@ initAnalytics();
 
 render();
 
-// Checklist 版本偵測：僅在 GitHub Pages 已提供不同版本時自動重新載入。
+// Checklist code update: compare the published HTML, not a forgotten manual
+// version tag. A normalized build checksum recognizes this exact release.
+// The URL receipt prevents reload loops if a future manual edit forgets to
+// regenerate the checksum; each subsequent GitHub edit still triggers once.
 (()=>{
-  const currentVersion = "ddv-e1867edf59b64456";
-  const versionPattern = /const currentVersion = "(ddv-[a-f0-9]{16})";/;
-  const pageUrl = new URL("index.html", document.baseURI);
-  let checking = false;
-  let refreshing = false;
-  async function checkForUpdate(){
-    if(checking || refreshing || !navigator.onLine) return;
-    checking = true;
-    try{
-      const requestUrl = new URL(pageUrl.href);
-      requestUrl.searchParams.set("_ddv_check", Date.now().toString());
-      const response = await fetch(requestUrl.href, {cache:"no-store"});
-      if(!response.ok) return;
-      const remoteHtml = await response.text();
-      const remoteVersion = remoteHtml.match(versionPattern)?.[1];
-      if(remoteVersion && remoteVersion !== currentVersion){
-        refreshing = true;
-        const nextUrl = new URL(location.href);
-        nextUrl.searchParams.set("_ddv_refresh", Date.now().toString());
-        location.replace(nextUrl.href);
-      }
-    }catch(error){
-      console.warn("Checklist 更新檢查暫時失敗：",error);
-    }finally{
-      checking = false;
-    }
+  const checklistBuildHash = "4a45848b03e040f1ed48ecbc46eced3ab2b12ab84b2b48ea33c81feae7c7f4bb";
+  const pageUrl = new URL('index.html',document.baseURI);
+  let checking=false,refreshing=false;
+  const normalize=text=>text.replace(/^  const checklistBuildHash = "[a-f0-9_]{22,64}";/m,
+    '  const checklistBuildHash = "__CHECKLIST_BUILD_SHA256__";');
+  async function hash(text){
+    const bytes=new TextEncoder().encode(normalize(text));
+    const digest=await crypto.subtle.digest('SHA-256',bytes);
+    return Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
   }
-  setInterval(checkForUpdate, 60000);
-  window.addEventListener("online", checkForUpdate);
-  document.addEventListener("visibilitychange", ()=>{
-    if(!document.hidden) checkForUpdate();
+  async function checkForUpdate(){
+    if(checking||refreshing||!navigator.onLine||document.hidden)return;
+    checking=true;
+    try{
+      const remoteUrl=new URL(pageUrl.href);
+      remoteUrl.searchParams.set('_ddv_check',Date.now().toString());
+      const response=await fetch(remoteUrl.href,{cache:'no-store'});
+      if(!response.ok)return;
+      const html=await response.text();
+      if(!html.includes('ddChecklistBgmFrame')||!html.includes('cursor-ui/cursor.js'))return;
+      const remoteHash=await hash(html);
+      // After a newly deployed page reloads, even a manually edited release
+      // missing a build-stamp update must not cause an endless refresh loop.
+      const receipt=new URL(location.href).searchParams.get('_ddv_refresh');
+      if(remoteHash===checklistBuildHash||receipt===remoteHash.slice(0,16))return;
+      refreshing=true;
+      const next=new URL(location.href);
+      next.searchParams.set('_ddv_refresh',remoteHash.slice(0,16));
+      // Cache-busting URL causes the top-level Checklist and embedded BGM
+      // frame to reload only after an actual new Checklist release.
+      location.replace(next.href);
+    }catch(error){console.warn('Checklist 更新檢查暫時失敗：',error);}
+    finally{checking=false;}
+  }
+  setInterval(checkForUpdate,60000);
+  window.addEventListener('online',checkForUpdate);
+  document.addEventListener('visibilitychange',()=>{
+    if(!document.hidden)checkForUpdate();
   });
+  // Also catch the case where a cached older Checklist page was opened.
+  setTimeout(checkForUpdate,3000);
 })();
 
 // 頁面若跨過午夜，重新載入以切換到新的每日日期與任務紀錄。
@@ -1516,24 +1528,24 @@ setInterval(()=>{
   // parent only pins its white-glove cursors within the SAME-ORIGIN iframe.
   // This avoids pointer flicker when Chrome moves focus between the iframe,
   // native slider thumbs and the site's alternating hover-cursor states.
+  // Each iframe is its own document. The Checklist parent cursor.js cannot
+  // drive hover classes inside it; run the tiny cursor state machine INSIDE
+  // the canonical BGM iframe, without touching its player/audio code.
   function installChecklistPlayerCursor(){
     try{
       const doc=frame.contentDocument;
-      if(!doc || doc.location.origin !== location.origin || !doc.head)return;
+      if(!doc||doc.location.origin!==location.origin||!doc.head)return;
       const root=doc.documentElement;
       if(!root.classList.contains('dd-bgm-embed'))return;
-      root.classList.add('dd-bgm-checklist-cursor');
       if(doc.getElementById('dd-checklist-player-cursor-style'))return;
-      const cursorFile=name=>new URL('cursor-ui/'+name, document.baseURI).href;
+      root.classList.add('dd-bgm-checklist-cursor');
+      const cursorFile=name=>new URL('cursor-ui/'+name,document.baseURI).href;
       const normal=cursorFile('cursor-default.png');
       const hover=cursorFile('cursor-hover-1.png');
+      const hoverAlt=cursorFile('cursor-hover-2.png');
       const pressed=cursorFile('cursor-pressed.png');
       const style=doc.createElement('style');
       style.id='dd-checklist-player-cursor-style';
-      // Use the official cursor.js hover/alternate classes instead of pinning
-      // every interactive control to hover-1. The official 500 ms animation
-      // continues to drive the glove while iframe CSS keeps it consistent.
-      const hoverAlt=cursorFile('cursor-hover-2.png');
       style.textContent=`
         @media (hover:hover) and (pointer:fine){
           html.dd-bgm-checklist-cursor #player,
@@ -1542,45 +1554,54 @@ setInterval(()=>{
           html.dd-bgm-checklist-cursor #mini *{
             cursor:url("${normal}") 2 2,auto!important;
           }
-          /* A fallback immediately on hover, including slider tracks/thumbs. */
-          html.dd-bgm-checklist-cursor #player :is(button,a,select,summary,[role="button"],input[type="range"]):hover,
-          html.dd-bgm-checklist-cursor #player :is(button,a,select,summary,[role="button"],input[type="range"]):hover *,
+          html.dd-bgm-checklist-cursor #player :is(button,a,select,summary,label,[role="button"],[role="option"],[tabindex]:not([tabindex="-1"]),input[type="range"]):hover,
+          html.dd-bgm-checklist-cursor #player :is(button,a,select,summary,label,[role="button"],[role="option"],[tabindex]:not([tabindex="-1"]),input[type="range"]):hover *,
           html.dd-bgm-checklist-cursor #mini:hover,
           html.dd-bgm-checklist-cursor #mini:hover *{
             cursor:url("${hover}") 3 2,pointer!important;
           }
-          /* Follow the OFFICIAL 500ms alternate states, no second timer. */
-          html.dd-bgm-checklist-cursor.duoduo-cursor-hover-alt #player :is(button,a,select,summary,[role="button"],input[type="range"]):hover,
-          html.dd-bgm-checklist-cursor.duoduo-cursor-hover-alt #player :is(button,a,select,summary,[role="button"],input[type="range"]):hover *,
-          html.dd-bgm-checklist-cursor.duoduo-cursor-hover-alt #mini:hover,
-          html.dd-bgm-checklist-cursor.duoduo-cursor-hover-alt #mini:hover *{
+          html.dd-bgm-checklist-cursor.dd-bgm-cursor-alt #player :is(button,a,select,summary,label,[role="button"],[role="option"],[tabindex]:not([tabindex="-1"]),input[type="range"]):hover,
+          html.dd-bgm-checklist-cursor.dd-bgm-cursor-alt #player :is(button,a,select,summary,label,[role="button"],[role="option"],[tabindex]:not([tabindex="-1"]),input[type="range"]):hover *,
+          html.dd-bgm-checklist-cursor.dd-bgm-cursor-alt #mini:hover,
+          html.dd-bgm-checklist-cursor.dd-bgm-cursor-alt #mini:hover *{
             cursor:url("${hoverAlt}") 3 2,pointer!important;
           }
-          /* Pressed overrides both alternating hover frames. */
-          html.dd-bgm-checklist-cursor #player :is(button,a,select,summary,[role="button"],input[type="range"]):active,
-          html.dd-bgm-checklist-cursor #player :is(button,a,select,summary,[role="button"],input[type="range"]):active *,
+          html.dd-bgm-checklist-cursor #player :is(button,a,select,summary,label,[role="button"],[role="option"],[tabindex]:not([tabindex="-1"]),input[type="range"]):active,
+          html.dd-bgm-checklist-cursor #player :is(button,a,select,summary,label,[role="button"],[role="option"],[tabindex]:not([tabindex="-1"]),input[type="range"]):active *,
           html.dd-bgm-checklist-cursor #mini:active,
           html.dd-bgm-checklist-cursor #mini:active *{
             cursor:url("${pressed}") 3 2,grabbing!important;
           }
-          html.dd-bgm-checklist-cursor #player input[type="range"]::-webkit-slider-thumb,
-          html.dd-bgm-checklist-cursor #player input[type="range"]::-moz-range-thumb{
-            cursor:url("${hover}") 3 2,pointer!important;
-          }
-          html.dd-bgm-checklist-cursor.duoduo-cursor-hover-alt #player input[type="range"]::-webkit-slider-thumb,
-          html.dd-bgm-checklist-cursor.duoduo-cursor-hover-alt #player input[type="range"]::-moz-range-thumb{
-            cursor:url("${hoverAlt}") 3 2,pointer!important;
-          }
-          html.dd-bgm-checklist-cursor #player input[type="range"]:active::-webkit-slider-thumb,
-          html.dd-bgm-checklist-cursor #player input[type="range"]:active::-moz-range-thumb{
-            cursor:url("${pressed}") 3 2,grabbing!important;
-          }
+          html.dd-bgm-checklist-cursor #player input[type="range"]::-webkit-slider-thumb{cursor:url("${hover}") 3 2,pointer!important;}
+          html.dd-bgm-checklist-cursor.dd-bgm-cursor-alt #player input[type="range"]::-webkit-slider-thumb{cursor:url("${hoverAlt}") 3 2,pointer!important;}
+          html.dd-bgm-checklist-cursor #player input[type="range"]:active::-webkit-slider-thumb{cursor:url("${pressed}") 3 2,grabbing!important;}
+          html.dd-bgm-checklist-cursor #player input[type="range"]::-moz-range-thumb{cursor:url("${hover}") 3 2,pointer!important;}
+          html.dd-bgm-checklist-cursor.dd-bgm-cursor-alt #player input[type="range"]::-moz-range-thumb{cursor:url("${hoverAlt}") 3 2,pointer!important;}
+          html.dd-bgm-checklist-cursor #player input[type="range"]:active::-moz-range-thumb{cursor:url("${pressed}") 3 2,grabbing!important;}
         }`;
       doc.head.appendChild(style);
-    }catch(_){
-      // A different origin cannot be styled by the parent. Never interfere
-      // with audio playback or the Checklist task controls in that case.
-    }
+      // The frame owns the alternating state, not the Checklist host page.
+      // A setInterval on its Window keeps changing even when the pointer is
+      // motionless on a slider thumb or nested SVG element.
+      const interactives='button,a,select,summary,label,[role="button"],[role="option"],[tabindex]:not([tabindex="-1"]),input[type="range"]';
+      let over=false,down=false,alternate=false;
+      const paint=()=>{
+        root.classList.toggle('dd-bgm-cursor-alt',over&&!down&&alternate);
+      };
+      const updateTarget=target=>{
+        const interactive=target instanceof doc.defaultView.Element && !!target.closest(interactives);
+        if(interactive!==over){over=interactive;alternate=false;paint();}
+      };
+      doc.addEventListener('pointerover',e=>{if(e.pointerType==='mouse')updateTarget(e.target);},true);
+      doc.addEventListener('pointermove',e=>{if(e.pointerType==='mouse')updateTarget(e.target);},{capture:true,passive:true});
+      doc.addEventListener('pointerout',e=>{
+        if(e.pointerType==='mouse'&&!e.relatedTarget){over=false;down=false;paint();}
+      },true);
+      doc.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button===0){down=true;paint();}},true);
+      doc.addEventListener('pointerup',e=>{if(e.pointerType==='mouse'&&e.button===0){down=false;updateTarget(e.target);paint();}},true);
+      doc.defaultView.addEventListener('blur',()=>{over=false;down=false;paint();});
+      doc.defaultView.setInterval(()=>{if(over&&!down){alternate=!alternate;paint();}},500);
+    }catch(error){console.warn('Checklist BGM cursor style unavailable:',error);}
   }
 
   const overlay=document.getElementById('ddChecklistCoverDialog');
