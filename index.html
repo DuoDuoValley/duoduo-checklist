@@ -2,6 +2,7 @@
 <html lang="zh-Hant">
       <link rel="icon" type="image/png" href="Logo2.PNG">
 <head>
+<style id="ddChecklistGuideEmbeddedPlayerHide">html.dd-checklist-inside-guide #ddChecklistBgmFrame,html.dd-checklist-inside-guide #ddChecklistCoverDialog{display:none!important;}</style>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>多多谷｜每日 Checklist</title>
@@ -318,8 +319,30 @@ body.dark .category-card .section-head{background:linear-gradient(100deg,color-m
   <button id="ddChecklistCoverClose" type="button" aria-label="關閉封面預覽" title="關閉">×</button></figure>
 </div>
 
-<!-- Checklist embeds the canonical BGM shell from the OFFICIAL site. Checklist task DOM is untouched. -->
-<iframe id="ddChecklistBgmFrame" title="多多谷官網共用 BGM 播放器" src="https://duoduovalley.github.io/duoduo-website/index.html?bgm_embed=checklist" allow="autoplay" loading="eager" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+ <!-- A Checklist embedded within the official Guide should use ONLY the outer official BGM.
+      Standalone Checklist keeps the usual shared player. Do not navigate to the
+      music iframe at all when embedded, otherwise it could autoplay unseen. -->
+ <script>
+ (function(){
+   let insideOfficialGuide=false;
+   try{
+     if(window.parent!==window){
+       const host=new URL(window.parent.location.href);
+       insideOfficialGuide=host.origin===location.origin && /\/duoduo-website\/guide(?:\.html)?\/?$/.test(host.pathname);
+     }
+   }catch(_){ /* Cross-origin pages cannot access the parent URL. */ }
+   window.__ddChecklistInsideOfficialGuide=insideOfficialGuide;
+   if(insideOfficialGuide)document.documentElement.classList.add('dd-checklist-inside-guide');
+ })();
+ </script>
+ <iframe id="ddChecklistBgmFrame" title="多多谷官網共用 BGM 播放器" src="about:blank" data-player-src="https://duoduovalley.github.io/duoduo-website/index.html?bgm_embed=checklist" allow="autoplay" loading="eager" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+ <script>
+ // Only create an actual music-playing frame on a standalone Checklist.
+ if(!window.__ddChecklistInsideOfficialGuide){
+   const f=document.getElementById('ddChecklistBgmFrame');
+   f.src=f.dataset.playerSrc;
+ }
+ </script>
 
 <script>
 let pendingCompletionAnimationId = null;
@@ -1523,6 +1546,8 @@ setInterval(()=>{
 // on the host page, without changing Checklist task storage or layout.
 (()=>{
   const frame=document.getElementById('ddChecklistBgmFrame');
+  if(window.__ddChecklistInsideOfficialGuide) return; // No second BGM while embedded in the Guide.
+
   const channel='duoduo-checklist-bgm-217';
   // The official BGM stays the only source for the player. The Checklist
   // parent only pins its white-glove cursors within the SAME-ORIGIN iframe.
