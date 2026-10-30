@@ -606,14 +606,14 @@ const bossActiveGroups = {
   weekly: localStorage.getItem("dodogu_weekly_boss_active_group")
 };
 
-const now = new Date();
+let now = new Date();
 const weekdays = ["日","一","二","三","四","五","六"];
-const todayKey = now.toLocaleDateString("sv-SE");
+let todayKey = now.toLocaleDateString("sv-SE");
 const dayFromMonday = (now.getDay()+6)%7;
 const monday = new Date(now);
 monday.setHours(0,0,0,0);
 monday.setDate(now.getDate()-dayFromMonday);
-const weekKey = monday.toLocaleDateString("sv-SE");
+let weekKey = monday.toLocaleDateString("sv-SE");
 
 document.getElementById("today").textContent =
   `${now.getFullYear()} / ${String(now.getMonth()+1).padStart(2,"0")} / ${String(now.getDate()).padStart(2,"0")}（${weekdays[now.getDay()]}）`;
@@ -1484,80 +1484,106 @@ initAnalytics();
 
 render();
 
-// Checklist active-page update monitor (2026-10-28).
-// Keep checking while the Checklist is OPEN and VISIBLE; switching tabs is
-// not required to receive a new deployed release. Never refresh for playlist
-// data changes alone; the shared official BGM still owns its own updates.
+// Checklist update monitor: check without disrupting an unchanged page.
+// Compare the actual code/styles loaded in this tab, rather than relying on
+// an embedded SHA that can become stale when index.html is edited.
 (()=>{
-  const checklistBuildHash = "9a749dc8b15d87210c507b0a4f672dde53a8adc27026dd8111cdea3c0f46803b";
   const pageUrl = new URL('index.html',document.baseURI);
-  const retryKey='ddChecklist_update_receipt_v4';
+  let loadedSignature='';
+  let observedRemoteHash='';
   let checking=false,refreshing=false;
-  const normalize=text=>text.replace(/^  const checklistBuildHash = "[a-f0-9_]{22,64}";/m,
-    '  const checklistBuildHash = "__CHECKLIST_BUILD_SHA256__";').replace(/\r\n/g,'\n');
-  async function hash(text){
-    const bytes=new TextEncoder().encode(normalize(text));
+  let candidateHash='',candidateCount=0;
+  // These tags retain their original source even when the tasks, theme, or
+  // checklist DOM is dynamically updated. Ignore live task states and BGM data.
+  function sourceParts(doc){
+    const scripts=Array.from(doc.querySelectorAll('script'))
+      .filter(el=>!el.getAttribute('src')||el.getAttribute('src')==='cursor-ui/cursor.js')
+      .map(el=>
+      [el.getAttribute('src')||'',el.getAttribute('type')||'',el.textContent||''].join('\u0000'));
+    const styles=Array.from(doc.querySelectorAll('style')).map(el=>el.textContent||'');
+    return JSON.stringify([doc.title,scripts,styles]);
+  }
+  async function fingerprint(text){
+    const bytes=new TextEncoder().encode(text.replace(/\r\n/g,'\n'));
     const digest=await crypto.subtle.digest('SHA-256',bytes);
     return Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
   }
-  function readAttempts(){
-    try{return JSON.parse(sessionStorage.getItem(retryKey)||'null');}catch{return null;}
-  }
-  function saveAttempts(value){
-    try{sessionStorage.setItem(retryKey,JSON.stringify(value));}catch{}
+  async function initialize(){
+    loadedSignature=await fingerprint(sourceParts(document));
+    // First fetch calibrates the server's current source, which may differ
+    // from old embedded release hashes even when nothing has changed.
+    checkForUpdate();
   }
   async function checkForUpdate(){
-    // Hidden tabs may have throttled timers; visible tabs continue polling.
-    if(checking||refreshing||document.hidden||!navigator.onLine)return;
+    if(checking||refreshing||!loadedSignature||document.hidden||!navigator.onLine||window.__ddChecklistInsideOfficialGuide)return;
     checking=true;
     const controller=new AbortController();
     const abortTimer=setTimeout(()=>controller.abort(),12000);
     try{
       const remoteUrl=new URL(pageUrl.href);
       remoteUrl.searchParams.set('_ddv_check',String(Date.now()));
-      const response=await fetch(remoteUrl.href,{
-        cache:'no-store',credentials:'same-origin',signal:controller.signal,
-        headers:{'Cache-Control':'no-cache'}
-      });
+      const response=await fetch(remoteUrl.href,{cache:'no-store',credentials:'same-origin',signal:controller.signal});
       if(!response.ok)return;
       const html=await response.text();
       if(!html.includes('ddChecklistBgmFrame')||!html.includes('cursor-ui/cursor.js'))return;
-      const remoteHash=await hash(html);
-      if(remoteHash===checklistBuildHash)return;
-      // Pages served during a CDN transition may still be old even though a
-      // fresh check found the new version. Retry a few times, never loop fast.
-      const now=Date.now();
-      const previous=readAttempts();
-      const attempts=previous?.hash===remoteHash&&now-previous.firstSeen<15*60*1000
-        ? previous : {hash:remoteHash,attempts:0,firstSeen:now,lastAttempt:0};
-      if(attempts.attempts>=3&&now-attempts.lastAttempt<3*60*1000)return;
-      if(now-attempts.lastAttempt<25000)return;
-      if(attempts.attempts>=3){attempts.attempts=0;attempts.firstSeen=now;}
-      attempts.attempts++;
-      attempts.lastAttempt=now;
-      saveAttempts(attempts);
+      const remoteDoc=new DOMParser().parseFromString(html,'text/html');
+      const remoteSignature=await fingerprint(sourceParts(remoteDoc));
+      const remoteHash=await fingerprint(html);
+      const sourceChanged=remoteSignature!==loadedSignature;
+      // The very first server response may have a different raw HTML checksum
+      // from the old build; never reload simply for that mismatch.
+      if(!observedRemoteHash){
+        observedRemoteHash=remoteHash;
+        if(!sourceChanged)return;
+      }
+      const changed=sourceChanged||remoteHash!==observedRemoteHash;
+      if(!changed){candidateHash='';candidateCount=0;return;}
+      // Confirm twice before updating to avoid transient CDN transition replies.
+      if(candidateHash!==remoteHash){candidateHash=remoteHash;candidateCount=1;return;}
+      candidateCount++;
+      if(candidateCount<2)return;
       refreshing=true;
       const next=new URL(location.href);
       next.searchParams.set('_ddv_refresh',remoteHash.slice(0,16));
-      next.searchParams.set('_ddv_load',String(now));
+      next.searchParams.set('_ddv_load',String(Date.now()));
       location.replace(next.href);
     }catch(error){
       if(error?.name!=='AbortError')console.warn('Checklist 版本檢查暫時失敗：',error);
     }finally{clearTimeout(abortTimer);checking=false;}
   }
-  // Poll *even if the player is playing and the user has not moved away*.
-  setInterval(checkForUpdate,30000);
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initialize,{once:true});
+  else initialize();
+  setInterval(checkForUpdate,60000);
   window.addEventListener('online',checkForUpdate);
   window.addEventListener('focus',checkForUpdate);
   window.addEventListener('pageshow',event=>{if(event.persisted)checkForUpdate();});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkForUpdate();});
-  setTimeout(checkForUpdate,3000);
 })();
 
-// 頁面若跨過午夜，重新載入以切換到新的每日日期與任務紀錄。
-setInterval(()=>{
-  if(new Date().toLocaleDateString("sv-SE") !== todayKey) location.reload();
-},30000);
+// Date/week changes update task records in-place; no full page reload.
+function checkChecklistDateRollover(){
+  const current=new Date();
+  const nextDay=current.toLocaleDateString('sv-SE');
+  const nextMonday=new Date(current);
+  nextMonday.setHours(0,0,0,0);
+  nextMonday.setDate(current.getDate()-(current.getDay()+6)%7);
+  const nextWeek=nextMonday.toLocaleDateString('sv-SE');
+  if(nextDay===todayKey&&nextWeek===weekKey)return;
+  now=current;
+  todayKey=nextDay;
+  weekKey=nextWeek;
+  daily=JSON.parse(localStorage.getItem('dodogu_daily_'+todayKey)||'{}');
+  weekly=JSON.parse(localStorage.getItem('dodogu_weekly_'+weekKey)||'{}');
+  document.getElementById('today').textContent=
+    `${now.getFullYear()} / ${String(now.getMonth()+1).padStart(2,'0')} / ${String(now.getDate()).padStart(2,'0')}（${weekdays[now.getDay()]}）`;
+  render();
+}
+setInterval(checkChecklistDateRollover,30000);
+window.addEventListener('focus',checkChecklistDateRollover);
+window.addEventListener('pageshow',checkChecklistDateRollover);
+document.addEventListener('visibilitychange',()=>{
+  if(!document.hidden)checkChecklistDateRollover();
+});
 </script>
 
 <script src="cursor-ui/cursor.js" defer></script>
