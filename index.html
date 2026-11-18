@@ -659,6 +659,7 @@ const UI_ICON_MAP = {
   "Facebook": "facebook.PNG",
   "Discord": "discord、五星好評.PNG",
   "多多谷五星好評": "discord、五星好評.PNG",
+  "世界裂縫": "世界裂縫.png",
   "Roguelike 武陵道場": "Roguelike武陵道場.png",
   "第一次同行": "第一次同行.png",
   "金勾海賊王": "金勾海賊王.png",
@@ -820,6 +821,7 @@ const sections = [
     ["守護天使綠水靈（混沌）", null, null, "", "🟠 高階"]
   ]],
   ["每週任務", "weekly", [
+    ["世界裂縫"],
     ["Roguelike 武陵道場"],
     ["史烏（終極）"],
     ["黑魔法師（困難）"],["黑魔法師（終極）"],
@@ -1006,7 +1008,9 @@ function migrateV38Storage(){
   function legacyName(type,si,li){
     if(type==="daily" && si>=0 && si<=4) return sections[si]?.[2]?.[li]?.[0] || null;
     if(type==="daily" && si>=5 && si<=7) return legacyBossSections[si-5]?.[li] || null;
-    if(type==="weekly" && si===8) return sections.find(x=>x[1]==="weekly")?.[2]?.[li]?.[0] || null;
+    // Historical V36 weekly positions predate the new 世界裂縫 row.
+    // Old position 0 must still resolve to Roguelike, not the new item.
+    if(type==="weekly" && si===8) return sections.find(x=>x[1]==="weekly")?.[2]?.[li+1]?.[0] || null;
     return null;
   }
 
