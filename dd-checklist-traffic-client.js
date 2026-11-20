@@ -1,7 +1,9 @@
 /* Independent Checklist visits for the owner-only analytics dashboard.
  * Does not change GoatCounter's existing public widget or Checklist task storage. */
 (()=>{'use strict';
- if(window.top!==window||!location.pathname.startsWith('/duoduo-checklist/'))return;
+ const official=location.origin==='https://checklist.duoduovalley.com';
+ const legacy=location.origin==='https://duoduovalley.github.io'&&location.pathname.startsWith('/duoduo-checklist/');
+ if(window.top!==window||(!official&&!legacy))return;
  if(!navigator.onLine)return;
  const navigation=performance.getEntriesByType?.('navigation')?.[0];
  if(navigation?.type==='reload')return;
