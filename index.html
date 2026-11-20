@@ -440,7 +440,7 @@ body.dark .category-card .section-head{background:linear-gradient(100deg,color-m
           <div class="dd-checklist-progress-hint">進度儲存在此瀏覽器，建議定期下載備份。</div>
         </div>
       </details>
-      <a class="official-btn" href="https://duoduovalley.github.io/duoduo-website/" target="_blank" rel="noopener noreferrer">🌐 官方網站</a>
+      <a class="official-btn" href="https://www.duoduovalley.com/" target="_blank" rel="noopener noreferrer">🌐 官方網站</a>
       <a class="guide-btn" href="https://docs.google.com/document/d/13Ok02E9A_sS7LWrrFXw4S9jsPU6JWdTu6INpwuMlDdo/edit?tab=t.0#heading=h.abq713skdil9" target="_blank" rel="noopener">📖 遊玩指南</a>
       <button class="notify-btn" id="notifyBtn" type="button">🔔 開啟活動提醒</button>
     </div>
@@ -494,8 +494,8 @@ body.dark .category-card .section-head{background:linear-gradient(100deg,color-m
     <div class="dd-checklist-footer__bottom">
       <span class="dd-checklist-footer__copyright">© 2026 DuoDuo Valley · 多多谷</span>
       <nav class="dd-checklist-footer__links" aria-label="政策與頁面操作">
-        <a href="https://duoduovalley.github.io/duoduo-website/privacy.html" target="_blank" rel="noopener noreferrer">隱私權政策</a>
-        <a href="https://duoduovalley.github.io/duoduo-website/terms.html" target="_blank" rel="noopener noreferrer">使用條款</a>
+        <a href="https://www.duoduovalley.com/privacy.html" target="_blank" rel="noopener noreferrer">隱私權政策</a>
+        <a href="https://www.duoduovalley.com/terms.html" target="_blank" rel="noopener noreferrer">使用條款</a>
         <button type="button" id="ddChecklistBackToTop" aria-label="回到頁面頂部">↑ 回到頂部</button>
       </nav>
     </div>
@@ -644,7 +644,7 @@ body.dark .category-card .section-head{background:linear-gradient(100deg,color-m
    if(insideOfficialGuide)document.documentElement.classList.add('dd-checklist-inside-guide');
  })();
  </script>
- <iframe id="ddChecklistBgmFrame" title="多多谷官網共用 BGM 播放器" src="about:blank" data-player-src="https://duoduovalley.github.io/duoduo-website/index.html?bgm_embed=checklist" allow="autoplay" loading="eager" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+ <iframe id="ddChecklistBgmFrame" title="多多谷官網共用 BGM 播放器" src="about:blank" data-player-src="https://www.duoduovalley.com/index.html?bgm_embed=checklist" allow="autoplay" loading="eager" referrerpolicy="strict-origin-when-cross-origin"></iframe>
  <script>
  // Only create an actual music-playing frame on a standalone Checklist.
  if(!window.__ddChecklistInsideOfficialGuide){
@@ -2181,6 +2181,8 @@ document.addEventListener('visibilitychange',()=>{
   if(window.__ddChecklistInsideOfficialGuide) return; // No second BGM while embedded in the Guide.
 
   const channel='duoduo-checklist-bgm-217';
+  // Cross-origin BGM messages must be addressed to the exact player origin.
+  const playerOrigin=new URL(frame.dataset.playerSrc).origin;
   // The official BGM stays the only source for the player. The Checklist
   // parent only pins its white-glove cursors within the SAME-ORIGIN iframe.
   // This avoids pointer flicker when Chrome moves focus between the iframe,
@@ -2262,7 +2264,7 @@ document.addEventListener('visibilitychange',()=>{
     overlay.hidden=true;
     image.removeAttribute('src');
     if(previousFocus&&previousFocus.isConnected){previousFocus.focus({preventScroll:true});}
-    frame.contentWindow?.postMessage({channel,action:'cover-closed'},location.origin);
+    frame.contentWindow?.postMessage({channel,action:'cover-closed'},playerOrigin);
   }
   async function openPreview(raw){
     const token=++previewToken;
@@ -2289,7 +2291,7 @@ document.addEventListener('visibilitychange',()=>{
     else if(event.key==='Tab'){event.preventDefault();closeButton.focus({preventScroll:true});}
   });
   window.addEventListener('message',event=>{
-    if(event.origin!==location.origin||event.source!==frame.contentWindow)return;
+    if(event.origin!==playerOrigin||event.source!==frame.contentWindow)return;
     const data=event.data;
     if(!data||data.channel!==channel)return;
     if(data.action==='cover-open'&&typeof data.src==='string'){
@@ -2303,7 +2305,7 @@ document.addEventListener('visibilitychange',()=>{
       // the mini remains visible, then let the official player open normally.
       requestAnimationFrame(()=>requestAnimationFrame(()=>{
         if(request!==expandRequest)return;
-        frame.contentWindow?.postMessage({channel,action:'host-expand-ready'},location.origin);
+        frame.contentWindow?.postMessage({channel,action:'host-expand-ready'},playerOrigin);
       }));
       return;
     }
@@ -2315,7 +2317,7 @@ document.addEventListener('visibilitychange',()=>{
     applyFrameSize();frame.classList.add('dd-bgm-ready');
   });
   function notifyHostSize(){
-    try{frame.contentWindow?.postMessage({channel,action:'host-size',width:window.innerWidth},location.origin);}catch(_){}
+    try{frame.contentWindow?.postMessage({channel,action:'host-size',width:window.innerWidth},playerOrigin);}catch(_){}
     applyFrameSize();
   }
   frame.addEventListener('load',()=>{installChecklistPlayerCursor();notifyHostSize();});
